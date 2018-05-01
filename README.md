@@ -1,3 +1,20 @@
+<b>This repository is for the development of SynBioHub 2.x, which is not yet in a usable state.  If you're looking for SynBioHub 1.x, please go to [synbiohub/synbiohub](https://github.com/synbiohub/synbiohub) instead.</b>
+
+The 2.0.0 release of SynBioHub will feature extensive refactoring, including:
+
+* A conversion of the codebase from old-fashioned JavaScript to modern TypeScript
+* Lots of code deduplication and general cleanup so that new features can arrive more quickly
+* A new templating engine (Jade -> EJS)
+* A new and improved default look and feel, and a theme system so you can develop your own
+* Decoupling from Virtuoso/the ability to use alternative triplestores (e.g. blazegraph, rdf4j, jena)
+
+If you'd like to help out, please join our [developer list](https://groups.google.com/forum/#!forum/synbiohub-users) and say hello!
+
+<hr>
+
+
+
+
 <img src="https://synbiohub.org/logo_uploaded.svg" width="100%" />
 
 ![](https://david-dm.org/synbiohub/synbiohub.svg) 
