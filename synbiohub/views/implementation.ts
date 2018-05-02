@@ -1,17 +1,17 @@
 // This file manages the rendering of an Implementation
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 
-import filterAnnotations from '../filterAnnotations';
-import loadTemplate from '../loadTemplate';
+import filterAnnotations from 'synbiohub/filterAnnotations';
+import loadTemplate from 'synbiohub/loadTemplate';
 import sbolmeta from 'sbolmeta';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
-import config from '../config';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
+import config from 'synbiohub/config';
 import { URI } from 'sboljs';
-import getUrisFromReq from '../getUrisFromReq';
-import attachments from '../attachments';
-import uriToUrl from '../uriToUrl';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import attachments from 'synbiohub/attachments';
+import uriToUrl from 'synbiohub/uriToUrl';
 import sha1 from 'sha1';
 
 export default function(req, res) {

@@ -1,6 +1,6 @@
-import { getType } from '../query/type';
+import { getType } from 'synbiohub/query/type';
 import async from 'async';
-import config from '../config';
+import config from 'synbiohub/config';
 import collection from './collection';
 import componentDefinition from './componentDefinition';
 import moduleDefinition from './moduleDefinition';
@@ -15,7 +15,7 @@ import plan from './plan';
 import implementation from './implementation';
 import test from './test';
 import pug from 'pug';
-import getUrisFromReq from '../getUrisFromReq';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
 export default async function(req, res) {
 

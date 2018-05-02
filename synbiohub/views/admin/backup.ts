@@ -1,10 +1,10 @@
 
 import pug from 'pug';
-import sparql from '../../sparql/sparql';
-import config from '../../config';
-import isql from '../../isql';
-import path from 'path';
-import fs from 'mz/fs';
+import * as sparql from 'synbiohub/sparql/sparql';
+import config from 'synbiohub/config';
+import isql from 'synbiohub/isql';
+import path = require('path')
+import fs = require('mz/fs')
 import filesize from 'filesize';
 
 
@@ -52,14 +52,15 @@ async function listBackups() {
     return await Promise.all(
         Object.keys(backups).map((backup) => {
 
-            return await (async () => {
+            return (await (async () => {
 
                 const files = backups[backup]
 
                 const backupInfo = {
                     date: new Date(parseInt(backup)),
                     files: files,
-                    prefix: files[0].toString().substring(0, files[0].length - '_.bp'.length)
+                    prefix: files[0].toString().substring(0, files[0].length - '_.bp'.length),
+                    size: null
                 }
 
                 let sizes = await Promise.all(files.map((filename) => {
@@ -74,12 +75,12 @@ async function listBackups() {
 
                 var totalSize = 0
 
-                sizes.forEach((size) => totalSize += size)
+                sizes.forEach((size:number) => totalSize += size)
 
                 backupInfo.size = filesize(totalSize)
 
                 return backupInfo
-            })
+            }))
         })
     )
 

@@ -1,15 +1,15 @@
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import sbolmeta from 'sbolmeta';
 import async from 'async';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
-import wiky from '../wiky/wiky.js';
-import config from '../config';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
+import wiky from 'synbiohub/wiky/wiky.js';
+import config from 'synbiohub/config';
 import { URI } from 'sboljs';
-import getUrisFromReq from '../getUrisFromReq';
-import tasks from '../task/index';
-import jobUtils from '../jobs/job-utils';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import tasks from 'synbiohub/task/index';
+import jobUtils from 'synbiohub/jobs/job-utils';
 
 export default function(req, res) {
 

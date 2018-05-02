@@ -1,5 +1,5 @@
 
-import sparql from './sparql/sparql';
+import * as sparql from './sparql/sparql';
 import loadTemplate from './loadTemplate';
 
 function getSnapshots(uri) {

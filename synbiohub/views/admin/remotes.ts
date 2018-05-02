@@ -1,9 +1,9 @@
 
 import pug from 'pug';
-import sparql from '../../sparql/sparql';
-import db from '../../db';
-import config from '../../config';
-import { getSnapshots } from '../../snapshots';
+import * as sparql from 'synbiohub/sparql/sparql';
+import db from 'synbiohub/db';
+import config from 'synbiohub/config';
+import { getSnapshots } from 'synbiohub/snapshots';
 
 export default function(req, res) {
 

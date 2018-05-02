@@ -1,17 +1,17 @@
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import { getContainingCollections } from '../query/collection';
-import filterAnnotations from '../filterAnnotations';
-import shareImages from '../shareImages';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import { getContainingCollections } from 'synbiohub/query/collection';
+import filterAnnotations from 'synbiohub/filterAnnotations';
+import shareImages from 'synbiohub/shareImages';
 import sbolmeta from 'sbolmeta';
 import async from 'async';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
-import wiky from '../wiky/wiky.js';
-import config from '../config';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
+import wiky from 'synbiohub/wiky/wiky.js';
+import config from 'synbiohub/config';
 import { URI } from 'sboljs';
-import getUrisFromReq from '../getUrisFromReq';
-import uriToUrl from '../uriToUrl';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import uriToUrl from 'synbiohub/uriToUrl';
 import sha1 from 'sha1';
 
 export default function(req, res) {

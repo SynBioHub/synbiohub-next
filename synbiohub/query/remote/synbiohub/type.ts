@@ -1,6 +1,6 @@
 
 import request from 'request';
-import config from '../../../config';
+import config from 'synbiohub/config';
 
 async function getType(remoteConfig, uri) {
 

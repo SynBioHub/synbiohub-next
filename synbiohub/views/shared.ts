@@ -1,9 +1,9 @@
 import pug from 'pug';
-import config from '../config';
-import loadTemplate from '../loadTemplate';
-import db from '../db';
-import sparql from '../sparql/sparql';
-import getGraphUriFromTopLevevlUri from '../getGraphUriFromTopLevelUri';
+import config from 'synbiohub/config';
+import loadTemplate from 'synbiohub/loadTemplate';
+import db from 'synbiohub/db';
+import * as sparql from 'synbiohub/sparql/sparql';
+import getGraphUriFromTopLevevlUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import sha1 from 'sha1';
 
 export default function (req, res) {

@@ -1,6 +1,6 @@
 
 import { mail as helper } from 'sendgrid';
-import config from '../config';
+import config from 'synbiohub/config';
 
 function sendMail(user, subject, message) {
 

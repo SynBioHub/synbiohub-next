@@ -3,17 +3,17 @@
  *    TODO: Skipped this file in async/await conversion
  */
 
-import db from '../db';
+import db from 'synbiohub/db';
 
 import extend from 'xtend/mutable';
-import taskHandlers from '../task/index';
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
+import taskHandlers from 'synbiohub/task/index';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import SBOLDocument from 'sboljs';
-import convertAndValidateSbol from '../conversion/convert-validate';
-import config from '../config';
-import sparql from '../sparql/sparql';
-import serializeSBOL from '../serializeSBOL';
-import sse from '../sse';
+import convertAndValidateSbol from 'synbiohub/conversion/convert-validate';
+import config from 'synbiohub/config';
+import * as sparql from 'synbiohub/sparql/sparql';
+import serializeSBOL from 'synbiohub/serializeSBOL';
+import sse from 'synbiohub/sse';
 
 const Status = {
     QUEUED: 0,

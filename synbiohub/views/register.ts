@@ -1,12 +1,12 @@
 
 import pug from 'pug';
 import validator from 'validator';
-import util from '../util';
+import util from 'synbiohub/util';
 import async from 'async';
 import extend from 'xtend';
-import config from '../config';
-import createUser from '../createUser';
-import db from '../db';
+import config from 'synbiohub/config';
+import createUser from 'synbiohub/createUser';
+import db from 'synbiohub/db';
 
 export default function(req, res) {
     

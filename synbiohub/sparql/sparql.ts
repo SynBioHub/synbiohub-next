@@ -1,9 +1,10 @@
-const config = require('../config')
-const request = require('request-promise')
 
-const shell = require('shelljs')
+import config from 'synbiohub/config'
+import request from 'request-promise'
 
-const fs = require('mz/fs')
+import shell from 'shelljs'
+
+import fs = require('mz/fs')
 
 const sparqlResultsToArray = require('./sparql-results-to-array')
 
@@ -15,13 +16,18 @@ const tmp = require('tmp-promise')
 
 var exec = require('child_process').exec;
 
-function escapeSparqlIRI(uri) {
+export function escapeSparqlIRI(uri) {
 
     return '<' + uri + '>';
 
 }
 
-async function updateQuery(sparql, graphUri, accept) {
+export async function updateQuery(sparql, graphUri, accept?) {
+
+    var headers:any = {}
+
+    if(accept)
+        headers.accept = accept
 
     const triplestoreConfig = config.get('triplestore')
 
@@ -30,7 +36,7 @@ async function updateQuery(sparql, graphUri, accept) {
     if (config.get('logSparqlQueries'))
         console.log(sparql)
 
-    let body = await request({
+    let res = await request({
 
         method: 'POST',
         url: triplestoreConfig.sparqlEndpoint + '-auth',
@@ -43,20 +49,19 @@ async function updateQuery(sparql, graphUri, accept) {
             pass: triplestoreConfig.password,
             sendImmediately: false
         },
-        headers: {
-            accept: accept
-        }
+        headers: headers,
+        resolveWithFullResponse: true
 
     })
 
     return {
         type: res.headers['content-type'],
         statusCode: res.statusCode,
-        body: body
+        body: res.body
     }
 }
 
-function updateQueryJson(sparql, graphUri) {
+export async function updateQueryJson(sparql, graphUri) {
 
     //const timer = Timer('sparql query')
 
@@ -79,7 +84,7 @@ function updateQueryJson(sparql, graphUri) {
 
 }
 
-async function query(sparql, graphUri, accept) {
+export async function query(sparql, graphUri, accept) {
 
     const triplestoreConfig = config.get('triplestore')
 
@@ -88,7 +93,7 @@ async function query(sparql, graphUri, accept) {
     if (config.get('logSparqlQueries'))
         console.log(sparql)
 
-    let body = await request({
+    let res = await request({
 
         method: 'get',
         url: triplestoreConfig.sparqlEndpoint,
@@ -98,18 +103,19 @@ async function query(sparql, graphUri, accept) {
         },
         headers: {
             accept: accept
-        }
+        },
+        resolveWithFullResponse: true
 
     })
 
     return {
         type: res.headers['content-type'],
         statusCode: res.statusCode,
-        body: body
+        body: res.body
     }
 }
 
-function queryJson(sparql, graphUri) {
+export async function queryJson(sparql, graphUri) {
 
     //const timer = Timer('sparql query')
 
@@ -132,7 +138,7 @@ function queryJson(sparql, graphUri) {
 
 }
 
-async function queryJsonStaggered(sparql, graphUri) {
+export async function queryJsonStaggered(sparql, graphUri) {
 
     var offset = 0
     var limit = config.get('staggeredQueryLimit')
@@ -168,7 +174,7 @@ async function queryJsonStaggered(sparql, graphUri) {
     }
 }
 
-function deleteStaggered(sparql, graphUri) {
+export async function deleteStaggered(sparql, graphUri) {
 
     var limit = config.get('staggeredQueryLimit')
 
@@ -195,7 +201,7 @@ function deleteStaggered(sparql, graphUri) {
     }
 }
 
-async function upload(graphUri, data, type) {
+export async function upload(graphUri, data, type) {
 
     const triplestoreConfig = config.get('triplestore')
 
@@ -223,7 +229,7 @@ async function upload(graphUri, data, type) {
     return body
 }
 
-async function uploadSmallFile(graphUri, filename, type) {
+export async function uploadSmallFile(graphUri, filename, type) {
 
     const triplestoreConfig = config.get('triplestore')
 
@@ -260,13 +266,10 @@ async function uploadSmallFile(graphUri, filename, type) {
 
     })
 
-    console.log('uploadfile done; ' + res.statusCode)
-    console.log(body)
-
     return body
 }
 
-function uploadFile(graphUri, filename, type) {
+export async function uploadFile(graphUri, filename, type) {
 
     let tempDir = await tmp.dir()
 
@@ -329,18 +332,4 @@ function uploadFile(graphUri, filename, type) {
         }
 
     }
-}
-
-module.exports = {
-
-    escape: require('pg-escape'),
-    escapeIRI: escapeSparqlIRI,
-    updateQuery: updateQuery,
-    updateQueryJson: updateQueryJson,
-    query: query,
-    queryJson: queryJson,
-    queryJsonStaggered: queryJsonStaggered,
-    deleteStaggered: deleteStaggered,
-    upload: upload,
-    uploadFile: uploadFile,
 }

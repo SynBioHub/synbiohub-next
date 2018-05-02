@@ -5,9 +5,9 @@ import loadTemplate from './loadTemplate';
 import escape from 'pg-escape';
 import prefixify from './prefixify';
 import config from './config';
-import sparql from './sparql/sparql';
+import * as sparql from './sparql/sparql';
 
-function search(graphUri, criteria, offset, limit, user) {
+export function search(graphUri, criteria, offset, limit, user) {
 
     var templateParams = {
         criteria: criteria,
@@ -74,7 +74,7 @@ function search(graphUri, criteria, offset, limit, user) {
     
 }
 
-search.lucene = function lucene(value) {
+export function lucene(value) {
 
     var criteriaStr = ''
     var values = value.split('&');
@@ -144,4 +144,3 @@ search.lucene = function lucene(value) {
 
 }
 
-export default search;

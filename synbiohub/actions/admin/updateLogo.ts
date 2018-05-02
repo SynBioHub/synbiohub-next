@@ -1,5 +1,5 @@
 
-import fs from 'mz/fs';
+import fs = require('mz/fs')
 import config from 'synbiohub/config';
 
 export default function(logoFile) {

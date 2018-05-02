@@ -1,5 +1,5 @@
-import config from '../config';
-import db from '../db';
+import config from 'synbiohub/config';
+import db from 'synbiohub/db';
 import pug from 'pug';
 import sha1 from 'sha1';
 

@@ -1,6 +1,6 @@
 
 import async from 'async';
-import sparql from './sparql';
+import * as sparql from './sparql';
 
 async function sparql(graphUris, query, callback) {
 

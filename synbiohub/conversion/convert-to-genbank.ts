@@ -1,7 +1,7 @@
 
-import java from '../java';
+import java from 'synbiohub/java';
 import extend from 'xtend';
-import config from '../config';
+import config from 'synbiohub/config';
 
 async function convertToGenBank(inFilename, opts) {
 

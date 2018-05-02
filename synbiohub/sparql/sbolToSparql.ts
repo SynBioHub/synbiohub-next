@@ -1,6 +1,6 @@
 
 import SBOLDocument from 'sboljs';
-import sparql from './sparql';
+import * as sparql from './sparql';
 
 function sbolToSparql(sbol) {
 

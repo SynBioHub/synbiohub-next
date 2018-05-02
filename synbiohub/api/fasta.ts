@@ -1,7 +1,7 @@
 
-import { getType } from '../query/type';
+import { getType } from 'synbiohub/query/type';
 import async from 'async';
-import config from '../config';
+import config from 'synbiohub/config';
 
 //var fastaCollection = require('./fastaCollection')
 
@@ -13,9 +13,9 @@ import fastaCollection from './fastaCollection';
 
 import fastaSequence from './fastaSequence';
 
-import config from '../config';
+import config from 'synbiohub/config';
 import pug from 'pug';
-import getUrisFromReq from '../getUrisFromReq';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
 export default async function(req, res) {
 

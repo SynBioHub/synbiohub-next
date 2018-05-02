@@ -1,8 +1,8 @@
 
-import sparql from '../../sparql/sparql';
-import assert from 'assert';
+import * as sparql from 'synbiohub/sparql/sparql';
+import assert = require('assert')
 
-async function getType(uri, graphUri) {
+export default async function getType(uri, graphUri) {
 
     assert(!Array.isArray(graphUri))
 
@@ -18,8 +18,3 @@ async function getType(uri, graphUri) {
 
     }
 }
-
-export default {
-    getType: getType
-};
-

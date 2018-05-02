@@ -1,14 +1,14 @@
 
-import tmp from 'tmp-promise';
-import fs from 'mz/fs';
-import zlib from 'zlib';
-import shastream from 'sha1-stream';
-import filetype from 'file-type';
-import mkdirp from 'mkdirp-promise';
-import assert from 'assert';
-import streamMeter from 'stream-meter';
-import stream from 'stream';
-import mv from 'mv';
+import tmp from 'tmp-promise'
+import fs = require( 'mz/fs')
+import zlib = require( 'zlib')
+import shastream = require( 'sha1-stream')
+import filetype = require( 'file-type')
+import mkdirp = require( 'mkdirp-promise')
+import assert = require('assert')
+import streamMeter = require( 'stream-meter')
+import stream = require('stream')
+import mv = require('mv')
 
 function createUpload(inputStream) {
 

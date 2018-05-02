@@ -1,6 +1,6 @@
 
 import pug from 'pug'
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 import loadTemplate from 'synbiohub/loadTemplate'
 import config from 'synbiohub/config'
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'

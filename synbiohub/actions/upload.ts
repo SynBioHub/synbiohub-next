@@ -1,17 +1,18 @@
 
 import pug from 'pug';
-import loadTemplate from '../loadTemplate';
-import getUrisFromReq from '../getUrisFromReq';
-import config from '../config';
-import getGraphUriFromTopLevelUri from '../getGraphUriFromTopLevelUri';
+import loadTemplate from 'synbiohub/loadTemplate';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import config from 'synbiohub/config';
+import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import multiparty from 'multiparty';
-import uploads from '../uploads';
-import attachments from '../attachments';
+import uploads from 'synbiohub/uploads';
+import attachments from 'synbiohub/attachments';
 import streamToString from 'stream-to-string';
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
+import fetchSBOLObjectRecursive from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import SBOLDocument from 'sboljs';
-import sparql from '../sparql/sparql-collate';
-import getOwnedBy from '../query/ownedBy';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
+import getOwnedBy from 'synbiohub/query/ownedBy';
+import getAttachmentsForSubject from 'synbiohub/views/getAttachmentsForSubject'
 
 export default async function (req, res) {
 
@@ -53,20 +54,7 @@ export default async function (req, res) {
 				uri: uri
 			}
 
-		var getAttachmentsQuery = loadTemplate('sparql/GetAttachments.sparql', templateParams)
-
-		await Promise.all([
-			sparql.queryJson(getAttachmentsQuery, graphUri).then((results) => {
-
-				attachmentList = results
-
-				return attachments.getAttachmentsFromList(graphUri, attachmentList).then((results) => {
-
-					attachmentObjects = results
-
-				})
-			})
-		])
+		let attachmentObjects = await getAttachmentsForSubject(uri, graphUri)
 
 		const locals = {
 			config: config.get(),

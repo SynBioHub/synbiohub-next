@@ -1,10 +1,10 @@
 
-import getUrisFromReq from '../getUrisFromReq';
-import splitUri from '../splitUri';
-import { fetchSBOLSource } from '../fetch/fetch-sbol-source';
-import prepareSnapshot from '../conversion/prepare-snapshot';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import splitUri from 'synbiohub/splitUri';
+import { fetchSBOLSource } from 'synbiohub/fetch/fetch-sbol-source';
+import prepareSnapshot from 'synbiohub/conversion/prepare-snapshot';
 import fs from 'mz/fs';
-import sparql from '../sparql/sparql';
+import * as sparql from 'synbiohub/sparql/sparql';
 
 export default async function(req, res) {
 

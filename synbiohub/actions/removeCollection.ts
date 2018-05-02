@@ -1,10 +1,10 @@
 import async from 'async';
 import request from 'request';
-import loadTemplate from '../loadTemplate';
-import config from '../config';
-import getUrisFromReq from '../getUrisFromReq';
-import sparql from '../sparql/sparql';
-import getOwnedBy from '../query/ownedBy';
+import loadTemplate from 'synbiohub/loadTemplate';
+import config from 'synbiohub/config';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import * as sparql from 'synbiohub/sparql/sparql';
+import getOwnedBy from 'synbiohub/query/ownedBy';
 import pug from 'pug';
 
 export default async function(req, res) {

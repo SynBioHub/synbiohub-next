@@ -1,5 +1,5 @@
 
-import { getRootCollectionMetadata } from '../query/collection';
+import { getRootCollectionMetadata } from 'synbiohub/query/collection';
 
 async function rootCollections(req, res) {
 

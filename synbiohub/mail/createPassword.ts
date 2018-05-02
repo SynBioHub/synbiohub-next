@@ -1,6 +1,6 @@
 import sendMail from './sendMail';
-import loadTemplate from '../loadTemplate';
-import config from '../config';
+import loadTemplate from 'synbiohub/loadTemplate';
+import config from 'synbiohub/config';
 
 function sendCreatePasswordMail(user, administrator) {
 

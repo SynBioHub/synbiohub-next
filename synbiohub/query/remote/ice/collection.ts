@@ -1,8 +1,8 @@
 
 import request from 'request';
-import config from '../../../config';
-import ice from '../../../ice';
-import splitUri from '../../../splitUri';
+import config from 'synbiohub/config';
+import ice from 'synbiohub/ice';
+import splitUri from 'synbiohub/splitUri';
 
 function getCollectionMemberCount(remoteConfig, uri) {
 

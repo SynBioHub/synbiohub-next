@@ -1,8 +1,8 @@
 
 import request from 'request';
-import config from '../../../config';
-import benchling from '../../../benchling';
-import splitUri from '../../../splitUri';
+import config from 'synbiohub/config';
+import benchling from 'synbiohub/benchling';
+import splitUri from 'synbiohub/splitUri';
 
 function getCollectionMemberCount(remoteConfig, uri) {
 
@@ -15,10 +15,7 @@ function getCollectionMemberCount(remoteConfig, uri) {
     }
 
     if(displayId.indexOf(remoteConfig.folderPrefix) !== 0) {
-
-        res.status(404).send('???')
-        return
-
+        throw new Error('???')
     }
 
     const folderId = displayId.slice(remoteConfig.folderPrefix.length)

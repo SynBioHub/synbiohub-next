@@ -1,7 +1,7 @@
 import sha1 from 'sha1';
 import config from './config';
 
-function uriToUrl(uri,req) {
+function uriToUrl(uri, req?) {
 
     if (!uri) {
 	return ''

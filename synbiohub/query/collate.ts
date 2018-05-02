@@ -1,5 +1,5 @@
 
-function collateObjects(objects) {
+export function collateObjects(objects) {
 
     var res = {}
 
@@ -13,7 +13,7 @@ function collateObjects(objects) {
 
 }
 
-function collateArrays(arrays) {
+export function collateArrays(arrays) {
 
     var res = []
 
@@ -25,10 +25,5 @@ function collateArrays(arrays) {
 
     return res
 }
-
-export default {
-    collateObjects: collateObjects,
-    collateArrays: collateArrays
-};
 
 

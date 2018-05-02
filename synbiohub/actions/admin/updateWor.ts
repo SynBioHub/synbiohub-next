@@ -1,4 +1,4 @@
-import config from '../../config';
+import config from 'synbiohub/config';
 import request from 'request-promise';
 
 export default async function () {

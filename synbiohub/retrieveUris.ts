@@ -1,4 +1,4 @@
-import sparql from './sparql/sparql';
+import * as sparql from './sparql/sparql';
 import loadTemplate from './loadTemplate';
 import config from './config';
 import getGraphUriFromTopLevelUri from './getGraphUriFromTopLevelUri';

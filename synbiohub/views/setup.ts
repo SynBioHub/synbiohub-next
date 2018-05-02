@@ -1,11 +1,11 @@
 
 import pug from 'pug';
 import extend from 'xtend';
-import config from '../config';
+import config from 'synbiohub/config';
 import validator from 'validator';
-import createUser from '../createUser';
+import createUser from 'synbiohub/createUser';
 import uuid from 'uuid/v4';
-import theme from '../theme';
+import theme from 'synbiohub/theme';
 import fs from 'fs';
 
 export default function (req, res) {

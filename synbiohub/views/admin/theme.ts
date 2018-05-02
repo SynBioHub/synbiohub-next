@@ -1,9 +1,9 @@
 
 import pug from 'pug';
-import config from '../../config';
-import theme from '../../theme';
-import updateLogo from '../../actions/admin/updateLogo';
-import updateWor from '../../actions/admin/updateWor';
+import config from 'synbiohub/config';
+import theme from 'synbiohub/theme';
+import updateLogo from 'synbiohub/actions/admin/updateLogo';
+import updateWor from 'synbiohub/actions/admin/updateWor';
 
 export default function(req, res) {
     if(req.method === 'POST') {

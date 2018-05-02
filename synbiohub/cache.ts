@@ -1,5 +1,5 @@
 
-import sparql from './sparql/sparql';
+import * as sparql from './sparql/sparql';
 import ExecutionTimer from './util/execution-timer';
 import TrieSearch from 'trie-search';
 

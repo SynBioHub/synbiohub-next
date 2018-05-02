@@ -1,8 +1,8 @@
 
-import sparql from '../sparql/sparql';
+import * as sparql from 'synbiohub/sparql/sparql';
 import { Parser as SparqlParser } from 'sparqljs';
 import { Generator as SparqlGenerator } from 'sparqljs';
-import checkQuery from '../checkSparqlQuery';
+import checkQuery from 'synbiohub/checkSparqlQuery';
 
 export default function(req, res) {
 

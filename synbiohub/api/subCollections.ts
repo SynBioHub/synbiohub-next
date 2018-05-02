@@ -1,7 +1,7 @@
 
 
-import getUrisFromReq from '../getUrisFromReq';
-import { getSubCollections } from '../query/collection';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import { getSubCollections } from 'synbiohub/query/collection';
 
 async function subCollections(req, res) {
 

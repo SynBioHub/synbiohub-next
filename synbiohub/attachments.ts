@@ -1,12 +1,12 @@
 import loadTemplate from './loadTemplate';
 import sliver from './sliver';
 import config from './config';
-import sparql from './sparql/sparql';
+import * as sparql from './sparql/sparql';
 import filesize from 'filesize';
-import assert from 'assert';
+import assert = require('assert')
 import { URI } from 'sboljs';
 import sha1 from 'sha1';
-import { fetchSBOLObjectRecursive } from './fetch/fetch-sbol-object-recursive';
+import fetchSBOLObjectRecursive from './fetch/fetch-sbol-object-recursive';
 
 function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {
 

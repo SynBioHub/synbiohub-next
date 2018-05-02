@@ -9,9 +9,9 @@ import { spawn } from 'child_process';
  *
  * TODO handle errors
  */
-async function saveN3ToRdfXml(n3) {
+async function saveN3ToRdfXml(n3):Promise<string> {
 
-    return await new Promise((resolve, reject) => {
+    return await new Promise<string>((resolve, reject) => {
 
         const childProcess = spawn(__dirname + '/../../scripts/n3_to_rdfxml.sh', [], {
             cwd: __dirname + '/../../scripts',

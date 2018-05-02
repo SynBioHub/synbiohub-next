@@ -1,5 +1,5 @@
 
-import splitUri from '../../../splitUri';
+import splitUri from 'synbiohub/splitUri';
 
 async function getType(remoteConfig, uri) {
 

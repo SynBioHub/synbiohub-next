@@ -1,4 +1,4 @@
-import config from '../config';
+import config from 'synbiohub/config';
 
 export default function(req, res) {
     let registries = req.body;

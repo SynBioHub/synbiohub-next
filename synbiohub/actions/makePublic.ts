@@ -1,6 +1,5 @@
-const {
-    getCollectionMetaData
-} = require('../query/collection')
+
+import { getCollectionMetaData } from 'synbiohub/query/collection'
 
 var pug = require('pug')
 
@@ -30,14 +29,13 @@ var fs = require('mz/fs');
 
 const prepareSubmission = require('../prepare-submission')
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    function addToCollectionsForm(req, res, collectionId, version, locals) {
+    async function addToCollectionsForm(req, res, collectionId, version, locals) {
 
         var collectionQuery = 'PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX sbol2: <http://sbols.org/v2#> SELECT ?object ?name WHERE { ?object a sbol2:Collection . FILTER NOT EXISTS { ?otherCollection sbol2:member ?object } OPTIONAL { ?object dcterms:title ?name . }}'
-        var collections
 
         function sortByNames(a, b) {
             if (a.name < b.name) {
@@ -53,7 +51,8 @@ module.exports = function(req, res) {
             result.uri = result.object
             result.name = result.name ? result.name : result.uri.toString()
             delete result.object
-        })
+        }
+
         collections.sort(sortByNames)
 
         locals = extend({
@@ -80,12 +79,9 @@ module.exports = function(req, res) {
     var name = ''
     var description = ''
     var citations = []
+    var collectionUri
 
-    const {
-        graphUri,
-        uri,
-        designId
-    } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId } = getUrisFromReq(req, res)
 
     if (req.method === 'POST') {
         overwrite_merge = req.body.tabState === "new" ? '0' : '2'
@@ -155,8 +151,6 @@ module.exports = function(req, res) {
 
     if (version === 'current') version = '1'
 
-    var uri = collectionUri
-
     console.log('check if exists:' + uri)
 
     result = await getCollectionMetaData(collectionUri, null /* public store */ )
@@ -203,7 +197,7 @@ module.exports = function(req, res) {
         return makePublic()
 
     }
-})
+}
 
 
 async function saveTempFile() {

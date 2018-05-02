@@ -1,8 +1,13 @@
-const loadTemplate = require('../loadTemplate');
-const config = require('../config');
-const local = require('./local/collection');
-const splitUri = require('../splitUri');
-const { collateArrays } = require('./collate');
+
+
+import loadTemplate from 'synbiohub/loadTemplate';
+import config from 'synbiohub/config';
+import local from './local/collection';
+import splitUri from 'synbiohub/splitUri';
+import { collateArrays } from './collate'
+
+
+
 const remote = {
     synbiohub: require('./remote/synbiohub/collection'),
     ice: require('./remote/ice/collection'),
@@ -11,7 +16,7 @@ const remote = {
 
 const uriToUrl = require('../uriToUrl')
 
-async function getCollectionMemberCount(uri, graphUri, search) {
+export async function getCollectionMemberCount(uri, graphUri, search) {
 
     const {
         submissionId,
@@ -31,7 +36,7 @@ function objValues(obj) {
     return Object.keys(obj).map((key) => obj[key]);
 }
 
-async function getRootCollectionMetadata(graphUri, user) {
+export async function getRootCollectionMetadata(graphUri, user) {
 
     let arrs = await Promise.all(
         [local.getRootCollectionMetadata(graphUri)].concat(
@@ -48,7 +53,7 @@ async function getRootCollectionMetadata(graphUri, user) {
     return collateArrays(arrs)
 }
 
-async function getContainingCollections(uri, graphUri) {
+export async function getContainingCollections(uri, graphUri) {
 
     const { submissionId, version } = splitUri(uri);
     const remoteConfig = config.get('remotes')[submissionId];
@@ -74,7 +79,7 @@ async function getContainingCollections(uri, graphUri) {
     return collections
 }
 
-async function getCollectionMembers(uri, graphUri, limit, offset, sort, filter) {
+export async function getCollectionMembers(uri, graphUri, limit?, offset?, sort?, filter?) {
 
     const { submissionId, version } = splitUri(uri);
     const remoteConfig = config.get('remotes')[submissionId];
@@ -86,7 +91,7 @@ async function getCollectionMembers(uri, graphUri, limit, offset, sort, filter) 
     }
 }
 
-async function getSubCollections(uri, graphUri) {
+export async function getSubCollections(uri, graphUri) {
 
     const { submissionId, version } = splitUri(uri);
     const remoteConfig = config.get('remotes')[submissionId];
@@ -99,7 +104,7 @@ async function getSubCollections(uri, graphUri) {
 }
 
 
-async function getCollectionMetaData(uri, graphUri) {
+export async function getCollectionMetaData(uri, graphUri) {
 
     const { submissionId, version } = splitUri(uri);
     const remoteConfig = config.get('remotes')[submissionId];
@@ -111,7 +116,7 @@ async function getCollectionMetaData(uri, graphUri) {
     }
 }
 
-async function getCollectionMembersRecursive(uri, graphUri) {
+export async function getCollectionMembersRecursive(uri, graphUri) {
 
     let members = await getCollectionMembers(uri, graphUri)
 
@@ -119,23 +124,15 @@ async function getCollectionMembersRecursive(uri, graphUri) {
         return member.type === 'http://sbols.org/v2#Collection';
     });
 
-    await Promise.all(subCollections.map(subCollection => {
+    await Promise.all(
+        subCollections.map(subCollection => {
+            
+            return getCollectionMembersRecursive(subCollection.uri, graphUri)
+                .then((scMembers) => { subCollection.members = scMembers; return Promise.resolve(subCollection) })
 
-        let scMembers = await getCollectionMembersRecursive(subCollection.uri, graphUri)
-        
-        subCollection.members = scMembers
-
-    }))
+        })
+    })
 
     return members
 }
 
-module.exports = {
-    getRootCollectionMetadata: getRootCollectionMetadata,
-    getCollectionMetaData: getCollectionMetaData,
-    getCollectionMemberCount: getCollectionMemberCount,
-    getContainingCollections: getContainingCollections,
-    getCollectionMembers: getCollectionMembers,
-    getCollectionMembersRecursive: getCollectionMembersRecursive,
-    getSubCollections: getSubCollections
-}

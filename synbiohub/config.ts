@@ -17,7 +17,7 @@ mergeConfigs()
 
 export default {
 
-    get: function configGet(key) {
+    get: function configGet(key?) {
 
         if(arguments.length === 0)
             return mergedConfig

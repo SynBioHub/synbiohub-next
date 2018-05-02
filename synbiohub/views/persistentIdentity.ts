@@ -1,9 +1,9 @@
 
-import { getVersion } from '../query/version';
+import { getVersion } from 'synbiohub/query/version';
 import async from 'async';
-import config from '../config';
+import config from 'synbiohub/config';
 import pug from 'pug';
-import getUrisFromReq from '../getUrisFromReq';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import topLevel from './topLevel';
 
 export default function(req, res) {

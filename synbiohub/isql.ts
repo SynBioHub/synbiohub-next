@@ -5,7 +5,7 @@ const config = require('./config')
 
 const EOT = '\04'
 
-function isql(commands) {
+export default function isql(commands) {
 
     return new Promise((resolve, reject) => {
 

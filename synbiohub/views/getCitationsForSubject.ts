@@ -1,6 +1,6 @@
 
-import sparql from './sparql';
-import retrieveCitations from '../citations';
+import * as sparql from './sparql';
+import retrieveCitations from 'synbiohub/citations';
 
 export default async function getCitationsForSubject(subject, graphUri) {
 

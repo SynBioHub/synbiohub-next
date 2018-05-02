@@ -1,25 +1,25 @@
 
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import { getModuleDefinitionMetadata } from '../query/module-definition';
-import { getContainingCollections } from '../query/local/collection';
-import filterAnnotations from '../filterAnnotations';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import { getModuleDefinitionMetadata } from 'synbiohub/query/module-definition';
+import { getContainingCollections } from 'synbiohub/query/local/collection';
+import filterAnnotations from 'synbiohub/filterAnnotations';
 import sbolmeta from 'sbolmeta';
-import shareImages from '../shareImages';
-import loadTemplate from '../loadTemplate';
+import shareImages from 'synbiohub/shareImages';
+import loadTemplate from 'synbiohub/loadTemplate';
 import sbolmeta from 'sbolmeta';
 import formatSequence from 'sequence-formatter';
 import async from 'async';
-import prefixify from '../prefixify';
+import prefixify from 'synbiohub/prefixify';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
-import wiky from '../wiky/wiky.js';
-import config from '../config';
+import wiky from 'synbiohub/wiky/wiky.js';
+import config from 'synbiohub/config';
 import { URI } from 'sboljs';
 import sha1 from 'sha1';
-import getUrisFromReq from '../getUrisFromReq';
-import uriToUrl from '../uriToUrl';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import uriToUrl from 'synbiohub/uriToUrl';
 
 export default function(req, res) {
 

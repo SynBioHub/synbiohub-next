@@ -1,3 +1,5 @@
 
-export default require('./local/component-definition');
+export * from './local/component-definition'
+
+
 

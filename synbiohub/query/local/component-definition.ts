@@ -1,10 +1,9 @@
 
-const sparql = require('../../sparql/sparql')
-const async = require('async')
-const loadTemplate = require('../../loadTemplate')
-const config = require('../../config')
+import * as sparql from 'synbiohub/sparql/sparql'
+import loadTemplate from 'synbiohub/loadTemplate'
+import config from 'synbiohub/config'
 
-function getComponentDefinitionMetadata(uri, graphUri) {
+export default async function getComponentDefinitionMetadata(uri, graphUri) {
 
     var templateParams = {
         componentDefinition: uri
@@ -30,9 +29,4 @@ function getComponentDefinitionMetadata(uri, graphUri) {
     }
 
 }
-
-module.exports = {
-    getComponentDefinitionMetadata: getComponentDefinitionMetadata
-}
-
 

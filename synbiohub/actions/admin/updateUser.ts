@@ -1,6 +1,6 @@
 
-import db from '../../db';
-import config from '../../config';
+import db from 'synbiohub/db';
+import config from 'synbiohub/config';
 
 export default async function(req, res) {
 

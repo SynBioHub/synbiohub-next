@@ -1,9 +1,9 @@
 
-import loadTemplate from '../../loadTemplate';
-import sparql from '../../sparql/sparql';
-import compareMavenVersions from '../../compareMavenVersions';
+import loadTemplate from 'synbiohub/loadTemplate';
+import * as sparql from 'synbiohub/sparql/sparql';
+import compareMavenVersions from 'synbiohub/compareMavenVersions';
 
-async function getVersion(uri, graphUri) {
+export default async function getVersion(uri, graphUri) {
 
     var query = loadTemplate('./sparql/GetVersions.sparql', {
         uri: uri
@@ -27,8 +27,4 @@ async function getVersion(uri, graphUri) {
 
     }
 }
-
-export default {
-    getVersion: getVersion
-};
 

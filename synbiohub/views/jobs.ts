@@ -1,7 +1,7 @@
 
 import pug from 'pug';
-import jobUtils from '../jobs/job-utils';
-import config from '../config';
+import jobUtils from 'synbiohub/jobs/job-utils';
+import config from 'synbiohub/config';
 
 export default async function(req, res) {
 

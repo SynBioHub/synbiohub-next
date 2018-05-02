@@ -1,19 +1,20 @@
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import { getComponentDefinitionMetadata } from '../query/component-definition';
-import { getContainingCollections } from '../query/local/collection';
-import loadTemplate from '../loadTemplate';
+
+import fetchSBOLObjectRecursive from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import { getComponentDefinitionMetadata } from 'synbiohub/query/component-definition';
+import getContainingCollections from 'synbiohub/query/local/collection';
+import loadTemplate from 'synbiohub/loadTemplate';
 import sbolmeta from 'sbolmeta';
 import async from 'async';
-import prefixify from '../prefixify';
+import prefixify from 'synbiohub/prefixify';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
-import config from '../config';
+import config from 'synbiohub/config';
 import striptags from 'striptags';
 import { URI } from 'sboljs';
-import getUrisFromReq from '../getUrisFromReq';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
-export default function (req, res) {
+export default async function (req, res) {
 
     var locals = {
         config: config.get(),
@@ -33,32 +34,14 @@ export default function (req, res) {
         uri: uri
     }
 
-    fetchSBOLObjectRecursive('ComponentDefinition', uri, graphUri).then((result) => {
+    let result = await fetchSBOLObjectRecursive('ComponentDefinition', uri, graphUri)
 
-        sbol = result.sbol
-        componentDefinition = result.object
+    let sbol = result.sbol
+    let componentDefinition = result.object
 
-        return componentDefinition;
+    locals.meta = {
+        displayList: getDisplayList(componentDefinition, config, req.url.toString().endsWith('/share'))
+    }
 
-    }).then(componentDefinition => {
-
-        locals.meta = {
-            displayList: getDisplayList(componentDefinition, config, req.url.toString().endsWith('/share'))
-        }
-
-        res.send(pug.renderFile('templates/views/visualization.jade', locals))
-
-    }).catch((err) => {
-
-        const locals = {
-            config: config.get(),
-            section: 'errors',
-            user: req.user,
-            errors: [err.stack]
-        }
-
-        res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
-
-    })
-
+    res.send(pug.renderFile('templates/views/visualization.jade', locals))
 };

@@ -1,5 +1,5 @@
 
-async function getModuleDefinitionMetadata(uri, graphUris) {
+export default async function getModuleDefinitionMetadata(uri, graphUris) {
 
     var templateParams = {
         moduleDefinition: uri

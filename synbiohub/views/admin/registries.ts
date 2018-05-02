@@ -5,9 +5,9 @@
 
 import pug from 'pug';
 
-import sparql from '../../sparql/sparql';
-import db from '../../db';
-import config from '../../config';
+import * as sparql from 'synbiohub/sparql/sparql';
+import db from 'synbiohub/db';
+import config from 'synbiohub/config';
 import request from 'request';
 
 export default function (req, res) {

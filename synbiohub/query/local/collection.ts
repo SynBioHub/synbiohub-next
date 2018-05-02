@@ -1,7 +1,7 @@
 
-import loadTemplate from '../../loadTemplate';
-import sparql from '../../sparql/sparql';
-import config from '../../config';
+import loadTemplate from 'synbiohub/loadTemplate';
+import * as sparql from 'synbiohub/sparql/sparql';
+import config from 'synbiohub/config';
 import escape from 'pg-escape';
 
 async function getCollectionMemberCount(uri, graphUri, search) {
@@ -53,7 +53,7 @@ async function getRootCollectionMetadata(graphUri) {
     })
 }
 
-async function getContainingCollections(uri, graphUri, reqUrl) {
+async function getContainingCollections(uri, graphUri) {
 
     function sortByNames(a, b) {
         if (a.name < b.name) {

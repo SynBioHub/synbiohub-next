@@ -1,8 +1,8 @@
 
 import pug from 'pug';
-import search from '../search';
+import search from 'synbiohub/search';
 import async from 'async';
-import config from '../config';
+import config from 'synbiohub/config';
 
 export default function(req, res) {
 

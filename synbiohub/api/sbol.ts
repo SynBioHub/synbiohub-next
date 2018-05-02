@@ -1,9 +1,9 @@
 
 import pug from 'pug';
-import { fetchSBOLSource } from '../fetch/fetch-sbol-source';
-import serializeSBOL from '../serializeSBOL';
-import config from '../config';
-import getUrisFromReq from '../getUrisFromReq';
+import { fetchSBOLSource } from 'synbiohub/fetch/fetch-sbol-source';
+import serializeSBOL from 'synbiohub/serializeSBOL';
+import config from 'synbiohub/config';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import fs from 'mz/fs';
 
 export default async function(req, res) {

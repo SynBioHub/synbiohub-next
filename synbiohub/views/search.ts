@@ -1,7 +1,7 @@
 import pug from 'pug';
-import search from '../search';
-import config from '../config';
-import iceSearch from '../query/remote/ice/collection';
+import search from 'synbiohub/search';
+import config from 'synbiohub/config';
+import iceSearch from 'synbiohub/query/remote/ice/collection';
 
 export default function (req, res) {
 

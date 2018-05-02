@@ -1,10 +1,10 @@
 
 import pug from 'pug';
 import extend from 'xtend';
-import db from '../db';
+import db from 'synbiohub/db';
 import sha1 from 'sha1';
-import config from '../config';
-import apiTokens from '../apiTokens';
+import config from 'synbiohub/config';
+import apiTokens from 'synbiohub/apiTokens';
 
 export default function (req, res) {
 

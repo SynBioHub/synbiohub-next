@@ -1,10 +1,10 @@
 import pug from 'pug';
-import search from '../search';
-import config from '../config';
-import loadTemplate from '../loadTemplate';
-import sparql from '../sparql/sparql';
-import { getRootCollectionMetadata } from '../query/collection';
-import uriToUrl from '../uriToUrl';
+import search from 'synbiohub/search';
+import config from 'synbiohub/config';
+import loadTemplate from 'synbiohub/loadTemplate';
+import * as sparql from 'synbiohub/sparql/sparql';
+import { getRootCollectionMetadata } from 'synbiohub/query/collection';
+import uriToUrl from 'synbiohub/uriToUrl';
 
 export default async function (req, res) {
 

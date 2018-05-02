@@ -1,25 +1,25 @@
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import { getContainingCollections } from '../query/local/collection';
-import filterAnnotations from '../filterAnnotations';
-import retrieveCitations from '../citations';
-import shareImages from '../shareImages';
-import loadTemplate from '../loadTemplate';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import { getContainingCollections } from 'synbiohub/query/local/collection';
+import filterAnnotations from 'synbiohub/filterAnnotations';
+import retrieveCitations from 'synbiohub/citations';
+import shareImages from 'synbiohub/shareImages';
+import loadTemplate from 'synbiohub/loadTemplate';
 import sbolmeta from 'sbolmeta';
 import async from 'async';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
-import wiky from '../wiky/wiky.js';
-import config from '../config';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
+import wiky from 'synbiohub/wiky/wiky.js';
+import config from 'synbiohub/config';
 import { URI } from 'sboljs';
-import getUrisFromReq from '../getUrisFromReq';
-import attachments from '../attachments';
-import uriToUrl from '../uriToUrl';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import attachments from 'synbiohub/attachments';
+import uriToUrl from 'synbiohub/uriToUrl';
 import sha1 from 'sha1';
 
 export default function(req, res) {
 
-	var locals = {
+	var locals:any = {
         config: config.get(),
         section: 'component',
         user: req.user

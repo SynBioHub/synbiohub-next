@@ -1,7 +1,7 @@
 
 import pug from 'pug';
-import sparql from '../../sparql/sparql';
-import config from '../../config';
+import * as sparql from 'synbiohub/sparql/sparql';
+import config from 'synbiohub/config';
 
 export default async function(req, res) {
 
@@ -13,10 +13,9 @@ export default async function(req, res) {
 
     let results = await sparql.queryJson(query, null)
 
-    const graphs = results.map((result) => result.graph)
-
     let graphs = await Promise.all(
-        graphs.map((graph) => graphInfo(graph))
+        results.map((result) => result.graph)
+               .map((graph) => graphInfo(graph))
     )
 
     var locals = {

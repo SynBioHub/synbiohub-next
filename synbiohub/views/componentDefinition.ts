@@ -1,28 +1,28 @@
 import getCitationsForSubject from './getCitationsForSubject';
 
 
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import { getComponentDefinitionMetadata } from '../query/component-definition';
-import { getContainingCollections } from '../query/local/collection';
-import filterAnnotations from '../filterAnnotations';
-import shareImages from '../shareImages';
-import loadTemplate from '../loadTemplate';
-import retrieveCitations from '../citations';
+import fetchSBOLObjectRecursive from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import { getComponentDefinitionMetadata } from 'synbiohub/query/component-definition';
+import { getContainingCollections } from 'synbiohub/query/local/collection';
+import filterAnnotations from 'synbiohub/filterAnnotations';
+import shareImages from 'synbiohub/shareImages';
+import loadTemplate from 'synbiohub/loadTemplate';
+import retrieveCitations from 'synbiohub/citations';
 import sbolmeta from 'sbolmeta';
 import formatSequence from 'sequence-formatter';
 import async from 'async';
-import prefixify from '../prefixify';
+import prefixify from 'synbiohub/prefixify';
 import pug from 'pug';
-import sparql from '../sparql/sparql-collate';
+import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
-import wiky from '../wiky/wiky.js';
-import config from '../config';
+import wiky from 'synbiohub/wiky/wiky.js';
+import config from 'synbiohub/config';
 import striptags from 'striptags';
 import { URI } from 'sboljs';
 import sha1 from 'sha1';
-import getUrisFromReq from '../getUrisFromReq';
-import attachments from '../attachments';
-import uriToUrl from '../uriToUrl';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import attachments from 'synbiohub/attachments';
+import uriToUrl from 'synbiohub/uriToUrl';
 import request from 'request';
 import getIgemWiki from './get_igem_wiki';
 

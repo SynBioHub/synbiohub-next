@@ -1,8 +1,8 @@
 
 import saveN3ToRdfXml from './save-n3-to-rdfxml';
-import java from '../java';
+import java from 'synbiohub/java';
 import fs from 'mz/fs';
-import config from '../config';
+import config from 'synbiohub/config';
 
 
 /* Takes an array of strings containing n3 triples

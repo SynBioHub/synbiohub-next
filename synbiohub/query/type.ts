@@ -1,5 +1,5 @@
 
-import config from '../config';
+import config from 'synbiohub/config';
 import local from './local/type';
 import synbiohub from './remote/synbiohub/type';
 import ice from './remote/ice/type';
@@ -11,7 +11,7 @@ const remote = {
     benchling
 }
 
-import splitUri from '../splitUri';
+import splitUri from 'synbiohub/splitUri';
 
 async function getType(uri, graphUri) {
 

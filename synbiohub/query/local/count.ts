@@ -1,8 +1,8 @@
 
-import loadTemplate from '../../loadTemplate';
-import sparql from '../../sparql/sparql';
+import loadTemplate from 'synbiohub/loadTemplate';
+import * as sparql from 'synbiohub/sparql/sparql';
 
-async function getCount(type, graphUri) {
+export default async function getCount(type, graphUri) {
 
     var query = loadTemplate('./sparql/Count.sparql', {
         type: type
@@ -20,8 +20,3 @@ async function getCount(type, graphUri) {
 
     }
 }
-
-export default {
-    getCount: getCount
-};
-

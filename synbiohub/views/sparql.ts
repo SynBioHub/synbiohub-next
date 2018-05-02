@@ -1,11 +1,11 @@
 
-import config from '../config';
+import config from 'synbiohub/config';
 import pug from 'pug';
 import extend from 'xtend';
 import { Parser as SparqlParser } from 'sparqljs';
 import { Generator as SparqlGenerator } from 'sparqljs';
-import sparql from '../sparql/sparql';
-import checkQuery from '../checkSparqlQuery';
+import * as sparql from 'synbiohub/sparql/sparql';
+import checkQuery from 'synbiohub/checkSparqlQuery';
 
 export default function(req, res) {
 

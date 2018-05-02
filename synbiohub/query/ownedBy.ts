@@ -1,6 +1,6 @@
 
-import sparql from '../sparql/sparql';
-import loadTemplate from '../loadTemplate';
+import * as sparql from 'synbiohub/sparql/sparql';
+import loadTemplate from 'synbiohub/loadTemplate';
 
 async function getOwnedBy(topLevelUri, graphUri) {
 

@@ -1,9 +1,9 @@
 
 import pug from 'pug';
-import sparql from '../../sparql/sparql';
-import jobUtils from '../../jobs/job-utils';
-import db from '../../db';
-import config from '../../config';
+import * as sparql from 'synbiohub/sparql/sparql';
+import jobUtils from 'synbiohub/jobs/job-utils';
+import db from 'synbiohub/db';
+import config from 'synbiohub/config';
 
 export default async function(req, res) {
 

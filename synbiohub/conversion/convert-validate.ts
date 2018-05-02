@@ -1,8 +1,8 @@
 
-import config from '../config';
+import config from 'synbiohub/config';
 import request from 'request-promise';
 import SBOLDocument from 'sboljs';
-import serializeSBOL from '../serializeSBOL';
+import serializeSBOL from 'synbiohub/serializeSBOL';
 
 async function convertAndValidateSbol(xmlOrSbolDoc, uriPrefix, version) {
 

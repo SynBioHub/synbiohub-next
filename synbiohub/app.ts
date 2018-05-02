@@ -31,7 +31,7 @@ import persistentIdentity from './views/persistentIdentity';
 import setup from './views/setup';
 import dataIntegration from './views/dataIntegration';
 import jobs from './views/jobs';
-import sparql from './views/sparql';
+import * as sparql from './views/sparql';
 import addOwner from './views/addOwner';
 import shared from './views/shared';
 import visualization from './views/visualization';
@@ -42,7 +42,7 @@ import org from './views/orgProfile';
 import general from './views/admin/general';
 import status from './views/admin/status';
 import graphs from './views/admin/graphs';
-import sparql from './views/admin/sparql';
+import * as sparql from './views/admin/sparql';
 import remotes from './views/admin/remotes';
 import users from './views/admin/users';
 import newUser from './views/admin/newUser';
@@ -118,7 +118,7 @@ import rootCollections from './api/rootCollections';
 import subCollections from './api/subCollections';
 import download from './api/download';
 import datatables from './api/datatables';
-import sparql from './api/sparql';
+import * as sparql from './api/sparql';
 import updateWebOfRegistries from './api/updateWebOfRegistries';
 
 var api = {

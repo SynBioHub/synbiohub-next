@@ -1,24 +1,14 @@
 
 import db from 'synbiohub/db';
 
-export default function(req, res) {
+export default async function(req, res) {
 
-    db.model.User.findById(req.body.id).then((user) => {
+    let user = await db.model.User.findById(req.body.id)
 
-        user.destroy()
+    await user.destroy()
 
-    }).then(() => {
-
-        res.status(200).send('saved')
-
-    }).catch((err) => {
-
-        res.status(500).send(err.stack)
-
-    })
-
-
-
-
+    res.status(200).send('saved')
 };
+
+
 

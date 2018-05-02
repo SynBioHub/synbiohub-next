@@ -1,6 +1,6 @@
 
-import loadTemplate from '../loadTemplate';
-import sparql from './sparql';
+import loadTemplate from 'synbiohub/loadTemplate';
+import * as sparql from './sparql';
 
 export default async function getAttachmentsForSubject(subject, graphUri) {
 

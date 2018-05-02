@@ -1,9 +1,9 @@
 import pug from 'pug';
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
-import serializeSBOL from '../serializeSBOL';
-import config from '../config';
-import getUrisFromReq from '../getUrisFromReq';
-import uploads from '../uploads';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
+import serializeSBOL from 'synbiohub/serializeSBOL';
+import config from 'synbiohub/config';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import uploads from 'synbiohub/uploads';
 
 export default async function(req, res) {
 

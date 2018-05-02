@@ -1,8 +1,8 @@
 import pug from 'pug';
-import { fetchSBOLObjectRecursive } from '../fetch/fetch-sbol-object-recursive';
+import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import sbolmeta from 'sbolmeta';
-import config from '../config';
-import getUrisFromReq from '../getUrisFromReq';
+import config from 'synbiohub/config';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
 export default async function(req, res) {
 

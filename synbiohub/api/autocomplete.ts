@@ -1,6 +1,6 @@
 
-import cache from '../cache';
-import ExecutionTimer from '../util/execution-timer';
+import cache from 'synbiohub/cache';
+import ExecutionTimer from 'synbiohub/util/execution-timer';
 
 export default function(req, res) {
 

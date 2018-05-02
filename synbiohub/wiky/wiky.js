@@ -313,8 +313,4 @@ wiky.process_normal = function(wikitext) {
 	return wikitext;
 }
 
-if (typeof exports === 'object') {
-    for (var i in wiky) {
-        export const i = wiky[i];
-    }
-}
+export default wiky

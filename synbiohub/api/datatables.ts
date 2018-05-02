@@ -1,8 +1,8 @@
 import sha1 from 'sha1';
-import config from '../config';
-import { getCollectionMemberCount, getCollectionMembers } from '../query/collection';
-import getGraphUriFromTopLevelUri from '../getGraphUriFromTopLevelUri';
-import uriToUrl from '../uriToUrl';
+import config from 'synbiohub/config';
+import { getCollectionMemberCount, getCollectionMembers } from 'synbiohub/query/collection';
+import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
+import uriToUrl from 'synbiohub/uriToUrl';
 
 function datatables(req, res) {
 

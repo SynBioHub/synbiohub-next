@@ -1,7 +1,7 @@
 
 import pug from 'pug';
 import os from 'os';
-import config from '../../config';
+import config from 'synbiohub/config';
 
 export default function(req, res) {
 
