@@ -1,9 +1,10 @@
 const pug = require('pug')
-const { fetchSBOLSource } = require('../fetch/fetch-sbol-source')
+
 import serializeSBOL from 'synbiohub/serializeSBOL'
 import buildCombineArchive from 'synbiohub/buildCombineArchive'
 import config from 'synbiohub/config'
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 const fs = require('mz/fs')
 
 export default async function (req, res) {
@@ -14,7 +15,7 @@ export default async function (req, res) {
 
     var archiveName
 
-    let fileName = await fetchSBOLSource(uri)
+    let fileName = await DefaultSBOLFetcher.get(req).fetchSBOLSource(uri)
 
     console.log("sbol file for archive:" + fileName)
 

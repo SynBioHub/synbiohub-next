@@ -1,7 +1,7 @@
 
 import * as fs from 'mz/fs';
 import extend from 'xtend';
-import deepmerge from 'deepmerge';
+import deepmerge = require('deepmerge')
 
 var path = 'config.json'
 var localPath = 'config.local.json'
@@ -34,17 +34,6 @@ export default {
 
     set: function configSet(key, value) {
 
-        if(arguments.length === 1) {
-
-            localConfig = clone(arguments[0])
-
-            mergeConfigs()
-            saveLocalConfig()
-
-            return
-
-        }
-
         console.log('config: set ' + key + ' => ' + value)
 
         localConfig = extend(localConfig, {
@@ -55,6 +44,16 @@ export default {
 
         mergeConfigs()
         saveLocalConfig()
+    },
+
+    setAll: function configSetAll(all) {
+
+        localConfig = clone(all)
+
+        mergeConfigs()
+        saveLocalConfig()
+
+        return
     },
 
     delete: function configDelete(key) {

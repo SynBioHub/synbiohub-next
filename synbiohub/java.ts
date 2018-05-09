@@ -1,17 +1,17 @@
 
 
 const extend = require('xtend')
-const config = require('./config')
+import config from './config'
 
 const split = require('binary-split')
 
-const EOT = '\04'
+const EOT = '\u0004'
 
 const spawn = require('child_process').spawn
 
 const javaArgs = [
     '-jar', 
-    __dirname + '/../java/target/SynBioHub-1.3.0-jar-with-dependencies.jar' 
+    './java/target/SynBioHub-1.3.0-jar-with-dependencies.jar' 
 ]
 
 console.log(JSON.stringify(javaArgs))

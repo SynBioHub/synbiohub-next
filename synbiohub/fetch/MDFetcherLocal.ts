@@ -5,6 +5,7 @@ import escape = require('pg-escape')
 import loadTemplate from "synbiohub/loadTemplate";
 import * as sparql from 'synbiohub/sparql/sparql'
 import config from "synbiohub/config";
+import compareMavenVersions from "synbiohub/compareMavenVersions";
 
 export default class MDFetcherLocal extends MDFetcher {
 
@@ -208,7 +209,7 @@ export default class MDFetcherLocal extends MDFetcher {
         }
     }
 
-    async getComponentDefinitionMetadata(uri, graphUri) {
+    async getComponentDefinitionMetadata(uri) {
 
         var templateParams = {
             componentDefinition: uri
@@ -216,15 +217,13 @@ export default class MDFetcherLocal extends MDFetcher {
 
         var query = loadTemplate('sparql/getComponentDefinitionMetaData.sparql', templateParams)
 
-        graphUri = graphUri || config.get('triplestore').defaultGraph
-
-        let result = await sparql.queryJson(query, graphUri)
+        let result = await sparql.queryJson(query, this.graphUri)
 
         if (result && result[0]) {
 
             return {
                 metaData: result[0],
-                graphUri: graphUri
+                graphUri: this.graphUri
             }
 
         } else {
@@ -254,7 +253,7 @@ export default class MDFetcherLocal extends MDFetcher {
         }
     }
 
-    async getModuleDefinitionMetadata(uri, graphUris) {
+    async getModuleDefinitionMetadata(uri) {
 
         var templateParams = {
             moduleDefinition: uri
@@ -262,31 +261,18 @@ export default class MDFetcherLocal extends MDFetcher {
 
         var query = loadTemplate('sparql/getModuleDefinitionMetaData.sparql', templateParams)
 
-        for(let graphUri of graphUris) {
+        let result = await sparql.queryJson(query, this.graphUri)
 
-            graphUri = graphUri || config.get('triplestore').defaultGraph
+        if (result && result[0]) {
 
-            let result = await sparql.queryJson(query, graphUri)
-
-            if (result && result[0]) {
-
-                return {
-                    graphUri: graphUri,
-                    metaData: result[0]
-                }
-
-            }
+            return result[0]
 
         }
-
-        return undefined
     }
 
-    async getType(uri, graphUri) {
+    async getType(uri) {
 
-        assert(!Array.isArray(graphUri))
-
-        let result = await sparql.queryJson('SELECT ?type WHERE { <' + uri + '> a ?type }', graphUri)
+        let result = await sparql.queryJson('SELECT ?type WHERE { <' + uri + '> a ?type }', this.graphUri)
 
         if (result && result[0]) {
 
@@ -299,13 +285,13 @@ export default class MDFetcherLocal extends MDFetcher {
         }
     }
 
-    async getVersion(uri, graphUri) {
+    async getVersion(uri) {
 
         var query = loadTemplate('./sparql/GetVersions.sparql', {
             uri: uri
         })
 
-        let results = await sparql.queryJson(query, graphUri)
+        let results = await sparql.queryJson(query, this.graphUri)
 
         if(results && results[0]) {
 

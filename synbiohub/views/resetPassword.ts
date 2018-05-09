@@ -1,9 +1,9 @@
 
 import pug from 'pug';
 import validator from 'validator';
-import util from 'synbiohub/util';
+import * as util from 'synbiohub/util';
 import async from 'async';
-import extend from 'xtend';
+import extend = require('xtend')
 import config from 'synbiohub/config';
 import db from 'synbiohub/db';
 import sha1 from 'sha1';

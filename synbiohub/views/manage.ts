@@ -1,12 +1,12 @@
 
 import pug from 'pug';
-import search from 'synbiohub/search';
+import * as search from 'synbiohub/search';
 import async from 'async';
 import config from 'synbiohub/config';
 
 export default function(req, res) {
 
-    var locals = {
+    var locals:any = {
         config: config.get(),
         section: 'manage',
         privateSubmissions: [],
@@ -42,7 +42,7 @@ export default function(req, res) {
 
     Promise.all([
 
-        search(null, criteria, undefined, undefined).then((searchRes) => {
+        search.search(null, criteria, undefined, undefined, undefined).then((searchRes) => {
 
             const results = searchRes.results
 
@@ -58,7 +58,7 @@ export default function(req, res) {
 
         }),
 
-        search(req.user.graphUri, criteria, undefined, undefined).then((searchRes) => {
+        search.search(req.user.graphUri, criteria, undefined, undefined, req.user).then((searchRes) => {
 
             const results = searchRes.results
 

@@ -1,8 +1,8 @@
 
-import SBOLDocument from 'sboljs';
-import request from 'request-promise';
+import SBOLDocument = require('sboljs')
+import request = require('request-promise')
 import config from './config';
-import extend from 'xtend';
+import extend = require('xtend')
 import serializeSBOL from './serializeSBOL';
 import delay = require('timeout-as-promise')
 

@@ -49,42 +49,36 @@ async function listBackups() {
 
     }
 
-    return await Promise.all(
-        Object.keys(backups).map((backup) => {
+    for(let backup of Object.keys(backups)) {
 
-            return (await (async () => {
+        const files = backups[backup]
 
-                const files = backups[backup]
+        const backupInfo = {
+            date: new Date(parseInt(backup)),
+            files: files,
+            prefix: files[0].toString().substring(0, files[0].length - '_.bp'.length),
+            size: null
+        }
 
-                const backupInfo = {
-                    date: new Date(parseInt(backup)),
-                    files: files,
-                    prefix: files[0].toString().substring(0, files[0].length - '_.bp'.length),
-                    size: null
-                }
+        let sizes = await Promise.all(files.map((filename) => {
 
-                let sizes = await Promise.all(files.map((filename) => {
+            return fs.stat(backupDir + '/' + filename).then((stats) => {
 
-                    return fs.stat(backupDir + '/' + filename).then((stats) => {
+                return Promise.resolve(stats.size)
 
-                        return Promise.resolve(stats.size)
+            })
 
-                    })
+        }))
 
-                }))
+        var totalSize = 0
 
-                var totalSize = 0
+        sizes.forEach((size: number) => totalSize += size)
 
-                sizes.forEach((size:number) => totalSize += size)
-
-                backupInfo.size = filesize(totalSize)
-
-                return backupInfo
-            }))
-        })
-    )
+        backupInfo.size = filesize(totalSize)
+    }
 
 }
+
 
 
 async function form(req, res) {

@@ -1,5 +1,5 @@
 import config from 'synbiohub/config';
-import request from 'request-promise';
+import request = require('request-promise')
 
 export default async function () {
 

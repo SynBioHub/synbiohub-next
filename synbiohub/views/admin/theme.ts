@@ -65,7 +65,7 @@ async function post(req, res) {
 
     localConfig.themeParameters[themeName] = newParameters 
 
-    config.set(localConfig)
+    config.setAll(localConfig)
 
     let publishUpdate = false;
 

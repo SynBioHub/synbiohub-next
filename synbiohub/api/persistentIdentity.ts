@@ -7,10 +7,9 @@ var pug = require('pug')
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 var sbol = require('./sbol')
-
-const { fetchSBOLSource } = require('../fetch/fetch-sbol-source')
 
 const fs = require('mz/fs')
 
@@ -22,7 +21,7 @@ export default async function(req, res) {
 	
     var newUri = uri + '/' + result
 
-    let tempFilename = await fetchSBOLSource(newUri)
+    let tempFilename = await DefaultSBOLFetcher.get(req).fetchSBOLSource(newUri)
 
     res.status(200).type('application/rdf+xml')
     //.set({ 'Content-Disposition': 'attachment; filename=' + collection.name + '.xml' })

@@ -18,7 +18,7 @@ async function view(req, res) {
         graphUri,
         uri,
         designId
-    } = getUrisFromReq(req, res);
+    } = getUrisFromReq(req);
 
     let users = await db.model.User.findAll()
 

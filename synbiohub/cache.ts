@@ -1,7 +1,7 @@
 
 import * as sparql from './sparql/sparql';
 import ExecutionTimer from './util/execution-timer';
-import TrieSearch from 'trie-search';
+import TrieSearch = require('trie-search')
 
 var autocompleteTitle = new TrieSearch('name', {
     splitOnRegEx: /\s|_/g

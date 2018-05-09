@@ -1,14 +1,18 @@
 
-import express from 'express';
-import session from 'express-session';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import multer from 'multer';
-import lessMiddleware from 'less-middleware';
-import browserifyMiddleware from 'browserify-middleware';
-import UglifyJS from 'uglify-es';
+import express = require('express')
+import session = require('express-session')
+import cookieParser = require('cookie-parser')
+import bodyParser = require('body-parser')
+import multer = require('multer')
+import lessMiddleware = require('less-middleware')
+import browserifyMiddleware = require('browserify-middleware')
+import UglifyJS = require('uglify-es')
+
+
+import { Router } from 'express'
+
 import config from './config';
-import SequelizeStoreFactory from 'connect-sequelize';
+import SequelizeStoreFactory = require('connect-sequelize')
 const SequelizeStore = SequelizeStoreFactory(session);
 import db from './db';
 import { initSSE } from './sse';
@@ -43,7 +47,6 @@ import remotes from './views/admin/remotes';
 import users from './views/admin/users';
 import newUser from './views/admin/newUser';
 import update from './views/admin/update';
-import adminJobs from './views/admin/jobs';
 import theme from './views/admin/theme';
 import backup from './views/admin/backup';
 import backupRestore from './views/admin/backupRestore';
@@ -63,7 +66,7 @@ var views = {
     submit: viewSubmit,
     manage,
     topLevel,
-    persistentIdentity,
+    persistentIdentity: persistentIdentityView,
     setup,
     sparql: sparqlView,
     addOwner,
@@ -134,8 +137,6 @@ import cloneSubmission from './actions/cloneSubmission';
 import actionResetPassword from './actions/resetPassword';
 import setNewPassword from './actions/setNewPassword';
 import remove from './actions/remove';
-import createImplementation from './actions/createImplementation';
-import createTest from './actions/createTest';
 import updateMutableDescription from './actions/updateMutableDescription';
 import updateMutableNotes from './actions/updateMutableNotes';
 import updateMutableSource from './actions/updateMutableSource';
@@ -144,7 +145,6 @@ import upload from './actions/upload';
 import createSnapshot from './actions/createSnapshot';
 import updateCollectionIcon from './actions/updateCollectionIcon';
 import removeOwner from './actions/removeOwnedBy';
-import createOrg from './actions/createOrg';
 import saveRemote from './actions/admin/saveRemote';
 import saveRegistry from './actions/admin/saveRegistry';
 import deleteRegistry from './actions/admin/deleteRegistry';
@@ -165,8 +165,6 @@ var actions = {
     resetPassword: actionResetPassword,
     setNewPassword,
     remove,
-    createImplementation,
-    createTest,
     updateMutableDescription,
     updateMutableNotes,
     updateMutableSource,
@@ -175,7 +173,6 @@ var actions = {
     createSnapshot,
     updateCollectionIcon,
     removeOwner,
-    createOrg,
     admin: {
         saveRemote,
         saveRegistry,
@@ -203,9 +200,13 @@ browserifyMiddleware.settings({
 
 function App() {
 
-    var app = express()
+    var app:Router = express()
 
-    app.get('/bundle.js', browserifyMiddleware(__dirname + '/../browser/synbiohub.js'))
+
+    app.set('view engine', 'pug')
+    app.set('views', './')
+
+    app.get('/bundle.js', browserifyMiddleware('./browser/synbiohub.js'))
 
 
     app.use(lessMiddleware('public', { /*once: true*/ }))
@@ -356,8 +357,6 @@ function App() {
     app.post('/admin/federate', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.federate);
     app.post('/admin/retrieveFromWebOfRegistries', requireAdmin, actions.admin.retrieve);
 
-    app.all('/createOrg', requireUser, actions.createOrg)
-
     app.get('/search/:query?', views.search);
     app.get('/searchCount/:query?', views.search);
     app.get('/remoteSearch/:query?', forceNoHTML, views.search); /// DEPRECATED, use /search
@@ -398,9 +397,6 @@ function App() {
 
     // TODO: these should NOT be GET!
     app.get('/user/:userId/:collectionId/:displayId/:version/remove', requireUser, actions.remove);
-    app.get('/user/:userId/:collectionId/:displayId/:version/createImplementation', requireUser, actions.createImplementation);
-    app.post('/user/:userId/:collectionId/:displayId/:version/createImplementation', requireUser, actions.createImplementation);
-    app.get('/user/:userId/:collectionId/:displayId/:version/createTest', requireUser, actions.createTest);
 
     app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/remove', actions.remove);
     app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', actions.makePublic);

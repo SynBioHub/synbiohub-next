@@ -1,6 +1,5 @@
 
-import pug from 'pug';
-import extend from 'xtend';
+import extend = require('xtend')
 import config from 'synbiohub/config';
 import validator from 'validator';
 import createUser from 'synbiohub/createUser';
@@ -42,7 +41,7 @@ function setupForm(req, res, settings, locals) {
         errors: []
     }, locals)
 
-    res.send(pug.renderFile('templates/views/setup.jade', locals))
+    res.render('templates/views/setup.jade', locals)
 
 }
 

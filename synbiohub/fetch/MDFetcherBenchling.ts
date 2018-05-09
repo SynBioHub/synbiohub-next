@@ -73,7 +73,7 @@ export default class MDFetcherBenchling extends MDFetcher {
 
     }
 
-    async getContainingCollections(uri) {
+    async getContainingCollections(uri):Promise<Array<any>> {
 
         var rootUri = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + this.remoteConfig.id + '_collection/current'
         
@@ -89,7 +89,7 @@ export default class MDFetcherBenchling extends MDFetcher {
     }
 
 
-    async getCollectionMembers(uri, limit, offset) {
+    async getCollectionMembers(uri, limit?, offset?) {
 
         const { displayId } = splitUri(uri)
 
@@ -183,7 +183,7 @@ export default class MDFetcherBenchling extends MDFetcher {
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 
-            let metadata = await getRootCollectionMetadata(this.remoteConfig)
+            let metadata = await this.getRootCollectionMetadata()
 
             return metadata[0]
 
@@ -212,7 +212,7 @@ export default class MDFetcherBenchling extends MDFetcher {
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 
-            return getCollectionMembers(this.remoteConfig, uri)
+            return this.getCollectionMembers(uri)
 
         } else {
 

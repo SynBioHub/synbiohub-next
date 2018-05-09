@@ -1,6 +1,6 @@
 
 import config from 'synbiohub/config';
-import request from 'request-promise';
+import request = require('request-promise')
 import SBOLDocument from 'sboljs';
 import serializeSBOL from 'synbiohub/serializeSBOL';
 

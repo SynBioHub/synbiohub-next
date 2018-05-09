@@ -1,7 +1,7 @@
 
 import config from './config';
-import fs from 'mz/fs';
-import path from 'path';
+import * as fs from 'mz/fs';
+import * as path from 'path';
 
 var themeName
 var themePath
@@ -10,11 +10,11 @@ var theme
 function setCurrentThemeFromConfig() {
 
     themeName = config.get('theme')
-    themePath = path.normalize(__dirname + '/../themes/' + themeName)
+    themePath = path.normalize('./themes/' + themeName)
 
     return fs.readFile(themePath + '/theme.json').then((res) => {
 
-        theme = JSON.parse(res)
+        theme = JSON.parse(res + '')
 
     }).then(generateLess)
 

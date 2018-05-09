@@ -1,11 +1,11 @@
 
 import async from 'async';
-import * as sparql from './sparql';
+import * as sparqlz from 'synbiohub/sparql/sparql';
 
 async function sparql(graphUris, query, callback) {
 
     let results = await Promise.all(graphUris.map(
-                (graphUri) => sparql.queryJson(query, graphUri)))
+                (graphUri) => sparqlz.queryJson(query, graphUri)))
 
     return collateResults(results)
 

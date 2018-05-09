@@ -1,6 +1,6 @@
 
 import pug from 'pug';
-import extend from 'xtend';
+import extend = require('xtend')
 import db from 'synbiohub/db';
 import sha1 from 'sha1';
 import config from 'synbiohub/config';

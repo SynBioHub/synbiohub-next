@@ -3,6 +3,9 @@ import MDFetcher from "synbiohub/fetch/MDFetcher";
 
 export default class MDFetcherFederated extends MDFetcher {
 
+    getType(uri: string): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
     getOwnedBy(uri: string): Promise<string> {
         throw new Error("Method not implemented.");
     }

@@ -1,4 +1,4 @@
-import gitFactory from 'simple-git';
+import gitFactory = require('simple-git')
 const git = gitFactory();
 
 export default async function (req, res) {

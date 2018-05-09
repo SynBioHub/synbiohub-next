@@ -175,3 +175,11 @@ export function getAttachmentsFromList(graphUri, attachmentList, share) {
         return Promise.resolve(attachments)
     })
 }
+
+export async function getAttachmentsForSubject(subject, graphUri) {
+
+    throw new Error('not implemented yet')
+
+}
+
+

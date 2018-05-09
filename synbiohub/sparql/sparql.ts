@@ -1,12 +1,12 @@
 
 import config from 'synbiohub/config'
-import request from 'request-promise'
+import request = require('request-promise')
 
-import shell from 'shelljs'
+import shell = require('shelljs')
 
 import fs = require('mz/fs')
 
-const sparqlResultsToArray = require('./sparql-results-to-array')
+import sparqlResultsToArray from './sparql-results-to-array'
 
 //const Timer = require('../util/execution-timer')
 
@@ -16,7 +16,7 @@ const tmp = require('tmp-promise')
 
 var exec = require('child_process').exec;
 
-export function escapeSparqlIRI(uri) {
+export function escapeIRI(uri) {
 
     return '<' + uri + '>';
 
@@ -278,7 +278,7 @@ export async function uploadFile(graphUri, filename, type) {
 
     await new Promise((resolve, reject) => {
 
-        const splitProcess = spawn(__dirname + '/../../scripts/split_to_n3.sh', [
+        const splitProcess = spawn('./scripts/split_to_n3.sh', [
             filename
         ], {
             cwd: tempDir.path

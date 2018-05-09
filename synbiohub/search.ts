@@ -1,5 +1,5 @@
 
-import extend from 'xtend';
+import extend = require('xtend')
 import async from 'async';
 import loadTemplate from './loadTemplate';
 import escape from 'pg-escape';

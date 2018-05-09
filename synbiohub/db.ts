@@ -1,6 +1,6 @@
 
-import Sequelize from 'sequelize';
-import Umzug from 'umzug';
+import Sequelize = require('sequelize')
+import Umzug = require('umzug')
 
 const sequelize = new Sequelize('database', 'username', 'password', {
   dialect: 'sqlite',

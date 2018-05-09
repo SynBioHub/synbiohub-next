@@ -1,19 +1,10 @@
+import config from "synbiohub/config";
+import theme from "synbiohub/theme";
+import * as java from "synbiohub/java";
+import App from "synbiohub/app";
+import db from "synbiohub/db";
+import { fs } from "mz";
 
-var config = require('./lib/config')
-
-var App = require('./lib/app')
-
-var db = require('./lib/db')
-
-var fs = require('fs')
-
-var jobUtils = require('./lib/jobs/job-utils')
-
-var sliver = require('./lib/sliver')
-
-var theme = require('./lib/theme')
-
-var java = require('./lib/java')
 
 
 if(fs.existsSync('synbiohub.sqlite') && config.get('firstLaunch') === true) {
@@ -35,11 +26,9 @@ function startServer() {
     return initSliver()
                 .then(() => java.init())
                 .then(() => theme.setCurrentThemeFromConfig())
-                .then(() => jobUtils.setRunningJobsToQueued())
-                .then(() => jobUtils.resumeAllJobs())
                 .then(() => {
 
-        var app = new App()
+        var app = App()
 
         app.listen(parseInt(config.get('port')))
     })

@@ -10,7 +10,7 @@ import * as attachments from 'synbiohub/attachments';
 import streamToString from 'stream-to-string';
 import SBOLDocument from 'sboljs';
 import * as sparql from 'synbiohub/sparql/sparql-collate';
-import getAttachmentsForSubject from 'synbiohub/views/getAttachmentsForSubject'
+import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function (req, res) {

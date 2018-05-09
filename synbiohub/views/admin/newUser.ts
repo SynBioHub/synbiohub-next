@@ -3,7 +3,7 @@ import pug from 'pug';
 import config from 'synbiohub/config';
 import createUser from 'synbiohub/createUser';
 import sendCreatePasswordMail from 'synbiohub/mail/createPassword';
-import extend from 'xtend';
+import extend = require('xtend')
 import uuidV4 from 'uuid/v4';
 import sha1 from 'sha1';
 

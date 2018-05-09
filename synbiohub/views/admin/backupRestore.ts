@@ -6,7 +6,7 @@ import config from 'synbiohub/config'
 const spawn = require('child_process').spawn
 
 
-export default function(req, res) {
+export default async function(req, res) {
 
     const prefix = req.params.prefix
 
@@ -23,7 +23,7 @@ async function restoreBackup(prefix) {
             prefix
         ]
 
-        const process = spawn(__dirname + '/../../../scripts/restore_backup.sh', args)
+        const process = spawn('./scripts/restore_backup.sh', args)
 
         var output = []
 

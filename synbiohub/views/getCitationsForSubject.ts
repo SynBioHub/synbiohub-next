@@ -1,5 +1,5 @@
 
-import * as sparql from './sparql';
+import * as sparql from 'synbiohub/sparql/sparql';
 import retrieveCitations from 'synbiohub/citations';
 
 export default async function getCitationsForSubject(subject, graphUri) {

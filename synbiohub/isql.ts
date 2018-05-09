@@ -3,7 +3,7 @@ const spawn = require('child_process').spawn
 
 const config = require('./config')
 
-const EOT = '\04'
+const EOT = '\u0004'
 
 export default function isql(commands) {
 
@@ -52,6 +52,4 @@ export default function isql(commands) {
 
     })
 }
-
-export default isql
 

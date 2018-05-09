@@ -2,7 +2,7 @@
 import * as sparql from './sparql/sparql';
 import loadTemplate from './loadTemplate';
 
-function getSnapshots(uri) {
+export function getSnapshots(uri) {
 
     const query = loadTemplate('./sparql/GetSnapshots.sparql', {
         uri: uri
@@ -17,8 +17,3 @@ function getSnapshots(uri) {
 
 
 }
-
-export default {
-    getSnapshots: getSnapshots
-};
-

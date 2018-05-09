@@ -1,7 +1,7 @@
 
 
-import SSE from 'express-sse';
-import Multimap from 'multimap';
+import SSE = require('express-sse')
+import Multimap = require('multimap')
 
 const connections = new Multimap()
 

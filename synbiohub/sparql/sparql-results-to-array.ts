@@ -1,5 +1,5 @@
 
-import extend from 'xtend';
+import extend = require('xtend')
 
 function sparqlResultsToArray(results) {
 

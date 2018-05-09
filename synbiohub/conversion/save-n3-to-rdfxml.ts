@@ -13,8 +13,8 @@ async function saveN3ToRdfXml(n3):Promise<string> {
 
     return await new Promise<string>((resolve, reject) => {
 
-        const childProcess = spawn(__dirname + '/../../scripts/n3_to_rdfxml.sh', [], {
-            cwd: __dirname + '/../../scripts',
+        const childProcess = spawn('./scripts/n3_to_rdfxml.sh', [], {
+            cwd: './scripts',
             env: {
                 NODE: process.execPath
             }
