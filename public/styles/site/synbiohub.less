@@ -180,7 +180,7 @@ a {
     top: 65px;
     height: 40px;
     width: 100%;
-    background-color: #2C3E50;
+    color: black;
 }
 
 .sbol_breadcrumbs ul {
@@ -193,7 +193,6 @@ a {
 .sbol_breadcrumbs ul li {
     float: left;
     display: inline;
-    color: white;
     height: 100%;
     padding: 10px;
 
@@ -341,9 +340,12 @@ a {
 }
 
 .sbol-breadcrumbs {
-    background-color: @baseColor;
     height: 55px;
     margin-top: 65px;
+}
+
+.sbol-breadcrumbs:empty {
+    display: none;
 }
 
 .sbol-breadcrumbs ul {
