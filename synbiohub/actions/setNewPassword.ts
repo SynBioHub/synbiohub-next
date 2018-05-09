@@ -1,10 +1,10 @@
 
 
 const pug = require('pug')
-const db = require('../db')
+import db from 'synbiohub/db'
 
 const sha1 = require('sha1')
-const config = require('../config')
+import config from 'synbiohub/config'
 
 module.exports = function(req, res) {
 

@@ -2,7 +2,7 @@
 const { getCollectionMetaData } = require('../query/collection')
 const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
 
-var loadTemplate = require('../loadTemplate')
+import loadTemplate from 'synbiohub/loadTemplate'
 
 var pug = require('pug')
 
@@ -14,17 +14,17 @@ var SBOLDocument = require('sboljs')
 
 var extend = require('xtend')
 
-var serializeSBOL = require('../serializeSBOL')
+import serializeSBOL from 'synbiohub/serializeSBOL'
 
 var request = require('request')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
-const cloneSubmission = require('../clone-submission')
+import cloneSubmission from 'synbiohub/clone-submission'
 
-var sparql = require('../sparql/sparql')
+import sparql from 'synbiohub/sparql/sparql'
 
 const tmp = require('tmp-promise')
 

@@ -3,34 +3,47 @@ import SBOLFetcher from "./SBOLFetcher";
 
 export default class SBOLFetcherFederated extends SBOLFetcher {
 
-    providers:Array<SBOLFetcher>
+    fetchers:Array<SBOLFetcher>
 
-    constructor(providers:Array<SBOLFetcher>) {
+    constructor(fetchers:Array<SBOLFetcher>) {
 
-        this.providers = providers
+        super()
+
+        this.fetchers = fetchers
 
     }
 
-    fetchSBOLSource(type: any, uri: any, graphUri: any) {
+    async fetchSBOLSource(type:string, uri:string):Promise<string> {
 
-        /*
-        const { submissionId, version } = splitUri(uri)
-        const remoteConfig = config.get('remotes')[submissionId]
+        for(let fetcher of this.fetchers) {
 
-        return remoteConfig !== undefined && version === 'current' ?
-            remote[remoteConfig.type].fetchSBOLSource(remoteConfig, type, uri) :
-            local.fetchSBOLSource(type, uri, graphUri)*/
+            try {
+
+                let tempFilename = await fetcher.fetchSBOLSource(type, uri)
+
+                return tempFilename
+
+            } catch(e) {
+                continue
+            }
+        }
     }
 
-    fetchSBOLObjectRecursive(sbol: any, type: string, uri: string, graphUri: string) {
-        /*
+    async fetchSBOLObjectRecursive(sbol: any, type: string, uri: string):Promise<any> {
 
-        const { submissionId, version } = splitUri(uri)
-        const remoteConfig = config.get('remotes')[submissionId]
+        for(let fetcher of this.fetchers) {
 
-        return remoteConfig !== undefined && version === 'current' ?
-            remote[remoteConfig.type].fetchSBOLObjectRecursive(remoteConfig, sbol, type, uri) :
-            local.fetchSBOLObjectRecursive(sbol, type, uri, graphUri)*/
+            try {
+
+                let res = await fetcher.fetchSBOLObjectRecursive(sbol, type, uri)
+
+                return res
+
+            } catch(e) {
+                continue
+            }
+        }
+
     }
 
 }

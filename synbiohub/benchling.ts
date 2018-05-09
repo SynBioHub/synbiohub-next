@@ -4,16 +4,15 @@ import request from 'request';
 import config from './config';
 import extend from 'xtend';
 
-function getBenchlingJson(remoteConfig, path, qs) {
+export async function getBenchlingJson(remoteConfig, path, qs?):Promise<any> {
 
     console.log('getBenchlingJson:'+ path)
 
     var retriesLeft = config.get('benchlingMaxRetries')?config.get('benchlingMaxRetries'):3
 
-    return attempt()
+    return await attempt()
 
-    function attempt() {
-
+    async function attempt() {
 
         return new Promise((resolve, reject) => {
 
@@ -21,26 +20,26 @@ function getBenchlingJson(remoteConfig, path, qs) {
 
             request({
                 method: 'get',
-                headers: { },
-		'auth': {
-		    'username': remoteConfig['X-BENCHLING-API-Token']
-		},
+                headers: {},
+                'auth': {
+                    'username': remoteConfig['X-BENCHLING-API-Token']
+                },
                 qs: qs || {},
-		rejectUnauthorized: remoteConfig['rejectUnauthorized'],
+                rejectUnauthorized: remoteConfig['rejectUnauthorized'],
                 url: remoteConfig.url + path
             }, (err, response, body) => {
 
                 console.log('getBenchlingJson: ' + remoteConfig.url + path + ': response received')
 
-                if(err) {
+                if (err) {
                     console.log('getBenchlingJson: error')
                     reject(err)
                     return
                 }
 
-                if(response.statusCode === 500) {
+                if (response.statusCode === 500) {
 
-                    if(-- retriesLeft < 0) {
+                    if (--retriesLeft < 0) {
 
                         reject(new Error('Benchling returned 500 and ran out of retries'))
                         return
@@ -55,13 +54,13 @@ function getBenchlingJson(remoteConfig, path, qs) {
                     return
                 }
 
-                if(response.statusCode >= 300) {
+                if (response.statusCode >= 300) {
                     //console.log(body)
-		    if (response.body && response.body.error && response.body.error.message) {
-			reject(new Error(response.body.error.message))
-		    } else {
-			reject(new Error('HTTP ' + response.statusCode))
-		    }
+                    if (response.body && response.body.error && response.body.error.message) {
+                        reject(new Error(response.body.error.message))
+                    } else {
+                        reject(new Error('HTTP ' + response.statusCode))
+                    }
                     return
                 }
 
@@ -75,15 +74,15 @@ function getBenchlingJson(remoteConfig, path, qs) {
 
 }
 
-function postBenchlingJson(remoteConfig, path, postData) {
+export async function postBenchlingJson(remoteConfig, path, postData):Promise<any> {
 
     console.log('getBenchlingJson:'+ path)
 
     var retriesLeft = config.get('benchlingMaxRetries')?config.get('benchlingMaxRetries'):3
 
-    return attempt()
+    return await attempt()
 
-    function attempt() {
+    async function attempt() {
 
 
         return new Promise((resolve, reject) => {
@@ -146,105 +145,91 @@ function postBenchlingJson(remoteConfig, path, postData) {
 
 }
 
-function getPart(remoteConfig, partId) {
+export async function getPart(remoteConfig, partId) {
 
     console.log('getPart:'+partId)
 
-    return getBenchlingJson(remoteConfig, '/sequences/' + partId)
+    return await getBenchlingJson(remoteConfig, '/sequences/' + partId)
 
 }
 
-function getSequence(remoteConfig, partId) {
+export async function getSequence(remoteConfig, partId) {
 
     console.log('getSequence:'+partId)
 
-    return getBenchlingJson(remoteConfig, '/sequences/' + partId)
+    return await getBenchlingJson(remoteConfig, '/sequences/' + partId)
 
 }
 
-function createSequence(remoteConfig, sequenceData) {
+export async function createSequence(remoteConfig, sequenceData) {
 
     console.log('createSequence:'+sequenceData.name)
 
-    return postBenchlingJson(remoteConfig, '/sequences/', sequenceData)
+    return await postBenchlingJson(remoteConfig, '/sequences/', sequenceData)
 
 }
 
-function getRootFolderCount(remoteConfig) {
+export async function getRootFolderCount(remoteConfig) {
 
     console.log('getRootFolderCount')
 
-    return getBenchlingJson(remoteConfig, '/folders/')
-                .then((folders) => Promise.resolve(folders.folders.length))
+    let folders = await getBenchlingJson(remoteConfig, '/folders/')
+
+    return folders.folders.length
 
 }
 
-function getRootFolders(remoteConfig, offset, limit) {
+export async function getRootFolders(remoteConfig, offset?, limit?) {
 
     console.log('getRootFolders:' + ' offset='+offset+' limit='+limit)
 
     offset = offset || 0
     limit = limit || 1000000
 
-    return getBenchlingJson(remoteConfig, '/folders/')
-        .then((folders) => {
-	    if (folders.folders.length > offset + limit) {
-		return Promise.resolve(folders.folders.slice(offset, offset + limit))
-	    } else {
-		return Promise.resolve(folders.folders.slice(offset, folders.folders.length))
-	    }
-	})
+    let folders = await getBenchlingJson(remoteConfig, '/folders/')
+
+    if (folders.folders.length > offset + limit) {
+        return folders.folders.slice(offset, offset + limit)
+    } else {
+		return folders.folders.slice(offset, folders.folders.length)
+    }
 
 }
 
-function getFolderEntryCount(remoteConfig, folderId) {
+export async function getFolderEntryCount(remoteConfig, folderId) {
 
     console.log('getFolderEntryCount:'+folderId)
 
-    offset = 0
-    limit = 1000000
+    let offset = 0
+    let limit = 1000000
 
-    return getBenchlingJson(remoteConfig, '/folders/' + folderId) // + '/entries?limit='+limit+'&'+'offset='+offset)
-                .then((folder) => Promise.resolve(folder.count))
+    let folder = await getBenchlingJson(remoteConfig, '/folders/' + folderId) // + '/entries?limit='+limit+'&'+'offset='+offset)
+    return folder.count
 
 }
 
-function getFolderEntries(remoteConfig, folderId, offset, limit) {
+export async function getFolderEntries(remoteConfig, folderId, offset, limit) {
 
     console.log('getFolderEntries:'+folderId)
 
     offset = offset || 0
     limit = limit || 1000000
 
-    return getBenchlingJson(remoteConfig, '/folders/' + folderId) // + '/entries?limit='+limit+'&'+'offset='+offset)
-        .then((folder) => {
-	    if (folder.sequences.length > offset + limit) {
-		return Promise.resolve(folder.sequences.slice(offset, offset + limit))
-	    } else {
-		return Promise.resolve(folder.sequences.slice(offset, folder.sequences.length))
-	    }
-	})
+    let folder = await getBenchlingJson(remoteConfig, '/folders/' + folderId) // + '/entries?limit='+limit+'&'+'offset='+offset)
+
+    if (folder.sequences.length > offset + limit) {
+        return folder.sequences.slice(offset, offset + limit)
+    } else {
+        return folder.sequences.slice(offset, folder.sequences.length)
+    }
 }
 
-function getFolder(remoteConfig, folderId) {
+export async function getFolder(remoteConfig, folderId) {
 
     console.log('getFolder:'+folderId)
 
-    return getBenchlingJson(remoteConfig, '/folders/' + folderId)
-        
+    return await getBenchlingJson(remoteConfig, '/folders/' + folderId)
 }
 
 
-export default {
-    getBenchlingJson: getBenchlingJson,
-    postBenchlingJson: postBenchlingJson,
-    getPart: getPart,
-    getSequence: getSequence,
-    createSequence: createSequence,
-    getRootFolderCount: getRootFolderCount,
-    getRootFolders: getRootFolders,
-    getFolderEntryCount: getFolderEntryCount,
-    getFolderEntries: getFolderEntries,
-    getFolder: getFolder
-};
 

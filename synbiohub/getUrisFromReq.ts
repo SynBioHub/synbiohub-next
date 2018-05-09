@@ -1,20 +1,31 @@
 
 import sha1 from 'sha1';
 import config from './config';
-import util from './util';
+import * as util from './util';
 import pug from 'pug';
 import splitUri from './splitUri';
 
-function getUrisFromReq(req, res) {
+export interface ReqURIInfo {
+    url:string
+    uri:string
+    graphUri:string
+    designId:string
+    share:string
+    baseUri:string
+    edit:boolean
+}
 
-    var graphUri
-    var uri
-    var designId
-    var share
-    var baseUri
-    var edit = false
+export default function getUrisFromReq(req:any, res:any): ReqURIInfo {
 
-    if(req.params.userId) {
+    var graphUri:string
+    var uri:string
+    var designId:string
+    var share:string
+    var baseUri:string
+    var edit:boolean = false
+    var url:string
+
+    if (req.params.userId) {
 
         designId = req.params.collectionId + '/' + req.params.displayId
         if (req.params.version) {
@@ -26,10 +37,10 @@ function getUrisFromReq(req, res) {
 
         var webOfRegistries = config.get('webOfRegistries')
         var prefix = config.get('databasePrefix')
-        prefix = prefix.substring(0,prefix.length-1)
+        prefix = prefix.substring(0, prefix.length - 1)
         share = config.get('databasePrefix') + 'user/' + encodeURIComponent(req.params.userId) + '/' + designId + '/' + sha1('synbiohub_' + sha1(uri) + config.get('shareLinkSalt')) + '/share'
         if (webOfRegistries[prefix]) {
-            share = share.replace(prefix,webOfRegistries[prefix])
+            share = share.replace(prefix, webOfRegistries[prefix])
         }
 
         graphUri = null
@@ -38,13 +49,13 @@ function getUrisFromReq(req, res) {
         }
 
         if (req.params.hash) {
-            if (sha1('synbiohub_' + sha1(uri) + config.get('shareLinkSalt'))===req.params.hash) {
+            if (sha1('synbiohub_' + sha1(uri) + config.get('shareLinkSalt')) === req.params.hash) {
                 graphUri = config.get('databasePrefix') + util.createTriplestoreID(req.params.userId)
                 url = share
-            } else if (sha1('synbiohub_' + sha1(uri+'/edit') + config.get('shareLinkSalt'))===req.params.hash) {
+            } else if (sha1('synbiohub_' + sha1(uri + '/edit') + config.get('shareLinkSalt')) === req.params.hash) {
                 graphUri = config.get('databasePrefix') + util.createTriplestoreID(req.params.userId)
                 url = share
-		edit = true;
+                edit = true;
             }
         }
 
@@ -69,12 +80,12 @@ function getUrisFromReq(req, res) {
                 config: config.get(),
                 section: 'errors',
                 user: req.user,
-                errors: [ 'Permission Denied' ]
+                errors: ['Permission Denied']
             }
             res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
         }
 
-    } else  {
+    } else {
 
         graphUri = null
 
@@ -94,8 +105,7 @@ function getUrisFromReq(req, res) {
         share: share,
         url: url,
         baseUri: baseUri,
-	edit: edit
+        edit: edit
     }
 }
 
-export default getUrisFromReq;

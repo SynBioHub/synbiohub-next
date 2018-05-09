@@ -1,5 +1,5 @@
 
-import assert from 'assert';
+import assert = require('assert')
 import config from './config';
 
 const prefixes = config.get('namespaces')

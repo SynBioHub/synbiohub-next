@@ -1,5 +1,30 @@
 
-export default abstract class SBOLFetcherLocal {
+var resolveBatch = config.get('resolveBatch')
+
+var webOfRegistries = config.get('webOfRegistries')
+
+var databasePrefix = config.get('databasePrefix')
+
+import request = require('request-promise')
+import SBOLFetcher from 'synbiohub/fetch/SBOLFetcher';
+import n3ToSBOL from 'synbiohub/conversion/n3-to-sbol';
+import saveN3ToRdfXml from 'synbiohub/conversion/save-n3-to-rdfxml';
+
+import fs = require('mz/fs')
+
+export default class SBOLFetcherLocal extends SBOLFetcher {
+
+    private graphUri:string
+
+    constructor(graphUri:string) {
+
+        super()
+
+        this.graphUri = graphUri
+
+
+    }
+
 
     /* Fetches SBOL source for an SBOL object URI, returning the filename of a
     * temporary file containing the SBOL XML.
@@ -29,7 +54,7 @@ export default abstract class SBOLFetcherLocal {
     * file can be sent as the response?
     *
     */
-    fetchSBOLSource(type: string, uri: string, graphUri: string) {
+    async fetchSBOLSource(type: string, objectUri: string) {
 
         const sbol = new SBOLDocument()
 
@@ -39,61 +64,106 @@ export default abstract class SBOLFetcherLocal {
         /* First check if this object is a collection.  If so, we can use the
         * specialized collection query to retrieve it without a recursive crawl.
         */
-        return sparql.queryJson([
+        let results = await sparql.queryJson([
             'SELECT ?coll WHERE {',
             '?coll a <http://sbols.org/v2#Collection> .',
             'FILTER(?coll = <' + sbol._rootUri + '>)',
             '}'
-        ].join('\n'), graphUri).then((results) => {
+        ].join('\n'))
 
-            // TODO: temporarily removed, need to add recursive crawl after this 
+        // TODO: temporarily removed, need to add recursive crawl after this 
+        // to ensure non-local objects are fetched.
+        if (results.length > 0) {
+
+            /* It's a collection.  Hooray, we can use the more efficient
+            * collection fetcher!
+            */
+            return await this.fetchCollectionSBOLSource(sbol, type, objectUri)
+
+        } else {
+
+            /* It's not a collection, so this is going to be a recursive
+            * crawl.  We need sboljs to work out which URIs are unresolved, so
+            * just fall back on using fetchSBOLObject and serializing it
+            * afterwards.
+            *
+            * Unfortunately, we also need to save the serialized XML to a file
+            * because the other fetcher returns a filename...
+            *
+            * TODO: we probably don't need to use sboljs to find out which
+            * URIs aren't resolved.  Bypassing this would avoid building an
+            * RDF graph in memory.
+            *
+            * TODO: this causes the query to check for a collection to
+            * run again
+            */
+            let res = await fetchSBOLObjectRecursive(sbol, type, objectUri)
+
+            let tmpFilename = await tmp.tmpName()
+
+            await fs.writeFile(tmpFilename, serializeSBOL(res.sbol))
+
+            return tmpFilename
+        }
+
+    }
+
+    /* Retrieves an SBOL object *recursively*, in that anything it references, and
+    * anything those objects reference (and so on) are resolved.  This is hugely
+    * expensive (> 10 minutes) for large Collections, which is why the Collection
+    * page currently uses metadata instead of an sboljs object.
+    *
+    * TODO: the collection page can use SBOL, it just needs to use the not yet
+    * implemented "fetch SBOL object and children".  There's also no reason that
+    * for example a ComponentDefinition couldn't have millions of components
+    * (human genome?), so we should probably make sure that none of the pages for
+    * top levels rely on recursively resolved SBOL documents and make them use
+    * the "object and children" fetcher instead.
+    *
+    * TODO: make the recursive crawl fail for things that are obviously too big
+    * to resolve everything.
+    */
+    async fetchSBOLObjectRecursive(sbol:any, type:string, uri:string) {
+
+        sbol._resolving = {};
+        sbol._rootUri = uri
+
+        sbol.lookupURI(sbol._rootUri)
+
+        // console.log(sbol)
+        // console.log(type)
+        // console.log(uri)
+
+        let results = await sparql.queryJson([
+            'SELECT ?coll ?type WHERE {',
+            '?coll a ?type .',
+            'FILTER(?coll = <' + sbol._rootUri + '>)',
+            '}'
+        ].join('\n'), this.graphUri)
+
+        if (results.length > 0) {
+
+            // TODO: temporarily removed, need to add recursive crawl after this
             // to ensure non-local objects are fetched.
-            if (results.length > 0) {
+            if (results[0].type === 'http://sbols.org/v2#Collection') {
 
-                /* It's a collection.  Hooray, we can use the more efficient
-                * collection fetcher!
-                */
-                return fetchCollectionSBOLSource(sbol, type, graphUri, objectUri)
+                return await this.getCollectionSBOL(sbol, type)
 
             } else {
 
-                /* It's not a collection, so this is going to be a recursive
-                * crawl.  We need sboljs to work out which URIs are unresolved, so
-                * just fall back on using fetchSBOLObject and serializing it
-                * afterwards.
-                *
-                * Unfortunately, we also need to save the serialized XML to a file
-                * because the other fetcher returns a filename...
-                *
-                * TODO: we probably don't need to use sboljs to find out which
-                * URIs aren't resolved.  Bypassing this would avoid building an
-                * RDF graph in memory.
-                *
-                * TODO: this causes the query to check for a collection to
-                * run again
-                */
-                return fetchSBOLObjectRecursive(sbol, type, objectUri, graphUri).then((res) => {
-
-                    return tmp.tmpName().then((tmpFilename) => {
-
-                        return fs.writeFile(tmpFilename, serializeSBOL(res.sbol))
-                            .then(() => Promise.resolve(tmpFilename))
-
-                    })
-
-                })
+                return await this.getSBOLRecursive(sbol, type)
 
             }
 
-        })
+        } else {
+
+            throw new Error(sbol._rootUri + ' not found')
+
+        }
 
     }
 
-    fetchSBOLObjectRecursive(sbol:any, type:string, uri:string, graphUri:string) {
-    }
-
-
-    private function fetchCollectionSBOLSource(sbol, type, graphUri, objectUri) {
+    private async fetchCollectionSBOLSource(sbol, type, objectUri) {
 
         var graphs = ''
         //if (graphUri) {
@@ -132,192 +202,93 @@ export default abstract class SBOLFetcherLocal {
             '}'*/
         ].join('\n')
 
-        return sparql.queryJson([
+        let results = await sparql.queryJson([
             'SELECT (COUNT(*) as ?count) ' + graphs + ' WHERE {',
             subquery,
             '}'
-        ].join('\n'), graphUri).then((results) => {
+        ].join('\n'), this.graphUri)
 
-            var countLeft = results[0].count
-            var offset = 0
-            var limit = config.get('staggeredQueryLimit')
+        var countLeft = results[0].count
+        var offset = 0
+        var limit = config.get('staggeredQueryLimit')
 
-            var n3 = []
+        var n3 = []
 
-            return doNextQuery()
+        return await doNextQuery()
 
-            function doNextQuery() {
+        async function doNextQuery() {
 
-                //console.log(countLeft + ' left of ' + results[0].count)
+            //console.log(countLeft + ' left of ' + results[0].count)
 
-                if(countLeft > 0) {
-                    let query = ['CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
-                            subquery,
-                            '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit].join('\n')
-                    //console.log(query)
+            if(countLeft > 0) {
 
-                    return sparql.query(query, graphUri, 'text/plain').then((res) => {
+                let query = ['CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
+                        subquery,
+                        '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit].join('\n')
+                //console.log(query)
 
-                        n3.push(res.body)
+                let res = await sparql.query(query, this.graphUri, 'text/plain')
 
-                        countLeft -= limit
-                        offset += limit
+                n3.push(res.body)
 
-                        return doNextQuery()
+                countLeft -= limit
+                offset += limit
 
-                    })
-
-                } else {
-
-
-                    return n3ToSBOL(n3)
-
-                }
-            }
-        })
-
-
-    }
-}
-
-
-
-
-
-export default {
-    fetchSBOLSource: fetchSBOLSource
-};
-
-
-
-
-
-
-
-/*
- *    TODO: Skipped this file in async/await conversion
- */
-
-
-import SBOLDocument from 'sboljs';
-
-import sparql from '../../sparql/sparql';
-import config from '../../config';
-
-var resolveBatch = config.get('resolveBatch')
-
-var webOfRegistries = config.get('webOfRegistries')
-
-var databasePrefix = config.get('databasePrefix')
-
-import request from 'request';
-import async from 'async';
-import assert from 'assert';
-import fs from 'mz/fs';
-import saveN3ToRdfXml from '../../conversion/save-n3-to-rdfxml';
-
-/* Retrieves an SBOL object *recursively*, in that anything it references, and
- * anything those objects reference (and so on) are resolved.  This is hugely
- * expensive (> 10 minutes) for large Collections, which is why the Collection
- * page currently uses metadata instead of an sboljs object.
- *
- * TODO: the collection page can use SBOL, it just needs to use the not yet
- * implemented "fetch SBOL object and children".  There's also no reason that
- * for example a ComponentDefinition couldn't have millions of components
- * (human genome?), so we should probably make sure that none of the pages for
- * top levels rely on recursively resolved SBOL documents and make them use
- * the "object and children" fetcher instead.
- *
- * TODO: make the recursive crawl fail for things that are obviously too big
- * to resolve everything.
- */
-function fetchSBOLObjectRecursive(sbol, type, uri, graphUri) {
-
-    sbol._resolving = {};
-    sbol._rootUri = uri
-
-    sbol.lookupURI(sbol._rootUri)
-
-    // console.log(sbol)
-    // console.log(type)
-    // console.log(uri)
-
-    return sparql.queryJson([
-        'SELECT ?coll ?type WHERE {',
-        '?coll a ?type .',
-        'FILTER(?coll = <' + sbol._rootUri + '>)',
-        '}'
-    ].join('\n'), graphUri).then((results) => {
-
-
-        if(results.length > 0) {
-
-	    // TODO: temporarily removed, need to add recursive crawl after this
-	    // to ensure non-local objects are fetched.
-	    if(results[0].type === 'http://sbols.org/v2#Collection') {
-		return getCollectionSBOL(sbol, type, graphUri)
+                return await doNextQuery()
 
             } else {
 
-		return getSBOLRecursive(sbol, type, graphUri)
+                return await n3ToSBOL(n3)
 
             }
+        }
+    }
 
-	} else {
+    private async getCollectionSBOL(sbol, type) {
 
-	    return Promise.reject(new Error(sbol._rootUri + ' not found'))
+        var graphs = ''
+        //if (graphUri) {
+    //	graphs = 'FROM <' + config.get('triplestore').defaultGraph + '> FROM <' + graphUri + '>'
+        //}
 
-	}
-
-    })
-
-}
-
-function getCollectionSBOL(sbol, type, graphUri) {
-
-    var graphs = ''
-    //if (graphUri) {
-//	graphs = 'FROM <' + config.get('triplestore').defaultGraph + '> FROM <' + graphUri + '>'
-    //}
-
-    const subquery = [
-        '{',
-            '?s ?p ?o .',
-            'FILTER(?s = <' + sbol._rootUri + '>)',
-        '}',
-        'UNION',
-        '{',
-            '?coll <http://sbols.org/v2#member> ?topLevel .',
-            '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?topLevel .',
-            '?s ?p ?o .',
-            'FILTER(?coll = <' + sbol._rootUri + '>)',
-        '}' /*,
-        'UNION',
-        '{',
-            '?coll <http://sbols.org/v2#member> ?topLevel .',
-	    '?topLevel a <http://sbols.org/v2#ComponentDefinition> .',
-            '?topLevel <http://sbols.org/v2#sequence> ?sequence .',
-            '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?sequence .',
-            '?s ?p ?o .',
-            'FILTER(?coll = <' + sbol._rootUri + '>)',
-        '}',
-        'UNION',
-        '{',
-            '?coll <http://sbols.org/v2#member> ?topLevel .',
-	    '?topLevel a <http://sbols.org/v2#ModuleDefinition> .',
-            '?topLevel <http://sbols.org/v2#model> ?model .',
-            '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?model .',
-            '?s ?p ?o .',
-            'FILTER(?coll = <' + sbol._rootUri + '>)',
-        '}'*/
-    ].join('\n')
+        const subquery = [
+            '{',
+                '?s ?p ?o .',
+                'FILTER(?s = <' + sbol._rootUri + '>)',
+            '}',
+            'UNION',
+            '{',
+                '?coll <http://sbols.org/v2#member> ?topLevel .',
+                '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?topLevel .',
+                '?s ?p ?o .',
+                'FILTER(?coll = <' + sbol._rootUri + '>)',
+            '}' /*,
+            'UNION',
+            '{',
+                '?coll <http://sbols.org/v2#member> ?topLevel .',
+            '?topLevel a <http://sbols.org/v2#ComponentDefinition> .',
+                '?topLevel <http://sbols.org/v2#sequence> ?sequence .',
+                '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?sequence .',
+                '?s ?p ?o .',
+                'FILTER(?coll = <' + sbol._rootUri + '>)',
+            '}',
+            'UNION',
+            '{',
+                '?coll <http://sbols.org/v2#member> ?topLevel .',
+            '?topLevel a <http://sbols.org/v2#ModuleDefinition> .',
+                '?topLevel <http://sbols.org/v2#model> ?model .',
+                '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?model .',
+                '?s ?p ?o .',
+                'FILTER(?coll = <' + sbol._rootUri + '>)',
+            '}'*/
+        ].join('\n')
 
     // console.log(subquery)
-    return sparql.queryJson([
-        'SELECT (COUNT(*) as ?count) ' + graphs + ' WHERE {',
-        subquery,
-        '}'
-    ].join('\n'), graphUri).then((results) => {
+        let results = await sparql.queryJson([
+            'SELECT (COUNT(*) as ?count) ' + graphs + ' WHERE {',
+            subquery,
+            '}'
+        ].join('\n'), this.graphUri)
 
         var countLeft = results[0].count
         var offset = 0
@@ -325,226 +296,236 @@ function getCollectionSBOL(sbol, type, graphUri) {
 
         var rdf = []
 
-        return doNextQuery()
+        return await doNextQuery()
 
-        function doNextQuery() {
+        async function doNextQuery() {
 
             console.log(countLeft + ' left of ' + results[0].count)
 
             if(countLeft > 0) {
 
-                return sparql.query([
+                let res = await sparql.query([
                     'CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
                     subquery,
                     '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit
-                ].join('\n'), graphUri, 'text/plain').then((res) => {
+                ].join('\n'), this.graphUri, 'text/plain')
 
-                    rdf.push(res.body)
+                rdf.push(res.body)
 
-                    countLeft -= limit
-                    offset += limit
+                countLeft -= limit
+                offset += limit
 
-                    return doNextQuery()
-
-                })
+                return await doNextQuery()
 
             } else {
 
-                return saveN3ToRdfXml(rdf).then((tempFilename) => {
+                let tempFilename = await saveN3ToRdfXml(rdf)
 
-                    return fs.readFile(tempFilename).then((contents) => {
+                let contents = await fs.readFile(tempFilename)
 
-                        fs.unlink(tempFilename)
+                fs.unlink(tempFilename)
 
-                        return new Promise((resolve, reject) => {
-                            sbol.loadRDF(contents.toString(), (err) => {
+                return new Promise((resolve, reject) => {
+                    sbol.loadRDF(contents.toString(), (err) => {
 
-                                if(err) {
-                                    reject(err)
-                                    return
-                                }
+                        if(err) {
+                            reject(err)
+                            return
+                        }
 
-                                const object = sbol.lookupURI(sbol._rootUri)
+                        const object = sbol.lookupURI(sbol._rootUri)
 
-                                sbol.graphUri = graphUri
-                                object.graphUri = graphUri
+                        sbol.graphUri = this.graphUri
+                        object.graphUri = this.graphUri
 
-                                resolve({
-                                    graphUri: graphUri,
-                                    sbol: sbol,
-                                    object: object
-                                })
-                            })
-
+                        resolve({
+                            graphUri: this.graphUri,
+                            sbol: sbol,
+                            object: object
                         })
-
                     })
-                })
 
+                })
             }
 
         }
-    })
+    }
 
-}
+    private async getSBOLRecursive(sbol, type) {
 
-function getSBOLRecursive(sbol, type, graphUri) {
+        await this.completePartialDocument(sbol, type, new Set([]))
 
-    var complete = false;
-    var resolved = false;
+        for(let uri of sbol.unresolvedURIs) {
 
-    return new Promise((resolve, reject) => {
-
-        async.series([
-
-            function getLocalParts(next) {
-
-                completePartialDocument(graphUri, sbol, type, new Set([]), (err) => {
-
-                    if(err) {
-                        next(err)
-
-                    } else {
-
-                        if(!complete) {
-
-                            complete = true
-
-                            next()
-                        }
-
-                    }
-                })
-            },
-
-            function fetchNonLocalSBOL(next) {
-                async.each(sbol.unresolvedURIs, (uri, nextUri) => {
-		    // TODO: temporary until URIs fixed
-		    if (uri.toString().startsWith('http://wiki.synbiohub.org/')) {
-			nextUri()
-		    } else {
-			prefix = uri.toString()
-			if (prefix.indexOf('/public/') !== -1) {
-			    prefix = prefix.substring(0,prefix.indexOf('/public/'))
-			} else if (prefix.indexOf('/user/') !== -1) {
-			    prefix = prefix.substring(0,prefix.indexOf('/user/'))
-			    if (uri.toString().replace(prefix+'/user/','').indexOf('/') === -1) {
-				prefix = uri.toString()
-			    }
-			}
-			if (webOfRegistries[prefix]) {
-			    uri = uri.replace(prefix,webOfRegistries[prefix]) + '/sbol'
-			    console.log('Fetching non-local:'+uri)
-			    request({
-				method: 'GET',
-				uri: uri,
-				'content-type': 'application/rdf+xml',
-			    }, function(err, response, body) {
-				if(err || response.statusCode >= 300) {
-				    nextUri()
-				} else {
-				    if (!body.toString().startsWith('<!DOCTYPE html><')) {
-					sbol.loadRDF(body, nextUri)
-				    } else {
-					nextUri()
-				    }
-				}
-			    })
-			} else {
-			    nextUri()
-			}
-		    }
-                }, next)
+            // TODO: temporary until URIs fixed
+            if (uri.toString().startsWith('http://wiki.synbiohub.org/')) {
+                continue
             }
 
-        ], function done(err) {
+            let prefix = uri.toString()
 
-            if (err) {
-
-                reject(err)
-
-            } else {
-
-                resolve({
-                    sbol: sbol,
-                    object: sbol.lookupURI(sbol._rootUri)
-                })
+            if (prefix.indexOf('/public/') !== -1) {
+                prefix = prefix.substring(0, prefix.indexOf('/public/'))
+            } else if (prefix.indexOf('/user/') !== -1) {
+                prefix = prefix.substring(0, prefix.indexOf('/user/'))
+                if (uri.toString().replace(prefix + '/user/', '').indexOf('/') === -1) {
+                    prefix = uri.toString()
+                }
             }
-        })
 
-    })
+            if (!webOfRegistries[prefix])
+                continue
 
-}
+            uri = uri.replace(prefix, webOfRegistries[prefix]) + '/sbol'
 
-function completePartialDocument(graphUri, sbol, type, skip, next) {
+            console.log('Fetching non-local:' + uri)
 
-    //console.log(sbol.unresolvedURIs.length + ' unresolved URI(s)')
+            let body = await request({
+                method: 'GET',
+                uri: uri,
+                'content-type': 'application/rdf+xml',
+            })
 
-    if(sbol.unresolvedURIs.length === 0) {
+            if(body.startsWith('<!DOCTYPE html><'))
+                continue
 
-        next();
+            await new Promise((resolve, reject) => {
+                sbol.loadRDF(body, (err) => {
+                    if (err)
+                        reject(err)
+                    else
+                        resolve(body)
+                })
+            })
+        }
 
-    } else {
+        return {
+            sbol: sbol,
+            object: sbol.lookupURI(sbol._rootUri)
+        }
+    }
+
+    private async completePartialDocument(sbol, type, skip) {
+
+        //console.log(sbol.unresolvedURIs.length + ' unresolved URI(s)')
+
+        if(sbol.unresolvedURIs.length === 0)
+            return
 
         var toResolve = sbol.unresolvedURIs.filter((uri) => !sbol._resolving[uri] &&
-						   !skip.has(uri.toString()) && uri.toString().startsWith(databasePrefix))
+                        !skip.has(uri.toString()) && uri.toString().startsWith(databasePrefix))
                                 .map((uri) => uri.toString())
 
         toResolve = toResolve.slice(0, resolveBatch)
 
-        retrieveSBOL(graphUri, sbol, type, toResolve, (err) => {
+        await this.retrieveSBOL(sbol, type, toResolve)
 
-            if(err) {
-                next(err)
-                return
+
+        var done = true
+
+        // somehow we killed the optimiser by doing uri toString inside
+        // the loop, so let's do it first...
+        //
+        // ~50 seconds -> instant, thanks v8
+        //
+        var uriStrings = sbol.unresolvedURIs.map((uri) => uri.toString())
+
+        for (var i = 0; i < uriStrings.length; ++i) {
+            var uri = uriStrings[i]
+
+            var uriString = uri
+
+            if (toResolve.indexOf(uriString) === -1 && uriString.startsWith(databasePrefix) && !skip.has(uriString)) {
+                done = false
+            } else {
+                skip.add(uriString)
             }
+        }
 
-            var done = true
+        if (done)
+            return
 
-            // somehow we killed the optimiser by doing uri toString inside
-            // the loop, so let's do it first...
-            //
-            // ~50 seconds -> instant, thanks v8
-            //
-            var uriStrings = sbol.unresolvedURIs.map((uri) => uri.toString())
+        await this.completePartialDocument(sbol, type, skip)
 
-            for(var i = 0; i < uriStrings.length; ++ i)
-            {
-                var uri = uriStrings[i]
+    }
 
-                var uriString = uri
+    private sparqlDescribeSubjects(sbol, type, uris, isCount) {
 
-                if (toResolve.indexOf(uriString) === -1 && uriString.startsWith(databasePrefix) && !skip.has(uriString)) {
-                    done = false
-                } else {
-                    skip.add(uriString)
+        /*
+        var triples = uris.map((uri, n) =>
+            sparql.escapeIRI(uri) + ' ?p' + n + ' ?o' + n + ' .'
+        )
+
+        return [
+            'CONSTRUCT {'
+        ].concat(triples).concat([
+            '} WHERE {'
+        ]).concat(triples).concat([
+            '}'
+        ]).join('\n')*/
+
+        var query = [
+            isCount ?
+                'SELECT (count(?s) as ?count) WHERE {'
+                :
+                'CONSTRUCT { ?s ?p ?o } WHERE {'
+        ]
+
+        var isFirst = true
+
+        uris.forEach((uri) => {
+
+            if (isFirst)
+                isFirst = false
+            else
+                query.push('UNION')
+
+            query.push(
+                '{',
+                '?s ?p ?o .'
+            )
+
+            if (uri === sbol._rootUri) {
+                if (type !== null) {
+                    if (type === "TopLevel") {
+                        query.push('?s a ?t .')
+                        // TODO: the generic top level will not work
+                        query.push('FILTER(?t = <http://sbols.org/v2#ComponentDefinition>' + ' ||' +
+                            ' ?t = <http://sbols.org/v2#ModuleDefinition>' + ' ||' +
+                            ' ?t = <http://sbols.org/v2#Model>' + ' ||' +
+                            ' ?t = <http://sbols.org/v2#Collection>' + ' ||' +
+                            ' ?t = <http://sbols.org/v2#Sequence>' + ' ||' +
+                            ' ?t = <http://sbols.org/v2#GenericTopLevel>)')
+                    } else if (type != 'GenericTopLevel') {
+                        query.push('?s a <http://sbols.org/v2#' + type + '> .')
+                    }
                 }
             }
 
-            if (done) {
-                next()
-                return
-            }
-
-            completePartialDocument(graphUri, sbol, type, skip, next)
-
+            query.push(
+                'FILTER(?s = ' + sparql.escapeIRI(uri) + ')',
+                '}'
+            )
         })
+
+        query.push('}')
+
+        return query.join('\n')
     }
-}
 
-function retrieveSBOL(graphUri, sbol, type, uris, next) {
+    private async retrieveSBOL(sbol, type, uris) {
 
-    Object.assign(sbol._resolving, uris)
+        Object.assign(sbol._resolving, uris)
 
-    var countQuery = sparqlDescribeSubjects(sbol, type, uris, true)
+        var countQuery = this.sparqlDescribeSubjects(sbol, type, uris, true)
 
-    var query = sparqlDescribeSubjects(sbol, type, uris, false)
+        var query = this.sparqlDescribeSubjects(sbol, type, uris, false)
 
-    var offset = 0
-    var limit = config.get('staggeredQueryLimit')
-    var countLeft
+        var offset = 0
+        var limit = config.get('staggeredQueryLimit')
+        var countLeft
 
-    sparql.queryJson(countQuery, graphUri).then((res) => {
+        let res = await sparql.queryJson(countQuery, this.graphUri)
 
         //console.log('count is ' + res[0].count)
 
@@ -561,106 +542,45 @@ function retrieveSBOL(graphUri, sbol, type, uris, next) {
 
         var rdf = []
 
-        return doQuery()
+        return await doQuery()
 
-        function doQuery() {
+        async function doQuery() {
 
-            return sparql.query(query + ' OFFSET ' + offset + ' LIMIT ' + limit, graphUri, 'application/rdf+xml').then((res) => {
+            let res = await sparql.query(query + ' OFFSET ' + offset + ' LIMIT ' + limit, this.graphUri, 'application/rdf+xml')
 
-                countLeft -= limit
-                offset += limit
+            countLeft -= limit
+            offset += limit
 
-                rdf.push(res.body)
+            rdf.push(res.body)
 
-                if(countLeft > 0) {
+            if (countLeft > 0) {
 
-                    return doQuery()
+                return await doQuery()
 
-                } else {
+            } else {
 
-                    //console.log('loading rdf')
+                //console.log('loading rdf')
 
-                    sbol.loadRDF(rdf, next)
+                return await new Promise((resolve, reject) => {
+                    sbol.loadRDF(rdf, (err) => {
+                        if (err)
+                            reject(err)
+                        else
+                            resolve()
+                    })
+                })
 
-                }
-
-            }).catch((err) => {
-
-                next(err)
-
-            })
+            }
         }
 
-    })
-
-
+    }
 }
 
-function sparqlDescribeSubjects(sbol, type, uris, isCount) {
 
-    /*
-    var triples = uris.map((uri, n) =>
-        sparql.escapeIRI(uri) + ' ?p' + n + ' ?o' + n + ' .'
-    )
 
-    return [
-        'CONSTRUCT {'
-    ].concat(triples).concat([
-        '} WHERE {'
-    ]).concat(triples).concat([
-        '}'
-    ]).join('\n')*/
 
-   var query = [
-       isCount ?
-           'SELECT (count(?s) as ?count) WHERE {'
-       :
-           'CONSTRUCT { ?s ?p ?o } WHERE {'
-   ]
 
-   var isFirst = true
 
-   uris.forEach((uri) => {
 
-       if(isFirst)
-           isFirst = false
-       else
-           query.push('UNION')
 
-       query.push(
-           '{',
-           '?s ?p ?o .'
-        )
-
-       if(uri === sbol._rootUri) {
-           if(type !== null) {
-               if (type === "TopLevel") {
-                   query.push('?s a ?t .')
-                   // TODO: the generic top level will not work
-                   query.push('FILTER(?t = <http://sbols.org/v2#ComponentDefinition>' + ' ||' +
-                       ' ?t = <http://sbols.org/v2#ModuleDefinition>' + ' ||' +
-                       ' ?t = <http://sbols.org/v2#Model>' + ' ||' +
-                       ' ?t = <http://sbols.org/v2#Collection>' + ' ||' +
-                       ' ?t = <http://sbols.org/v2#Sequence>' + ' ||' +
-                       ' ?t = <http://sbols.org/v2#GenericTopLevel>)')
-               } else if (type != 'GenericTopLevel') {
-                   query.push('?s a <http://sbols.org/v2#' + type + '> .')
-               }
-           }
-       }
-
-        query.push(
-           'FILTER(?s = ' + sparql.escapeIRI(uri) + ')',
-           '}'
-        )
-   })
-
-   query.push('}')
-
-   return query.join('\n')
-}
-
-export default {
-    fetchSBOLObjectRecursive: fetchSBOLObjectRecursive
-};
 

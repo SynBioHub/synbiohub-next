@@ -16,24 +16,34 @@ const doiRegex = require('doi-regex')
 
 export default class SBOLFetcherBenchling extends SBOLFetcher {
 
-    fetchSBOLObjectRecursive(remoteConfig, sbol, type, uri) {
+    private remoteConfig:any
+
+    constructor(remoteConfig:any) {
+
+        super()
+
+        this.remoteConfig = remoteConfig
+
+    }
+
+    async fetchSBOLObjectRecursive(sbol, type, uri) {
 
         const { displayId } = splitUri(uri)
 
         const version = '1' //new Date().getTime() + '_retrieved'
 
-        if(displayId === remoteConfig.rootCollection.displayId) {
+        if(displayId === this.remoteConfig.rootCollection.displayId) {
 
             const rootCollection = sbol.collection()
-            rootCollection.displayId = remoteConfig.rootCollection.displayId
+            rootCollection.displayId = this.remoteConfig.rootCollection.displayId
             rootCollection.version = version
             rootCollection.persistentIdentity = config.get('databasePrefix') + 'public/' + rootCollection.displayId
             rootCollection.uri = config.get('databasePrefix') + 'public/' + rootCollection.displayId + '/' + rootCollection.version
             rootCollection.wasDerivedFrom = 'https://benchling.com' //remoteConfig.url
-            rootCollection.name = remoteConfig.rootCollection.name
-            rootCollection.description = remoteConfig.rootCollection.description
+            rootCollection.name = this.remoteConfig.rootCollection.name
+            rootCollection.description = this.remoteConfig.rootCollection.description
 
-            let rootFolders = await benchling.getRootFolders(remoteConfig)
+            let rootFolders = await benchling.getRootFolders(this.remoteConfig)
 
             let collections = await Promise.all(
                 rootFolders.map((folder) => folderToCollection(folder.id))
@@ -50,9 +60,9 @@ export default class SBOLFetcherBenchling extends SBOLFetcher {
             }
         }
 
-        if(displayId.indexOf(remoteConfig.folderPrefix) === 0) {
+        if(displayId.indexOf(this.remoteConfig.folderPrefix) === 0) {
 
-            const folderId = displayId.slice(remoteConfig.folderPrefix.length)
+            const folderId = displayId.slice(this.remoteConfig.folderPrefix.length)
 
             let collection = await folderToCollection(folderId)
 
@@ -63,17 +73,17 @@ export default class SBOLFetcherBenchling extends SBOLFetcher {
             }
         }
         
-        if(displayId.endsWith(remoteConfig.sequenceSuffix)) {
+        if(displayId.endsWith(this.remoteConfig.sequenceSuffix)) {
 
-            const partDisplayId = displayId.slice(0, - remoteConfig.sequenceSuffix.length)
+            const partDisplayId = displayId.slice(0, - this.remoteConfig.sequenceSuffix.length)
                 
-            let part = await benchling.getSequence(remoteConfig, partDisplayId)
+            let part = await benchling.getSequence(this.remoteConfig, partDisplayId)
                 
             const sequence = sbol.sequence()
             sequence.displayId = displayId
             sequence.name = part.name + ' sequence'
             sequence.version = version
-            sequence.persistentIdentity = config.get('databasePrefix') + 'public/' + remoteConfig.id + '/' + sequence.displayId
+            sequence.persistentIdentity = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + sequence.displayId
             sequence.uri = sequence.persistentIdentity + '/' + sequence.version
             sequence.encoding = SBOLDocument.terms.dnaSequence
             sequence.elements = part.bases
@@ -86,7 +96,7 @@ export default class SBOLFetcherBenchling extends SBOLFetcher {
             }
         }
 
-        let part = await benchling.getPart(remoteConfig, displayId)
+        let part = await benchling.getPart(this.remoteConfig, displayId)
 
         let componentDefinition = await partToComponentDefinition(part)
         
@@ -96,158 +106,160 @@ export default class SBOLFetcherBenchling extends SBOLFetcher {
             remote: true
         }
 
-    }
+        async function folderToCollection(folderId) {
 
+            let res = await Promise.all([
+                benchling.getFolder(this.remoteConfig, folderId),
+                benchling.getFolderEntries(this.remoteConfig, folderId)
+            ])
 
-    private async function folderToCollection(folderId) {
+            const [folder, entries] = res
+            const collection = sbol.collection()
 
-        let res = await Promise.all([
-            benchling.getFolder(remoteConfig, folderId),
-			benchling.getFolderEntries(remoteConfig, folderId)
-        ])
+            collection.displayId = this.remoteConfig.folderPrefix + folder.id
+            collection.version = version
+            collection.persistentIdentity = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + collection.displayId
+            collection.uri = collection.persistentIdentity + '/' + collection.version
+            collection.name = folder.name
+            collection.wasDerivedFrom = 'https://benchling.com' //remoteConfig.url + '/folders/' + folder.id
 
-		const [folder, entries] = res
-		const collection = sbol.collection()
+            //collection.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/ice#folderType', folder.type)
 
-		collection.displayId = remoteConfig.folderPrefix + folder.id
-		collection.version = version
-		collection.persistentIdentity = config.get('databasePrefix') + 'public/' + remoteConfig.id + '/' + collection.displayId
-		collection.uri = collection.persistentIdentity + '/' + collection.version
-		collection.name = folder.name
-		collection.wasDerivedFrom = 'https://benchling.com' //remoteConfig.url + '/folders/' + folder.id
+            let componentDefinitions = await Promise.all(entries.map(async (entry) => {
+                let part = await benchling.getPart(this.remoteConfig, entry.id)
+                return await this.partToComponentDefinition(part)
+            }))
 
-		//collection.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/ice#folderType', folder.type)
+            for (let componentDefinition of componentDefinitions) {
+                collection.addMember(componentDefinition)
+            }
 
-		let componentDefinition = await Promise.all(entries.map((entry) => {
-			return benchling.getPart(remoteConfig, entry.id).then(partToComponentDefinition)
-		}))
-
-		for(let componentDefinition of componentDefinitions) {
-			collection.addMember(componentDefinition)
-		}
-
-		return collection
-    }
-
-
-    private async function partToComponentDefinition(part) {
-
-        if(part.hasSequence) {
-
-			let seq = await benchling.getSequence(remoteConfig, part.id)
-			
-			return createSBOL(seq)
-            
-        } else {
-
-            return createSBOL()
-
+            return collection
         }
 
-		function createSBOL() {
+        async function partToComponentDefinition(part) {
 
-			const componentDefinition = sbol.componentDefinition()
-			componentDefinition.displayId = part.id
-			componentDefinition.version = version
-			componentDefinition.persistentIdentity = config.get('databasePrefix') + 'public/' + remoteConfig.id + '/' + componentDefinition.displayId
-			componentDefinition.uri = componentDefinition.persistentIdentity + '/' + componentDefinition.version
-			componentDefinition.name = part.name
-			componentDefinition.description = part.description
-			componentDefinition.wasDerivedFrom = 'https://benchling.com' //'http://benchling.com' + part.editURL //remoteConfig.url + '/sequences/' + part.id
-			var first = true
-			part.aliases.forEach((alias) => {
-				if (alias.startsWith('http://') || alias.startsWith('https://')) {
-					componentDefinition.wasDerivedFrom = alias
-					if (first) {
-						componentDefinition.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#edit', 'http://benchling.com' + part.editURL + '')
-						first = false
-					}
-				} else {
-					componentDefinition.addStringAnnotation('http://www.w3.org/2000/01/rdf-schema#label', alias + '')
-				}
-			})
-			//componentDefinition.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/ice#id', part.id + '')
+            if(part.hasSequence) {
 
-			componentDefinition.addStringAnnotation('http://purl.org/dc/terms/created', new Date(part.createdAt).toISOString() + '')
-			componentDefinition.addStringAnnotation('http://purl.org/dc/terms/modified', new Date(part.modifiedAt).toISOString() + '')
-			componentDefinition.addStringAnnotation('http://purl.org/dc/elements/1.1/creator', part.creator.name + '')
-			componentDefinition.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#color', part.color + '')
+                let seq = await benchling.getSequence(this.remoteConfig, part.id)
+                
+                return createSBOL(seq)
+                
+            } else {
 
-			componentDefinition.addType(SBOLDocument.terms.dnaRegion)
-			if (part.circular) {
-				componentDefinition.addType("http://identifiers.org/so/SO:0000988")
-			} else {
-				componentDefinition.addType("http://identifiers.org/so/SO:0000987")
-			}
-			// TODO: folder, tags, tagSchema, primers, notes
+                return createSBOL()
 
-			const sequence = sbol.sequence()
-			sequence.displayId = componentDefinition.displayId + remoteConfig.sequenceSuffix
-			sequence.version = componentDefinition.version
-			sequence.persistentIdentity = config.get('databasePrefix') + 'public/' + remoteConfig.id + '/' + sequence.displayId
-			sequence.uri = sequence.persistentIdentity + '/' + sequence.version
-			sequence.name = componentDefinition.name + ' sequence'
-			sequence.encoding = SBOLDocument.terms.dnaSequence
-			sequence.elements = part.bases
-			sequence.wasDerivedFrom = 'https://benchling.com' //remoteConfig.url + '/sequences/' + part.id
-			componentDefinition.addSequence(sequence)
+            }
 
-			var annotationNum = 0;
+            function createSBOL(seq?) {
 
-			part.annotations.forEach((annotation) => {
+                const componentDefinition = sbol.componentDefinition()
+                componentDefinition.displayId = part.id
+                componentDefinition.version = version
+                componentDefinition.persistentIdentity = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + componentDefinition.displayId
+                componentDefinition.uri = componentDefinition.persistentIdentity + '/' + componentDefinition.version
+                componentDefinition.name = part.name
+                componentDefinition.description = part.description
+                componentDefinition.wasDerivedFrom = 'https://benchling.com' //'http://benchling.com' + part.editURL //remoteConfig.url + '/sequences/' + part.id
+                var first = true
+                part.aliases.forEach((alias) => {
+                    if (alias.startsWith('http://') || alias.startsWith('https://')) {
+                        componentDefinition.wasDerivedFrom = alias
+                        if (first) {
+                            componentDefinition.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#edit', 'http://benchling.com' + part.editURL + '')
+                            first = false
+                        }
+                    } else {
+                        componentDefinition.addStringAnnotation('http://www.w3.org/2000/01/rdf-schema#label', alias + '')
+                    }
+                })
+                //componentDefinition.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/ice#id', part.id + '')
 
-				const sa = sbol.sequenceAnnotation()
-				sa.displayId = 'annotation' + annotationNum
-				annotationNum++
-				sa.name = annotation.name
-				sa.version = componentDefinition.version
-				sa.persistentIdentity = componentDefinition.persistentIdentity + '/' + sa.displayId
-				sa.uri = sa.persistentIdentity + '/' + componentDefinition.version
-				if (genBankToSO(annotation.type) != "") {
-					sa.addRole(genBankToSO(annotation.type))
-				} else if (genBankToSO(annotation.type.toLowerCase()) != "") {
-					sa.addRole(genBankToSO(annotation.type.toLowerCase()))
-				} else {
-					sa.description = annotation.type
-					sa.addRole("http://identifiers.org/so/SO:0000001")
-				}
-				sa.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#color', annotation.color + '')
+                componentDefinition.addStringAnnotation('http://purl.org/dc/terms/created', new Date(part.createdAt).toISOString() + '')
+                componentDefinition.addStringAnnotation('http://purl.org/dc/terms/modified', new Date(part.modifiedAt).toISOString() + '')
+                componentDefinition.addStringAnnotation('http://purl.org/dc/elements/1.1/creator', part.creator.name + '')
+                componentDefinition.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#color', part.color + '')
 
-				const range = sbol.range()
-				range.displayId = 'range'
-				range.persistentIdentity = sa.persistentIdentity + '/' + range.displayId
-				range.version = componentDefinition.version
-				range.uri = range.persistentIdentity + '/' + range.version
-				range.start = annotation.start
-				// 0 seems to mean the origin
-				if (range.start === 0) {
-					range.start = part.length
-				}
-				range.end = annotation.end
-				if (range.end === 0) {
-					range.end = part.length
-				}
-				// Start after end, so swap
-				if (range.start > range.end) {
-					temp = range.start
-					range.start = range.end
-					range.end = temp
-				}
-				if (annotation.strand === 1) {
-					range.orientation = 'http://sbols.org/v2#inline'
-				} else if (annotation.strand === -1) {
-					range.orientation = 'http://sbols.org/v2#reverseComplement'
-				}
-				sa.addLocation(range)
+                componentDefinition.addType(SBOLDocument.terms.dnaRegion)
+                if (part.circular) {
+                    componentDefinition.addType("http://identifiers.org/so/SO:0000988")
+                } else {
+                    componentDefinition.addType("http://identifiers.org/so/SO:0000987")
+                }
+                // TODO: folder, tags, tagSchema, primers, notes
 
-				componentDefinition.addSequenceAnnotation(sa)
+                const sequence = sbol.sequence()
+                sequence.displayId = componentDefinition.displayId + this.remoteConfig.sequenceSuffix
+                sequence.version = componentDefinition.version
+                sequence.persistentIdentity = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + sequence.displayId
+                sequence.uri = sequence.persistentIdentity + '/' + sequence.version
+                sequence.name = componentDefinition.name + ' sequence'
+                sequence.encoding = SBOLDocument.terms.dnaSequence
+                sequence.elements = part.bases
+                sequence.wasDerivedFrom = 'https://benchling.com' //remoteConfig.url + '/sequences/' + part.id
+                componentDefinition.addSequence(sequence)
 
-			})
+                var annotationNum = 0;
 
-			return componentDefinition
-		}
+                part.annotations.forEach((annotation) => {
 
+                    const sa = sbol.sequenceAnnotation()
+                    sa.displayId = 'annotation' + annotationNum
+                    annotationNum++
+                    sa.name = annotation.name
+                    sa.version = componentDefinition.version
+                    sa.persistentIdentity = componentDefinition.persistentIdentity + '/' + sa.displayId
+                    sa.uri = sa.persistentIdentity + '/' + componentDefinition.version
+                    if (genBankToSO(annotation.type) != "") {
+                        sa.addRole(genBankToSO(annotation.type))
+                    } else if (genBankToSO(annotation.type.toLowerCase()) != "") {
+                        sa.addRole(genBankToSO(annotation.type.toLowerCase()))
+                    } else {
+                        sa.description = annotation.type
+                        sa.addRole("http://identifiers.org/so/SO:0000001")
+                    }
+                    sa.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/benchling#color', annotation.color + '')
+
+                    const range = sbol.range()
+                    range.displayId = 'range'
+                    range.persistentIdentity = sa.persistentIdentity + '/' + range.displayId
+                    range.version = componentDefinition.version
+                    range.uri = range.persistentIdentity + '/' + range.version
+                    range.start = annotation.start
+                    // 0 seems to mean the origin
+                    if (range.start === 0) {
+                        range.start = part.length
+                    }
+                    range.end = annotation.end
+                    if (range.end === 0) {
+                        range.end = part.length
+                    }
+                    // Start after end, so swap
+                    if (range.start > range.end) {
+                        let temp = range.start
+                        range.start = range.end
+                        range.end = temp
+                    }
+                    if (annotation.strand === 1) {
+                        range.orientation = 'http://sbols.org/v2#inline'
+                    } else if (annotation.strand === -1) {
+                        range.orientation = 'http://sbols.org/v2#reverseComplement'
+                    }
+                    sa.addLocation(range)
+
+                    componentDefinition.addSequenceAnnotation(sa)
+
+                })
+
+                return componentDefinition
+            }
+
+        }
     }
+
+
+
+
 }
 
 

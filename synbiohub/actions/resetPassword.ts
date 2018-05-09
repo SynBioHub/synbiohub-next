@@ -1,8 +1,8 @@
 
 
 const pug = require('pug')
-const db = require('../db')
-const config = require('../config')
+import db from 'synbiohub/db'
+import config from 'synbiohub/config'
 
 module.exports = function(req, res) {
 

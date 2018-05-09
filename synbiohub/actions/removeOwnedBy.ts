@@ -1,9 +1,10 @@
-const retrieveUris = require('../retrieveUris');
-const config = require('../config');
-const sparql = require('../sparql/sparql');
-const getUrisFromReq = require('../getUrisFromReq');
-const loadTemplate = require('../loadTemplate');
-const getOwnedBy = require('../query/ownedBy')
+
+import retrieveUris from 'synbiohub/retrieveUris';
+import config from 'synbiohub/config';
+import sparql from 'synbiohub/sparql/sparql';
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import loadTemplate from 'synbiohub/loadTemplate';
+import getOwnedBy from 'synbiohub/query/ownedBy'
 
 module.exports = function (req, res) {
 

@@ -1,5 +1,5 @@
 
-var jobUtils = require('../jobs/job-utils')
+import jobUtils from 'synbiohub/jobs/job-utils'
 
 module.exports = async function(req, res) {
 

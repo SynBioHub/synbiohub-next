@@ -59,6 +59,7 @@
     "stream-meter": "^1.0.4",
     "stream-to-string": "^1.1.0",
     "striptags": "^2.2.1",
+    "timeout-as-promise": "^1.0.0",
     "tmp-promise": "^1.0.3",
     "trie-search": "^1.0.0",
     "uglify-es": "^3.3.10",

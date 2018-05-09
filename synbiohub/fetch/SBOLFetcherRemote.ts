@@ -3,9 +3,10 @@ import SBOLFetcher from "./SBOLFetcher";
 const request = require('request-promise')
 const config = require('../../../config')
 
-export default class SBOLFetcherRemote {
+/*
+export default class SBOLFetcherRemote extends SBOLFetcher {
 
-    async fetchSBOLObjectRecursive(remoteConfig, sbol, type, uri) {
+    async fetchSBOLObjectRecursive(sbol, type, uri) {
 
         let body = await request({
             method: 'get',
@@ -47,3 +48,4 @@ export default class SBOLFetcherRemote {
     }
 
 }
+*/
