@@ -166,7 +166,9 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         } else {
 
-            throw new Error(sbol._rootUri + ' not found')
+            let e = new Error(sbol._rootUri + ' not found')
+            e.name = 'NotFound'
+            throw e
 
         }
 
@@ -223,7 +225,10 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         var n3 = []
 
+        let graphUri = this.graphUri
+
         return await doNextQuery()
+
 
         async function doNextQuery() {
 
@@ -236,7 +241,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
                         '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit].join('\n')
                 //console.log(query)
 
-                let res = await sparql.query(query, this.graphUri, 'text/plain')
+                let res = await sparql.query(query, graphUri, 'text/plain')
 
                 n3.push(res.body)
 
@@ -265,13 +270,21 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
                 '?s ?p ?o .',
                 'FILTER(?s = <' + sbol._rootUri + '>)',
             '}',
+
+
+            // SBH2: no members plz
+            /*
             'UNION',
             '{',
                 '?coll <http://sbols.org/v2#member> ?topLevel .',
                 '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?topLevel .',
                 '?s ?p ?o .',
                 'FILTER(?coll = <' + sbol._rootUri + '>)',
-            '}' /*,
+            '}'*/
+            
+            
+            
+            /*,
             'UNION',
             '{',
                 '?coll <http://sbols.org/v2#member> ?topLevel .',
@@ -305,6 +318,8 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         var rdf = []
 
+        let graphUri = this.graphUri
+
         return await doNextQuery()
 
         async function doNextQuery() {
@@ -317,7 +332,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
                     'CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
                     subquery,
                     '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit
-                ].join('\n'), this.graphUri, 'text/plain')
+                ].join('\n'), graphUri, 'text/plain')
 
                 rdf.push(res.body)
 
@@ -334,7 +349,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
                 fs.unlink(tempFilename)
 
-                return new Promise((resolve, reject) => {
+                return await new Promise((resolve, reject) => {
                     sbol.loadRDF(contents.toString(), (err) => {
 
                         if(err) {
@@ -344,11 +359,11 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
                         const object = sbol.lookupURI(sbol._rootUri)
 
-                        sbol.graphUri = this.graphUri
-                        object.graphUri = this.graphUri
+                        sbol.graphUri = graphUri
+                        object.graphUri = graphUri
 
                         resolve({
-                            graphUri: this.graphUri,
+                            graphUri: graphUri,
                             sbol: sbol,
                             object: object
                         })

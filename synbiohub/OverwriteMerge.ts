@@ -3,8 +3,8 @@ export enum OverwriteMergeOption {
 
     FailIfExists = 0,
     OverwriteIfExists = 1,
-    MergeA = 2,
-    MergeB = 3
+    MergeAndDrop = 2,
+    MergeAndOverwrite = 3
 }
 
 export default class OverwriteMerge {
@@ -22,15 +22,15 @@ export default class OverwriteMerge {
             if (fields.submitType[0] === "new") {
                 overwrite_merge = OverwriteMergeOption.FailIfExists
             } else {
-                overwrite_merge = OverwriteMergeOption.MergeA
+                overwrite_merge = OverwriteMergeOption.MergeAndDrop
             }
 
             if (fields.overwrite_objects && fields.overwrite_objects[0]) {
 
                 if(overwrite_merge === OverwriteMergeOption.FailIfExists) {
                     overwrite_merge = OverwriteMergeOption.OverwriteIfExists
-                } else if(overwrite_merge === OverwriteMergeOption.MergeA) {
-                    overwrite_merge = OverwriteMergeOption.MergeB
+                } else if(overwrite_merge === OverwriteMergeOption.MergeAndDrop) {
+                    overwrite_merge = OverwriteMergeOption.MergeAndOverwrite
                 }
             }
 

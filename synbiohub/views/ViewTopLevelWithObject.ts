@@ -24,7 +24,6 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     object:any
 
 
-    rdfType:any
     sbolUrl:string
     searchUsesUrl:string
     canEdit:boolean
@@ -96,32 +95,9 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     meta:any
      
     protected setTopLevelMetadata(req:Request, meta:any) {
-        if (meta.description != '') {
-            meta.description = wiky.process(meta.description, {})
-        }
-
-        meta.mutableDescriptionSource = meta.mutableDescription.toString() || ''
-        if (meta.mutableDescription.toString() != '') {
-            meta.mutableDescription = shareImages(req, meta.mutableDescription.toString())
-            meta.mutableDescription = wiky.process(meta.mutableDescription.toString(), {})
-        }
-
-        meta.mutableNotesSource = meta.mutableNotes.toString() || ''
-        if (meta.mutableNotes.toString() != '') {
-            meta.mutableNotes = shareImages(req, meta.mutableNotes.toString())
-            meta.mutableNotes = wiky.process(meta.mutableNotes.toString(), {})
-        }
-
-        meta.sourceSource = meta.source.toString() || ''
-        if (meta.source.toString() != '') {
-            meta.source = shareImages(req, meta.source.toString())
-            meta.source = wiky.process(meta.source.toString(), {})
-        }
 
         meta.attachments = attachments.getAttachmentsFromTopLevel(this.sbol, this.object,
             req.url.toString().endsWith('/share'))
-
-        meta.url = '/' + meta.uri.toString().replace(config.get('databasePrefix'), '')
 
         if (this.object.wasGeneratedBy) {
             meta.wasGeneratedBy = {
@@ -129,18 +105,8 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
                 url: uriToUrl(this.object.wasGeneratedBy, req)
             }
         }
-
-        if (req.url.toString().endsWith('/share')) {
-            meta.url += '/' + sha1('synbiohub_' + sha1(meta.uri) + config.get('shareLinkSalt')) + '/share'
-        }
-
-        if (meta.isReplacedBy && meta.isReplacedBy.uri != '') {
-            meta.isReplacedBy.uri = '/' + meta.isReplacedBy.uri.toString().replace(config.get('databasePrefix'), '')
-            meta.isReplacedBy.id = meta.isReplacedBy.uri.toString().replace('/public/', '').replace('/1', '') + ' '
-            meta.isReplacedBy.id = meta.isReplacedBy.id.substring(meta.isReplacedBy.id.indexOf('/') + 1)
-        }
-
-        this.meta = meta
+        
+        super.setTopLevelMetadata(req, meta)
     }
 
 
