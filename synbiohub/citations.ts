@@ -3,7 +3,7 @@ import request = require('request');
 import xml2js = require('xml2js');
 import async = require('async');
 
-export default function retrieveCitations(citations) {
+export default async function retrieveCitations(citations):Promise<any[]> {
 
     /* Parse citation list strings
      */
@@ -19,7 +19,7 @@ export default function retrieveCitations(citations) {
     /* Retrieve citation metadata from pubmed for all citations
      */
 
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
 
         async.map(citations, function(pubmedID, callback) {
 
@@ -47,7 +47,7 @@ export default function retrieveCitations(citations) {
             
             }})
 
-    })
+    }) as any[]
 
 };
 

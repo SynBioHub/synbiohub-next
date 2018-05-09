@@ -271,17 +271,17 @@ export async function uploadSmallFile(graphUri, filename, type) {
 
 export async function uploadFile(graphUri, filename, type) {
 
-    let tempDir = await tmp.dir()
+    let tempDir = (await tmp.dir()).path
 
     console.log('file before splitting ' + filename)
-    console.log('splitting RDF to n3 in temp dir ' + tempDir.path)
+    console.log('splitting RDF to n3 in temp dir ' + tempDir)
 
     await new Promise((resolve, reject) => {
 
-        const splitProcess = spawn('./scripts/split_to_n3.sh', [
+        const splitProcess = spawn(process.cwd() + '/scripts/split_to_n3.sh', [
             filename
         ], {
-            cwd: tempDir.path
+            cwd: tempDir
         })
 
         splitProcess.stderr.on('data', (data) => {
@@ -297,13 +297,15 @@ export async function uploadFile(graphUri, filename, type) {
                 return
             }
 
-            resolve(tempDir.path)
+            resolve(tempDir)
 
         })
 
     })
 
     let files = await fs.readdir(tempDir)
+
+    console.log('files from ' + tempDir + ' are ' + JSON.stringify(files))
 
     var filesToUpload = files.filter(
         (filename) => filename.indexOf('upload_') === 0)
@@ -325,7 +327,7 @@ export async function uploadFile(graphUri, filename, type) {
 
             await uploadSmallFile(graphUri, nextFile, 'text/n3')
             await fs.unlink(nextFile)
-            await uploadNextFile()
+            return await uploadNextFile()
 
         } else {
             return exec('rm -r ' + tempDir);

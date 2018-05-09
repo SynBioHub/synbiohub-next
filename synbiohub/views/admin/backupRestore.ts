@@ -23,24 +23,24 @@ async function restoreBackup(prefix) {
             prefix
         ]
 
-        const process = spawn('./scripts/restore_backup.sh', args)
+        const child = spawn(process.cwd() + '/scripts/restore_backup.sh', args)
 
         var output = []
 
-        process.stdout.on('data', (data) => {
+        child.stdout.on('data', (data) => {
 
             console.log(data.toString())
 
             output.push(data)
         })
 
-        process.stderr.on('data', (data) => {
+        child.stderr.on('data', (data) => {
 
             console.log(data.toString())
 
         })
 
-        process.on('close', (exitCode) => {
+        child.on('close', (exitCode) => {
 
             if(exitCode !== 0) {
                 reject(new Error('restore_backup.sh returned exit code ' + exitCode))
