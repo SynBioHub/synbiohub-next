@@ -17,6 +17,7 @@
         "public",
         "dist",
         "browser",
-        "synbiohub.js"
+        "synbiohub.js",
+        "migrations"
     ]
 }

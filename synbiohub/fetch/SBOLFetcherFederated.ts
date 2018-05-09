@@ -33,18 +33,27 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
 
     async fetchSBOLObjectRecursive(uri: string, type?:string, sbol?:SBOLDocument):Promise<any> {
 
+
+        let errors = []
+
         for(let fetcher of this.fetchers) {
 
             try {
 
-                let res = await fetcher.fetchSBOLObjectRecursive(sbol, type, uri)
+                let res = await fetcher.fetchSBOLObjectRecursive(uri, type, sbol)
 
                 return res
 
             } catch(e) {
-                continue
+                if(e.name === 'NotFound') {
+                    continue
+                } else {
+                    throw e
+                }
             }
         }
+
+        throw new Error('None of the fetchers could get me any SBOL!')
 
     }
 

@@ -5,9 +5,15 @@ import tmp = require('tmp-promise')
 import * as fs from 'mz/fs'
 import serializeSBOL from 'synbiohub/serializeSBOL';
 
+export interface FetchResult {
+    sbol:SBOLDocument
+    object:any
+    remote:any
+}
+
 export default abstract class SBOLFetcher {
 
-    abstract async fetchSBOLObjectRecursive(uri:string, type?:string, intoDocument?:SBOLDocument):Promise<any>;
+    abstract async fetchSBOLObjectRecursive(uri:string, type?:string, intoDocument?:SBOLDocument):Promise<FetchResult>;
 
     //abstract getCollectionMembersRecursive(collectionUri:string, graphUri:string):any;
 

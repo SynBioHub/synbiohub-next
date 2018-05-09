@@ -3,13 +3,6 @@ import MDFetcher from "synbiohub/fetch/MDFetcher";
 
 export default class MDFetcherFederated extends MDFetcher {
 
-    getType(uri: string): Promise<string> {
-        throw new Error("Method not implemented.");
-    }
-    getOwnedBy(uri: string): Promise<string> {
-        throw new Error("Method not implemented.");
-    }
-
     fetchers:Array<MDFetcher>
 
     constructor(fetchers:Array<MDFetcher>) {
@@ -18,6 +11,26 @@ export default class MDFetcherFederated extends MDFetcher {
 
         this.fetchers = fetchers
 
+    }
+
+    async getType(uri: string): Promise<string> {
+        for(let fetcher of this.fetchers) {
+            try {
+                return await fetcher.getType(uri)
+            } catch(e) {
+                continue
+            }
+        }
+    }
+
+    async getOwnedBy(uri: string): Promise<string> {
+        for(let fetcher of this.fetchers) {
+            try {
+                return await fetcher.getOwnedBy(uri)
+            } catch(e) {
+                continue
+            }
+        }
     }
 
     async getComponentDefinitionMetadata(uri: string): Promise<any> {
@@ -80,7 +93,7 @@ export default class MDFetcherFederated extends MDFetcher {
         return collections
     }
 
-    async getContainingCollections(uri: string): Promise<string[]> {
+    async getContainingCollections(uri: string): Promise<any[]> {
 
         let collections = []
 

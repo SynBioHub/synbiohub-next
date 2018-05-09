@@ -11,6 +11,8 @@ import sha1 = require('sha1')
 
 import { Request } from 'express'
 import filterAnnotations from "../filterAnnotations";
+import getCitationsForSubject from "./getCitationsForSubject";
+import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 
 export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
@@ -22,11 +24,14 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     object:any
 
 
+    rdfType:any
     sbolUrl:string
     searchUsesUrl:string
     canEdit:boolean
     remote:any
     annotations:Array<any>
+    submissionCitations:Array<any>
+    collections:Array<any>
 
     async prepare(req:Request) {
 
@@ -74,6 +79,11 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
                 }
             }
         })
+
+        this.submissionCitations = await getCitationsForSubject(this.uriInfo.uri, this.uriInfo.graphUri)
+
+        this.collections = await DefaultMDFetcher.get(req).getContainingCollections(this.uriInfo.uri)
+
     }
 
     async render(res:Response) {

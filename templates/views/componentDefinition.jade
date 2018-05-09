@@ -45,18 +45,6 @@ block topLevelPropertyTable
                         br
                 td
 
-block topLevelBelowTitle
-    if meta.protein && meta.protein.encodedBy !== undefined
-        span
-            | Encoded by
-            for entity in meta.protein.encodedBy
-                a(href=entity.url) #{entity.name}
-    if encodedProteins.length > 0
-        span
-            | Encodes
-            for protein in encodedProteins
-                a(href=protein.url) #{protein.name}
-
 block topLevelButtons
     li.dropdown.btn.btn-primary
         span.fa.fa-search

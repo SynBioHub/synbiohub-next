@@ -8,7 +8,7 @@ import async = require('async');
 import prefixify from 'synbiohub/prefixify';
 import pug = require('pug');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
-import getDisplayList from 'visbol/lib/getDisplayList';
+import getDisplayList = require('visbol/lib/getDisplayList')
 import wiky from 'synbiohub/wiky/wiky.js';
 import config from 'synbiohub/config';
 import { URI } from 'sboljs';
@@ -36,6 +36,10 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
     async prepare(req:Request) {
 
         await super.prepare(req)
+
+        this.rdfType = {
+            name: 'ComponentDefinition'
+        }
 
         this.setTopLevelMetadata(req, sbolmeta.summarizeComponentDefinition(this.object))
 

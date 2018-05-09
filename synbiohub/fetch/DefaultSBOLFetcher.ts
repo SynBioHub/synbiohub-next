@@ -19,7 +19,9 @@ export default class DefaultSBOLFetcher {
             fetchers.push(new SBOLFetcherLocal(req.user.graphUri))
         }
 
-        for(let remote of config.get('remotes')) {
+        for(let _remote of Object.values(config.get('remotes'))) {
+
+            let remote:any = _remote
 
             switch(remote.type) {
 

@@ -9,10 +9,6 @@ import compareMavenVersions from "synbiohub/compareMavenVersions";
 
 export default class MDFetcherLocal extends MDFetcher {
 
-    getOwnedBy(uri: string): Promise<string> {
-        throw new Error("Method not implemented.");
-    }
-
     private graphUri:string
 
     constructor(graphUri:string) {
@@ -21,6 +17,17 @@ export default class MDFetcherLocal extends MDFetcher {
 
         this.graphUri = graphUri
 
+    }
+
+    async getOwnedBy(uri: string): Promise<string> {
+
+        let query = loadTemplate('./sparql/GetOwnedBy.sparql', {
+            topLevel: uri
+        })
+
+        let results = await sparql.queryJson(query, this.graphUri)
+
+        return results.map((result) => result.ownedBy)
     }
 
     async getCollectionMemberCount(uri:string, search?:string):Promise<number> {

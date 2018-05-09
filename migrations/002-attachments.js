@@ -1,8 +1,8 @@
 const Bluebird = require('bluebird');
-const loadTemplate = require('../lib/loadTemplate');
-const db = require('../lib/db');
-const config = require('../lib/config');
-const sparql = require('../lib/sparql/sparql');
+const loadTemplate = require('../dist/synbiohub/loadTemplate')['default'];
+const db = require('../dist/synbiohub/db')['default'];
+const config = require('../dist/synbiohub/config')['default'];
+const sparql = require('../dist/synbiohub/sparql/sparql');
 
 module.exports = {
     up: (query, DataTypes) => {

@@ -1,6 +1,6 @@
 
 import request = require('request-promise')
-import SBOLFetcher from 'synbiohub/fetch/SBOLFetcher';
+import SBOLFetcher, { FetchResult } from 'synbiohub/fetch/SBOLFetcher';
 import n3ToSBOL from 'synbiohub/conversion/n3-to-sbol';
 import saveN3ToRdfXml from 'synbiohub/conversion/save-n3-to-rdfxml';
 
@@ -130,7 +130,9 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
     * TODO: make the recursive crawl fail for things that are obviously too big
     * to resolve everything.
     */
-    async fetchSBOLObjectRecursive(uri:string, type?:string, sbol?:SBOLDocument) {
+    async fetchSBOLObjectRecursive(uri:string, type?:string, sbol?:SBOLDocument):Promise<FetchResult> {
+
+        sbol = sbol || new SBOLDocument()
 
         sbol._resolving = {};
         sbol._rootUri = uri
@@ -358,7 +360,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
         }
     }
 
-    private async getSBOLRecursive(sbol, type) {
+    private async getSBOLRecursive(sbol, type):Promise<FetchResult> {
 
         await this.completePartialDocument(sbol, type, new Set([]))
 
@@ -408,7 +410,8 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         return {
             sbol: sbol,
-            object: sbol.lookupURI(sbol._rootUri)
+            object: sbol.lookupURI(sbol._rootUri),
+            remote: null
         }
     }
 
@@ -493,7 +496,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
             )
 
             if (uri === sbol._rootUri) {
-                if (type !== null) {
+                if (type) {
                     if (type === "TopLevel") {
                         query.push('?s a ?t .')
                         // TODO: the generic top level will not work
@@ -549,11 +552,13 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         var rdf = []
 
+        let graphUri = this.graphUri
+
         return await doQuery()
 
         async function doQuery() {
 
-            let res = await sparql.query(query + ' OFFSET ' + offset + ' LIMIT ' + limit, this.graphUri, 'application/rdf+xml')
+            let res = await sparql.query(query + ' OFFSET ' + offset + ' LIMIT ' + limit, graphUri, 'application/rdf+xml')
 
             countLeft -= limit
             offset += limit

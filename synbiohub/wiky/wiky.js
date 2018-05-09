@@ -18,9 +18,9 @@ wiky.process = function(wikitext, options) {
 	
 	var html = "";
 	
-	for (i=0;i<lines.length;i++)
+	for (var i=0;i<lines.length;i++)
 	{
-		line = lines[i];
+		var line = lines[i];
 		if (line.match(/^===/)!=null && line.match(/===$/)!=null)
 		{
 			html += "<h4>"+line.substring(3,line.length-3)+"</h4>";
