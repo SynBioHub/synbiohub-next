@@ -1,9 +1,9 @@
 
 import config from 'synbiohub/config';
-import pug from 'pug';
+import pug = require('pug');
 import extend = require('xtend')
 import { Parser as SparqlParser } from 'sparqljs';
-import { Generator as SparqlGenerator } from 'sparqljs';
+import { Generator as SparqlGenerator } from 'sparqljs'
 import * as sparql from 'synbiohub/sparql/sparql';
 import checkQuery from 'synbiohub/checkSparqlQuery';
 

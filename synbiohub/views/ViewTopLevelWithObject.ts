@@ -1,13 +1,13 @@
 
 import ViewTopLevel from "synbiohub/views/ViewTopLevel";
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
-import SBOLDocument from 'sboljs'
+import SBOLDocument = require('sboljs')
 import wiky from "synbiohub/wiky/wiky";
 import shareImages from "synbiohub/shareImages";
 import * as attachments from 'synbiohub/attachments'
 import config from "synbiohub/config";
 import uriToUrl from "synbiohub/uriToUrl";
-import sha1 from 'sha1'
+import sha1 = require('sha1')
 
 import { Request } from 'express'
 import filterAnnotations from "../filterAnnotations";

@@ -1,7 +1,7 @@
 
-import sbolmeta from 'sbolmeta';
+import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
-import formatSequence from 'sequence-formatter'
+import formatSequence = require('sequence-formatter')
 
 import { Request, Response } from 'express'
 

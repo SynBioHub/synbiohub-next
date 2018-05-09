@@ -1,7 +1,7 @@
 
 import config from 'synbiohub/config';
 import request = require('request-promise')
-import SBOLDocument from 'sboljs';
+import SBOLDocument = require('sboljs');
 import serializeSBOL from 'synbiohub/serializeSBOL';
 
 async function convertAndValidateSbol(xmlOrSbolDoc, uriPrefix, version) {

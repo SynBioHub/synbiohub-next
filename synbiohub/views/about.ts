@@ -1,5 +1,5 @@
 
-import pug from 'pug';
+import pug = require('pug');
 
 export default function(req, res) {
 

@@ -1,5 +1,5 @@
 
-import tmp from 'tmp-promise'
+import tmp = require('tmp-promise')
 import fs = require( 'mz/fs')
 import zlib = require( 'zlib')
 import shastream = require( 'sha1-stream')

@@ -1,6 +1,6 @@
 
-import pug from 'pug';
-import sbolmeta from 'sbolmeta';
+import pug = require('pug');
+import sbolmeta = require('sbolmeta');
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';

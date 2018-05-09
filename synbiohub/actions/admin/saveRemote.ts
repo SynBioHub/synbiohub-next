@@ -1,6 +1,6 @@
 
 import config from 'synbiohub/config';
-import extend from 'xtend';
+import extend = require('xtend');
 
 export default function (req, res) {
     var create = true;

@@ -1,7 +1,7 @@
 import config from 'synbiohub/config';
 import db from 'synbiohub/db';
-import pug from 'pug';
-import sha1 from 'sha1';
+import pug = require('pug');
+import sha1 = require('sha1');
 
 export default function(req, res) {
     

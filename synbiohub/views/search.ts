@@ -1,4 +1,4 @@
-import pug from 'pug';
+import pug = require('pug');
 import * as search from 'synbiohub/search';
 import config from 'synbiohub/config';
 import SBOLFetcherICE from '../fetch/SBOLFetcherICE';

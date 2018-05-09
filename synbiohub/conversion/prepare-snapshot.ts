@@ -1,6 +1,6 @@
 
 import java from 'synbiohub/java';
-import extend from 'xtend';
+import extend = require('xtend');
 import config from 'synbiohub/config';
 import * as fs from 'mz/fs';
 

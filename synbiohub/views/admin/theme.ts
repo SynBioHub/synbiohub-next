@@ -1,7 +1,7 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import config from 'synbiohub/config';
-import theme from 'synbiohub/theme';
+import * as theme from 'synbiohub/theme';
 import updateLogo from 'synbiohub/actions/admin/updateLogo';
 import updateWor from 'synbiohub/actions/admin/updateWor';
 

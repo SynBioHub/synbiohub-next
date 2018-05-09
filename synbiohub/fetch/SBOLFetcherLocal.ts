@@ -8,7 +8,7 @@ import fs = require('mz/fs')
 
 import SBOLDocument = require('sboljs')
 
-import tmp from 'tmp-promise'
+import tmp = require('tmp-promise')
 
 import * as sparql from 'synbiohub/sparql/sparql'
 import serializeSBOL from 'synbiohub/serializeSBOL';

@@ -1,5 +1,5 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import config from 'synbiohub/config';
 
 export default function(req, res) {

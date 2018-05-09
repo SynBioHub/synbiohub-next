@@ -1,6 +1,6 @@
 
 import config from './config';
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 
 function shareImages(req,wikiText) {
 

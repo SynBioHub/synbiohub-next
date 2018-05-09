@@ -1,7 +1,7 @@
 
 import SBOLDocument = require('sboljs')
 
-import tmp from 'tmp-promise'
+import tmp = require('tmp-promise')
 import * as fs from 'mz/fs'
 import serializeSBOL from 'synbiohub/serializeSBOL';
 

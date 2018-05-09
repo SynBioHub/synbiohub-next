@@ -1,8 +1,8 @@
 
-import pug from 'pug';
-import validator from 'validator';
+import pug = require('pug');
+import validator = require('validator');
 import * as util from 'synbiohub/util';
-import async from 'async';
+import async = require('async');
 import extend = require('xtend')
 import config from 'synbiohub/config';
 import createUser from 'synbiohub/createUser';

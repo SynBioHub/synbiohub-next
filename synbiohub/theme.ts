@@ -1,13 +1,13 @@
 
 import config from './config';
 import * as fs from 'mz/fs';
-import * as path from 'path';
+import * as path from 'path'
 
 var themeName
 var themePath
 var theme
 
-function setCurrentThemeFromConfig() {
+export function setCurrentThemeFromConfig() {
 
     themeName = config.get('theme')
     themePath = path.normalize('./themes/' + themeName)
@@ -20,19 +20,19 @@ function setCurrentThemeFromConfig() {
 
 }
 
-function getCurrentTheme() {
+export function getCurrentTheme() {
 
     return theme
 
 }
 
-function getCurrentThemeName() {
+export function getCurrentThemeName() {
 
     return themeName
 
 }
 
-function generateLess() {
+export function generateLess() {
 
     const outputPath = './public/styles/theme'
 
@@ -83,7 +83,7 @@ function generateLess() {
     }
 }
 
-function getParameterValue(param) {
+export function getParameterValue(param) {
 
     const configParameters = config.get('themeParameters')[themeName] || {}
 
@@ -96,11 +96,4 @@ function getParameterValue(param) {
 
 }
 
-export default {
-    setCurrentThemeFromConfig: setCurrentThemeFromConfig,
-    getCurrentTheme: getCurrentTheme,
-    getCurrentThemeName: getCurrentThemeName,
-    getParameterValue: getParameterValue,
-    generateLess: generateLess
-};
 

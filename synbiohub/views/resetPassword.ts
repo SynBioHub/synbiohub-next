@@ -1,13 +1,13 @@
 
-import pug from 'pug';
-import validator from 'validator';
+import pug = require('pug');
+import validator = require('validator');
 import * as util from 'synbiohub/util';
-import async from 'async';
+import async = require('async');
 import extend = require('xtend')
 import config from 'synbiohub/config';
 import db from 'synbiohub/db';
-import sha1 from 'sha1';
-import uuid from 'uuid';
+import sha1 = require('sha1');
+import uuid = require('uuid');
 import sendResetPasswordMail from 'synbiohub/mail/resetPassword';
 
 export default function(req, res) {

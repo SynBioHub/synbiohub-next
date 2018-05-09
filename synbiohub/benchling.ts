@@ -1,8 +1,8 @@
 
-import SBOLDocument from 'sboljs';
-import request from 'request';
+import SBOLDocument = require('sboljs');
+import request = require('request');
 import config from './config';
-import extend from 'xtend';
+import extend = require('xtend');
 
 export async function getBenchlingJson(remoteConfig, path, qs?):Promise<any> {
 

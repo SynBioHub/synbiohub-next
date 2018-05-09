@@ -1,6 +1,6 @@
 import config from 'synbiohub/config';
 import db from 'synbiohub/db';
-import pug from 'pug';
+import pug = require('pug');
 
 
 export default async function(req, res) {

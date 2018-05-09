@@ -1,7 +1,7 @@
 
 
-import tmp from 'tmp';
-import { spawn } from 'child_process';
+import tmp = require('tmp');
+import { spawn } from 'child_process'
 
 
 /* Takes an array of strings containing n3 triples

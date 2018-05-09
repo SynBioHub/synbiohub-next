@@ -1,7 +1,7 @@
 
-import async from 'async';
+import async = require('async');
 import config from 'synbiohub/config';
-import pug from 'pug';
+import pug = require('pug');
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import topLevel from './topLevel';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';

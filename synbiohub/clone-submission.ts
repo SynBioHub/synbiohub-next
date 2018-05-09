@@ -1,6 +1,6 @@
 
 import java from './java';
-import extend from 'xtend';
+import extend = require('xtend');
 import config from './config';
 
 async function cloneSubmission(inFilename, opts) {

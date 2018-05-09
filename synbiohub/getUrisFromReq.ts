@@ -1,8 +1,8 @@
 
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 import config from './config';
 import * as util from './util';
-import pug from 'pug';
+import pug = require('pug');
 import splitUri from './splitUri';
 
 export interface ReqURIInfo {

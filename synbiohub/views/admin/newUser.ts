@@ -1,11 +1,11 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import config from 'synbiohub/config';
 import createUser from 'synbiohub/createUser';
 import sendCreatePasswordMail from 'synbiohub/mail/createPassword';
 import extend = require('xtend')
 import uuidV4 from 'uuid/v4';
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 
 export default function(req, res) {
     if(req.method === 'POST') {

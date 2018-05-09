@@ -1,6 +1,6 @@
 
 import java from 'synbiohub/java';
-import extend from 'xtend';
+import extend = require('xtend');
 import config from 'synbiohub/config';
 
 async function changeURIPrefix(inFilename, opts) {

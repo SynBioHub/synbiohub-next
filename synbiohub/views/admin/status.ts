@@ -1,6 +1,6 @@
 
-import pug from 'pug';
-import * as os from 'os';
+import pug = require('pug');
+import * as os from 'os'
 import config from 'synbiohub/config';
 
 export default function(req, res) {

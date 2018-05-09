@@ -1,10 +1,10 @@
-import pug from 'pug';
+import pug = require('pug');
 import config from 'synbiohub/config';
 import loadTemplate from 'synbiohub/loadTemplate';
 import db from 'synbiohub/db';
 import * as sparql from 'synbiohub/sparql/sparql';
 import getGraphUriFromTopLevevlUri from 'synbiohub/getGraphUriFromTopLevelUri';
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 
 export default async function (req, res) {
     let databasePrefix = config.get('databasePrefix');

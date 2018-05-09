@@ -1,18 +1,18 @@
 
 import filterAnnotations from 'synbiohub/filterAnnotations';
-import sbolmeta from 'sbolmeta';
+import sbolmeta = require('sbolmeta');
 import shareImages from 'synbiohub/shareImages';
 import loadTemplate from 'synbiohub/loadTemplate';
-import formatSequence from 'sequence-formatter';
-import async from 'async';
+import formatSequence = require('sequence-formatter');
+import async = require('async');
 import prefixify from 'synbiohub/prefixify';
-import pug from 'pug';
+import pug = require('pug');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
 import wiky from 'synbiohub/wiky/wiky.js';
 import config from 'synbiohub/config';
 import { URI } from 'sboljs';
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import uriToUrl from 'synbiohub/uriToUrl';
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';

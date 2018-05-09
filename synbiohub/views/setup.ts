@@ -1,10 +1,10 @@
 
 import extend = require('xtend')
 import config from 'synbiohub/config';
-import validator from 'validator';
+import validator = require('validator')
 import createUser from 'synbiohub/createUser';
-import uuid from 'uuid/v4';
-import theme from 'synbiohub/theme';
+import uuid = require('uuid/v4')
+import * as theme from 'synbiohub/theme';
 import * as fs from 'mz/fs';
 
 export default function (req, res) {
@@ -32,7 +32,7 @@ export default function (req, res) {
 };
 
 
-function setupForm(req, res, settings, locals) {
+async function setupForm(req, res, settings, locals) {
 
     locals = extend({
         config: config.get(),
@@ -45,7 +45,7 @@ function setupForm(req, res, settings, locals) {
 
 }
 
-function setupPost(req, res, settings) {
+async function setupPost(req, res, settings) {
 
     var errors = []
 
@@ -140,7 +140,7 @@ function setupPost(req, res, settings) {
     }))
 
 
-    createUser({
+    let user = await createUser({
 
         username: settings.userName,
         name: settings.userFullName,
@@ -151,31 +151,17 @@ function setupPost(req, res, settings) {
         isCurator: true,
         isMember: true
 
-    }).then((user) => {
-
-        config.set('firstLaunch', false)
-
-        req.session.user = user.id
-
-        return theme.setCurrentThemeFromConfig()
-
-    }).then(() => {
-        req.session.save(() => {
-            res.redirect(req.body.next || '/');
-        })
-    }).catch((err) => {
-
-        errors.push('Could not create user')
-
-        errors.push(err.stack)
-
-        return setupForm(req, res, settings, {
-            errors: errors
-        })
-
     })
 
+    config.set('firstLaunch', false)
 
+    req.session.user = user.id
+
+    await theme.setCurrentThemeFromConfig()
+
+    req.session.save(() => {
+        res.redirect(req.body.next || '/');
+    })
 }
 
 function trim(input) {

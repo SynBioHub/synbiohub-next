@@ -1,5 +1,5 @@
 
-import pug from 'pug'
+import pug = require('pug')
 import * as sparql from 'synbiohub/sparql/sparql'
 import loadTemplate from 'synbiohub/loadTemplate'
 import config from 'synbiohub/config'

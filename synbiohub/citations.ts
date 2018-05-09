@@ -1,7 +1,7 @@
 
-import request from 'request';
-import xml2js from 'xml2js';
-import async from 'async';
+import request = require('request');
+import xml2js = require('xml2js');
+import async = require('async');
 
 export default function retrieveCitations(citations) {
 

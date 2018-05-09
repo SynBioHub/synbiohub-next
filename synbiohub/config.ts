@@ -1,6 +1,6 @@
 
 import * as fs from 'mz/fs';
-import extend from 'xtend';
+import extend = require('xtend');
 import deepmerge = require('deepmerge')
 
 var path = 'config.json'

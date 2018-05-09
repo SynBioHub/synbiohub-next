@@ -1,11 +1,11 @@
 
-import sbolmeta from 'sbolmeta';
+import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
 import config from 'synbiohub/config';
 
-import sha1 from 'sha1'
+import sha1 = require('sha1')
 
 export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
 

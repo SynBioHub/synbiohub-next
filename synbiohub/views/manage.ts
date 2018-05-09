@@ -1,7 +1,7 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import * as search from 'synbiohub/search';
-import async from 'async';
+import async = require('async');
 import config from 'synbiohub/config';
 
 export default function(req, res) {

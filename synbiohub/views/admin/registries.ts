@@ -3,12 +3,12 @@
  *    TODO: Skipped this file in async/await conversion
  */
 
-import pug from 'pug';
+import pug = require('pug');
 
 import * as sparql from 'synbiohub/sparql/sparql';
 import db from 'synbiohub/db';
 import config from 'synbiohub/config';
-import request from 'request';
+import request = require('request');
 
 export default function (req, res) {
 

@@ -1,5 +1,5 @@
 
-import sbolmeta from 'sbolmeta';
+import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'

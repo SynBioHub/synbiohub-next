@@ -1,13 +1,13 @@
 
 import loadTemplate from 'synbiohub/loadTemplate';
-import sbolmeta from 'sbolmeta';
-import async from 'async';
+import sbolmeta = require('sbolmeta');
+import async = require('async');
 import prefixify from 'synbiohub/prefixify';
-import pug from 'pug';
+import pug = require('pug');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
 import config from 'synbiohub/config';
-import striptags from 'striptags';
+import striptags = require('striptags');
 import { URI } from 'sboljs';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';

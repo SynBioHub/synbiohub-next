@@ -1,11 +1,11 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import * as sparql from 'synbiohub/sparql/sparql';
 import config from 'synbiohub/config';
 import isql from 'synbiohub/isql';
 import path = require('path')
 import fs = require('mz/fs')
-import filesize from 'filesize';
+import filesize = require('filesize');
 
 
 

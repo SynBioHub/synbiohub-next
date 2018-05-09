@@ -3,10 +3,10 @@ import loadTemplate from './loadTemplate';
 import sliver from './sliver';
 import config from './config';
 import * as sparql from './sparql/sparql';
-import filesize from 'filesize';
+import filesize = require('filesize');
 import assert = require('assert')
-import { URI } from 'sboljs';
-import sha1 from 'sha1';
+import { URI } from 'sboljs'
+import sha1 = require('sha1');
 import SBOLFetcherLocal from 'synbiohub/fetch/SBOLFetcherLocal';
 
 export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {

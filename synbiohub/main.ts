@@ -1,5 +1,5 @@
 import config from "synbiohub/config";
-import theme from "synbiohub/theme";
+import * as theme from "synbiohub/theme";
 import * as java from "synbiohub/java";
 import App from "synbiohub/app";
 import db from "synbiohub/db";

@@ -186,6 +186,7 @@ var actions = {
     }
 }
 
+/*
 browserifyMiddleware.settings({
     mode: 'production',
     cache: '1 day',
@@ -196,7 +197,9 @@ browserifyMiddleware.settings({
         console.log("Compiled!")
         return UglifyJS.minify(source).code
     },
-})
+})*/
+
+
 
 function App() {
 

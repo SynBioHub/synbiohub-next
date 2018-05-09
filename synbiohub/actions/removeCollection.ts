@@ -1,10 +1,10 @@
-import async from 'async';
-import request from 'request';
+import async = require('async');
+import request = require('request');
 import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import * as sparql from 'synbiohub/sparql/sparql';
-import pug from 'pug';
+import pug = require('pug');
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {

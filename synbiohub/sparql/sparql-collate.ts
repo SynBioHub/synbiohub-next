@@ -1,5 +1,5 @@
 
-import async from 'async';
+import async = require('async');
 import * as sparqlz from 'synbiohub/sparql/sparql';
 
 async function sparql(graphUris, query, callback) {

@@ -1,8 +1,8 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import extend = require('xtend')
 import db from 'synbiohub/db';
-import sha1 from 'sha1';
+import sha1 = require('sha1');
 import config from 'synbiohub/config';
 import apiTokens from 'synbiohub/apiTokens';
 

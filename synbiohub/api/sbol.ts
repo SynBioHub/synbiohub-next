@@ -1,5 +1,5 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';

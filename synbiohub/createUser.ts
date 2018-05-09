@@ -1,6 +1,6 @@
 
-import Sequelize from 'sequelize';
-import sha1 from 'sha1';
+import Sequelize = require('sequelize');
+import sha1 = require('sha1');
 import * as util from './util';
 import config from './config';
 import db from './db';

@@ -1,6 +1,6 @@
 
-import cheerio from 'cheerio';
-import request from 'request';
+import cheerio = require('cheerio');
+import request = require('request');
 
 export default async function getIgemWiki(url) {
 

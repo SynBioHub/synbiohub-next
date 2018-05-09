@@ -1,14 +1,14 @@
 
-import pug from 'pug';
+import pug = require('pug');
 import loadTemplate from 'synbiohub/loadTemplate';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import config from 'synbiohub/config';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
-import multiparty from 'multiparty';
+import multiparty = require('multiparty');
 import uploads from 'synbiohub/uploads';
 import * as attachments from 'synbiohub/attachments';
-import streamToString from 'stream-to-string';
-import SBOLDocument from 'sboljs';
+import streamToString = require('stream-to-string');
+import SBOLDocument = require('sboljs');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';

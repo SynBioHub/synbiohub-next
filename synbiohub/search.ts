@@ -1,8 +1,8 @@
 
 import extend = require('xtend')
-import async from 'async';
+import async = require('async');
 import loadTemplate from './loadTemplate';
-import escape from 'pg-escape';
+import escape = require('pg-escape');
 import prefixify from './prefixify';
 import config from './config';
 import * as sparql from './sparql/sparql';

@@ -1,11 +1,11 @@
-import pug from 'pug';
+import pug = require('pug');
 import * as search from 'synbiohub/search';
 import config from 'synbiohub/config';
 import loadTemplate from 'synbiohub/loadTemplate';
 import * as sparql from 'synbiohub/sparql/sparql';
 import uriToUrl from 'synbiohub/uriToUrl';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
-import sha1 from 'sha1'
+import sha1 = require('sha1')
 
 export default async function (req, res) {
 

@@ -1,5 +1,5 @@
 
-import async from 'async';
+import async = require('async');
 import config from 'synbiohub/config';
 
 //var fastaCollection = require('./fastaCollection')
@@ -11,7 +11,7 @@ import fastaCollection from './fastaCollection';
 
 import fastaSequence from './fastaSequence';
 
-import pug from 'pug';
+import pug = require('pug');
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
