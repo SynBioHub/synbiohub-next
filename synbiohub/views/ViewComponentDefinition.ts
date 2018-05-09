@@ -85,7 +85,7 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
 
         // TODO
         //if (isDNA) {
-            this.displayList = getDisplayList(this.object, config, req.url.toString().endsWith('/share'))
+            this.meta.displayList = getDisplayList(this.object, config, req.url.toString().endsWith('/share'))
         //}
     }
 
