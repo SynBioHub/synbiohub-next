@@ -1,8 +1,8 @@
 const pug = require('pug');
-const db = require('../db');
-const config = require('../config');
-const getUrisFromReq = require('../getUrisFromReq');
-const addOwnedBy = require('../actions/addOwnedBy');
+import db from 'synbiohub/db'
+import config from 'synbiohub/config'
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import addOwnedBy from 'synbiohub/actions/addOwnedBy'
 
 module.exports = function (req, res) {
 

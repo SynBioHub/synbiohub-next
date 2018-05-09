@@ -1,7 +1,7 @@
 import SBOLFetcher from "./SBOLFetcher";
 
 const request = require('request-promise')
-const config = require('../../../config')
+import config from '../config'
 
 /*
 export default class SBOLFetcherRemote extends SBOLFetcher {

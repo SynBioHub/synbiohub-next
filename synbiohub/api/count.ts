@@ -3,7 +3,7 @@ const { getCount } = require('../query/count')
 
 var pug = require('pug')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
 module.exports = function(req, res) {
 

@@ -1,7 +1,7 @@
 
 const pug = require('pug')
 
-const config = require('../../config')
+import config from 'synbiohub/config'
 
 const spawn = require('child_process').spawn
 

@@ -4,11 +4,11 @@ var extend = require('xtend')
 
 const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
 
-const ice = require('../ice')
+import ice from 'synbiohub/ice'
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 exports = module.exports = function(req, res) {
 	

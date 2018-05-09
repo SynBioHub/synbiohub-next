@@ -1,19 +1,19 @@
 
 const pug = require('pug')
 
-const sparql = require('../sparql/sparql')
+import sparql from 'synbiohub/sparql/sparql'
 
-const loadTemplate = require('../loadTemplate')
+import loadTemplate from 'synbiohub/loadTemplate'
 
-const config = require('../config')
+import config from 'synbiohub/config'
 
-const getGraphUriFromTopLevelUri = require('../getGraphUriFromTopLevelUri')
+import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
 
-const wiky = require('../wiky/wiky')
+import wiky from 'synbiohub/wiky/wiky'
 
-var retrieveCitations = require('../citations')
+import retrieveCitations from 'synbiohub/citations'
 
-const getOwnedBy = require('../query/ownedBy')
+import getOwnedBy from 'synbiohub/query/ownedBy'
 
 module.exports = function(req, res) {
 

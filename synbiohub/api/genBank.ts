@@ -4,17 +4,17 @@ const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursi
 
 var sbolmeta = require('sbolmeta')
 
-var serializeSBOL = require('../serializeSBOL')
+import serializeSBOL from 'synbiohub/serializeSBOL'
 
 var request = require('request');
 
 var SBOLDocument = require('sboljs')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
-const convertToGenBank = require('../conversion/convert-to-genbank')
+import convertToGenBank from 'synbiohub/conversion/convert-to-genbank'
 
 const tmp = require('tmp-promise')
 

@@ -14,7 +14,7 @@ const remote = {
     benchling: require('./remote/benchling/collection')
 };
 
-const uriToUrl = require('../uriToUrl')
+import uriToUrl from 'synbiohub/uriToUrl'
 
 export async function getCollectionMemberCount(uri, graphUri, search) {
 

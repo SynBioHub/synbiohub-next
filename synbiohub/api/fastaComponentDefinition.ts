@@ -4,9 +4,9 @@ const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursi
 
 var sbolmeta = require('sbolmeta')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 module.exports = function(req, res) {
 

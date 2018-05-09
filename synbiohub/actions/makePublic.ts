@@ -11,23 +11,23 @@ const {
     fetchSBOLObjectRecursive
 } = require('../fetch/fetch-sbol-object-recursive')
 
-const serializeSBOL = require('../serializeSBOL')
+import serializeSBOL from 'synbiohub/serializeSBOL'
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var loadTemplate = require('../loadTemplate')
+import loadTemplate from 'synbiohub/loadTemplate'
 
 var extend = require('xtend')
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
-var sparql = require('../sparql/sparql')
+import sparql from 'synbiohub/sparql/sparql'
 
 const tmp = require('tmp-promise')
 
 var fs = require('mz/fs');
 
-const prepareSubmission = require('../prepare-submission')
+import prepareSubmission from 'synbiohub/prepare-submission'
 
 export default async function(req, res) {
 

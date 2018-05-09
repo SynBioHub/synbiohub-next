@@ -1,11 +1,11 @@
 
 const { getCollectionMetaData } = require('../query/collection')
 
-var loadTemplate = require('../loadTemplate')
+import loadTemplate from 'synbiohub/loadTemplate'
 
 var pug = require('pug')
 
-var retrieveCitations = require('../citations');
+import retrieveCitations from 'synbiohub/citations'
 
 var fs = require('mz/fs');
 
@@ -17,15 +17,15 @@ var extend = require('xtend')
 
 var uuid = require('uuid');
 
-var serializeSBOL = require('../serializeSBOL')
+import serializeSBOL from 'synbiohub/serializeSBOL'
 
 var request = require('request')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var sparql = require('../sparql/sparql')
+import sparql from 'synbiohub/sparql/sparql'
 
-const prepareSubmission = require('../prepare-submission')
+import prepareSubmission from 'synbiohub/prepare-submission'
 
 const multiparty = require('multiparty')
 
@@ -33,11 +33,11 @@ const tmp = require('tmp-promise')
 
 var collNS = config.get('databasePrefix') + 'public/'
 
-var apiTokens = require('../apiTokens')
+import apiTokens from 'synbiohub/apiTokens'
 
 const sha1 = require("sha1")
-const attachments = require('../attachments')
-const uploads = require('../uploads')
+import attachments from 'synbiohub/attachments'
+import uploads from 'synbiohub/uploads'
 
 var exec = require('child_process').exec;
 

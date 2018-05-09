@@ -4,7 +4,7 @@ var pug = require('pug')
 var sboljs = require('sboljs')
 var async = require('async')
 
-var search = require('../search')
+import search from 'synbiohub/search'
 
 var extend = require('xtend')
 
@@ -16,13 +16,13 @@ var biopaxNS = 'http://www.biopax.org/release/biopax-level3.owl#'
 
 var soNS = 'http://identifiers.org/so/'
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
 var collNS = config.get('databasePrefix') + 'public/'
 
-var sparql = require('../sparql/sparql')
+import sparql from 'synbiohub/sparql/sparql'
 
-const serializeSBOL = require('../serializeSBOL')
+import serializeSBOL from 'synbiohub/serializeSBOL'
 
 module.exports = function(req, res) {
 

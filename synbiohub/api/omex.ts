@@ -1,9 +1,9 @@
 const pug = require('pug')
 const { fetchSBOLSource } = require('../fetch/fetch-sbol-source')
-const serializeSBOL = require('../serializeSBOL')
-const buildCombineArchive = require('../buildCombineArchive')
-const config = require('../config')
-const getUrisFromReq = require('../getUrisFromReq')
+import serializeSBOL from 'synbiohub/serializeSBOL'
+import buildCombineArchive from 'synbiohub/buildCombineArchive'
+import config from 'synbiohub/config'
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 const fs = require('mz/fs')
 
 module.exports = function (req, res) {

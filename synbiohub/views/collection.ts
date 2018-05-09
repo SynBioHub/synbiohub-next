@@ -7,11 +7,11 @@ const { getCollectionMetaData,
     getContainingCollections
 } = require('../query/collection')
 
-const getOwnedBy = require('../query/ownedBy')
+import getOwnedBy from 'synbiohub/query/ownedBy'
 
-var filterAnnotations = require('../filterAnnotations')
+import filterAnnotations from 'synbiohub/filterAnnotations'
 
-var loadTemplate = require('../loadTemplate')
+import loadTemplate from 'synbiohub/loadTemplate'
 
 var sbolmeta = require('sbolmeta')
 
@@ -19,31 +19,31 @@ var formatSequence = require('sequence-formatter')
 
 var async = require('async')
 
-var sparql = require('../sparql/sparql-collate')
+import sparql from 'synbiohub/sparql/sparql-collate'
 
-var prefixify = require('../prefixify')
+import prefixify from 'synbiohub/prefixify'
 
 var pug = require('pug')
 
 var getDisplayList = require('visbol/lib/getDisplayList')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var wiky = require('../wiky/wiky.js');
+import wiky from 'synbiohub/wiky/wiky.js'
 
 var getCitationsForSubject = require('./getCitationsForSubject')
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 var sha1 = require('sha1');
 
-var util = require('../util');
+import util from 'synbiohub/util'
 
-const uriToUrl = require('../uriToUrl')
+import uriToUrl from 'synbiohub/uriToUrl'
 
-const getAttachmentsFromList = require('../attachments')
+import getAttachmentsFromList from 'synbiohub/attachments'
 
-const shareImages = require('../shareImages')
+import shareImages from 'synbiohub/shareImages'
 
 module.exports = function (req, res) {
 

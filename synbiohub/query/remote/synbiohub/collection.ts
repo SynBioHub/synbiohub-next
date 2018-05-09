@@ -1,6 +1,6 @@
 
 const request = require('request-promise')
-const config = require('../../../config')
+import config from 'synbiohub/config'
 
 const { collateArrays } = require('../../collate')
 

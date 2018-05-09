@@ -3,11 +3,11 @@ var { getVersion } = require('../query/version')
 
 var async = require('async')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
 var pug = require('pug')
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 var sbol = require('./sbol')
 

@@ -3,9 +3,9 @@ var pug = require('pug')
 
 const { fetchCollectionFASTA } = require('../fetch/fetch-collection-fasta')
 
-var config = require('../config')
+import config from 'synbiohub/config'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 module.exports = function(req, res) {
 

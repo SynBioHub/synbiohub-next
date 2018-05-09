@@ -6,11 +6,11 @@ const GenericLocation = require('sboljs/lib/GenericLocation')
 
 const request = require('request')
 
-const benchling = require('../../../benchling')
+import benchling from '../benchling'
 
-const splitUri = require('../../../splitUri')
+import splitUri from '../splitUri'
 
-const config = require('../../../config')
+import config from '../config'
 
 const doiRegex = require('doi-regex')
 

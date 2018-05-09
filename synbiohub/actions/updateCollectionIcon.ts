@@ -1,11 +1,11 @@
 
 const fs = require('fs')
-const config = require('../config')
+import config from 'synbiohub/config'
 const extend = require('xtend')
 
-const getOwnedBy = require('../query/ownedBy')
+import getOwnedBy from 'synbiohub/query/ownedBy'
 
-var getUrisFromReq = require('../getUrisFromReq')
+import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 module.exports = function (req, res) {
 
