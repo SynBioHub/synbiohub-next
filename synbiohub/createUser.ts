@@ -1,7 +1,7 @@
 
 import Sequelize from 'sequelize';
 import sha1 from 'sha1';
-import util from './util';
+import * as util from './util';
 import config from './config';
 import db from './db';
 

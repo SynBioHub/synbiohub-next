@@ -2,7 +2,7 @@
 import java from 'synbiohub/java';
 import extend from 'xtend';
 import config from 'synbiohub/config';
-import fs from 'mz/fs';
+import * as fs from 'mz/fs';
 
 async function prepareSnapshot(inFilename, opts) {
 

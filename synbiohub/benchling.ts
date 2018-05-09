@@ -208,7 +208,7 @@ export async function getFolderEntryCount(remoteConfig, folderId) {
 
 }
 
-export async function getFolderEntries(remoteConfig, folderId, offset, limit) {
+export async function getFolderEntries(remoteConfig, folderId, offset?, limit?) {
 
     console.log('getFolderEntries:'+folderId)
 

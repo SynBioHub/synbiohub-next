@@ -4,7 +4,7 @@ var pug = require('pug')
 var sboljs = require('sboljs')
 var async = require('async')
 
-import search from 'synbiohub/search'
+import * as search from 'synbiohub/search'
 
 var extend = require('xtend')
 
@@ -20,11 +20,11 @@ import config from 'synbiohub/config'
 
 var collNS = config.get('databasePrefix') + 'public/'
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 
 import serializeSBOL from 'synbiohub/serializeSBOL'
 
-module.exports = function(req, res) {
+export default function(req, res) {
 
     if(req.method === 'POST') {
 
@@ -38,7 +38,7 @@ module.exports = function(req, res) {
 	
 }
 
-async function advancedSearchForm(req, res, properties, submissionData, locals) {
+async function advancedSearchForm(req, res, properties, submissionData?, locals?) {
 
     var igemStatus = {}
 
@@ -51,7 +51,7 @@ async function advancedSearchForm(req, res, properties, submissionData, locals) 
         errors: []
     }, locals)
 
-    let lists = await getUriList(null)
+    let lists:any = await getUriList(null)
 
     var collectionMeta = { id: '', version: '', name: '', description: '' }
 
@@ -84,7 +84,7 @@ async function advancedSearchPost(req, res) {
     var criteriaStr = ''
     var criteria = []
 
-    let lists = await getUriList(null)
+    let lists:any = await getUriList(null)
 
     var mappedCreators = {};
     var query = '';
@@ -170,7 +170,7 @@ async function advancedSearchPost(req, res) {
     query += req.body.description
     criteria.push(criteriaStr)
 
-    var locals = {
+    var locals:any = {
         config: config.get(),
         section: 'search',
         user: req.user
@@ -180,7 +180,7 @@ async function advancedSearchPost(req, res) {
         limit = 10000
     }
 
-    let searchRes = await search(null, criteria, req.query.offset, limit, req.user)
+    let searchRes = await search.search(null, criteria, req.query.offset, limit, req.user)
 
     const count = searchRes.count
     const results = searchRes.results
@@ -245,7 +245,7 @@ async function advancedSearchPost(req, res) {
     res.send(pug.renderFile('templates/views/search.jade', locals))
 }
 
-function getUriList(graphUri) {
+async function getUriList(graphUri) {
 
     var creatorQuery = 'PREFIX dc: <http://purl.org/dc/elements/1.1/> SELECT DISTINCT ?object WHERE { ?tl dc:creator ?object }'
 

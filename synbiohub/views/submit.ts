@@ -1,6 +1,4 @@
 
-const { getCollectionMetaData } = require('../query/collection')
-
 import loadTemplate from 'synbiohub/loadTemplate'
 
 var pug = require('pug')
@@ -23,7 +21,7 @@ var request = require('request')
 
 import config from 'synbiohub/config'
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 
 import prepareSubmission from 'synbiohub/prepare-submission'
 
@@ -36,12 +34,13 @@ var collNS = config.get('databasePrefix') + 'public/'
 import apiTokens from 'synbiohub/apiTokens'
 
 const sha1 = require("sha1")
-import attachments from 'synbiohub/attachments'
+import * as attachments from 'synbiohub/attachments'
 import uploads from 'synbiohub/uploads'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 var exec = require('child_process').exec;
 
-module.exports = function (req, res) {
+export default function (req, res) {
 
     if (req.method === 'POST') {
 
@@ -118,7 +117,7 @@ async function submitForm(req, res, submissionData, locals) {
 }
 
 
-function submitPost(req, res) {
+async function submitPost(req, res) {
 
     req.setTimeout(0) // no timeout
 
@@ -136,7 +135,7 @@ function submitPost(req, res) {
     var description = ''
     var citations = ''
 
-    form.parse(req, (err, fields, files) => {
+    await form.parse(req, async (err, fields, files) => {
 
         function getUser() {
 
@@ -162,12 +161,14 @@ function submitPost(req, res) {
         let user = await getUser()
 
         // TODO: this code is major hack.  Needs to be cleaned up.
-        collectionChoices = fields.collectionChoices
+        let collectionChoices = fields.collectionChoices
         if (req.forceNoHTML || !req.accepts('text/html')) {
             if (fields.collectionChoices && fields.collectionChoices[0]) {
                 collectionChoices = fields.collectionChoices[0].split(',')
             }
         }
+
+        var overwrite_merge
 
         if (fields.overwrite_merge && fields.overwrite_merge[0]) {
             overwrite_merge = fields.overwrite_merge[0];
@@ -208,7 +209,7 @@ function submitPost(req, res) {
             version: version,
             name: name,
             description: description,
-            citations: citations,
+            citations: [],
             collectionChoices: collectionChoices || [],
             overwrite_merge: overwrite_merge,
             createdBy: req.user ? req.user : user
@@ -274,12 +275,6 @@ function submitPost(req, res) {
 
         }
 
-        const citationRegEx = /^[0-9]+(,[0-9]*)*$/
-        if (submissionData.citation && submissionData.citation.trim() != '' &&
-            !citationRegEx.test(submissionData.citations)) {
-            errors.push('Citations must be comma separated Pubmed IDs')
-        }
-
         if (errors.length > 0) {
             if (req.forceNoHTML || !req.accepts('text/html')) {
                 res.status(500).type('text/plain').send(errors)
@@ -291,8 +286,8 @@ function submitPost(req, res) {
             }
         }
 
-        if (submissionData.citations) {
-            submissionData.citations = submissionData.citations.split(',').map(function (pubmedID) {
+        if (citations) {
+            submissionData.citations = citations.split(',').map(function (pubmedID) {
                 return pubmedID.trim();
             }).filter(function (pubmedID) {
                 return pubmedID !== '';
@@ -308,7 +303,7 @@ function submitPost(req, res) {
 
         uri = collectionUri
 
-        let result = await getCollectionMetaData(uri, graphUri)
+        let result = await DefaultMDFetcher.get(req).getCollectionMetadata(uri)
 
         if (!result) {
 
@@ -331,6 +326,8 @@ function submitPost(req, res) {
 
         const metaData = result
 
+        var uriPrefix
+
         if (submissionData.overwrite_merge === '2' || submissionData.overwrite_merge === '3') {
 
             // Merge
@@ -348,7 +345,7 @@ function submitPost(req, res) {
             uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
             uriPrefix = uriPrefix.substring(0, uriPrefix.lastIndexOf('/') + 1)
 
-            var templateParams = {
+            let templateParams = {
                 collection: uri,
                 uriPrefix: uriPrefix,
                 version: submissionData.version
@@ -358,10 +355,10 @@ function submitPost(req, res) {
 
             await sparql.deleteStaggered(removeQuery, graphUri)
 
-            templateParams = {
+            let templateParams2 = {
                 uri: uri
             }
-            removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
+            removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
             await sparql.deleteStaggered(removeQuery, graphUri)
 
             doSubmission()
@@ -384,7 +381,7 @@ function submitPost(req, res) {
             }
         }
 
-        function saveTempFile() {
+        async function saveTempFile() {
 
             if (files.file) {
 
@@ -401,7 +398,7 @@ function submitPost(req, res) {
             }
         }
 
-        function doSubmission() {
+        async function doSubmission() {
 
             console.log('-- validating/converting');
 
@@ -464,14 +461,17 @@ function submitPost(req, res) {
 
             let sources = {};
 
-            results.forEach(result => {
-                filename = result['source'];
-                uri = result['attachment'];
+            for(let result of results) {
+
+                let filename = result['source'];
+                let uri = result['attachment'];
 
                 sources[filename] = uri;
-            });
+            }
 
-            let attachRes = await Promise.all(Object.keys(attachmentFiles).map(filename => {
+            let filenames = Object.keys(attachmentFiles)
+
+            for(let filename of filenames) {
 
                 if (attachmentFiles[filename] && attachmentFiles[filename].toLowerCase().indexOf("sbol") >= 0)
                     return Promise.resolve()
@@ -506,30 +506,31 @@ function submitPost(req, res) {
                     hash,
                     size,
                     attachmentFiles[originalFilename] || mime,
-                    submissionData.createdBy.username)
-                })
+                    submissionData.createdBy.username
+                )
 
-                badFileUri = "file:" + filename;
-                goodFileUri = attachmentUri
+                let badFileUri = "file:" + filename;
+                let goodFileUri = attachmentUri
 
                 let query = loadTemplate('./sparql/AttachmentUpdate.sparql', { oldUri: badFileUri, newUri: goodFileUri })
                 return sparql.updateQuery(query, submissionData.createdBy.graphUri)
 
-            })
+            }
 
             console.log('rm -r ' + extractDirPath)
             exec('rm -r ' + extractDirPath)
 
-    }).then(() => {
-console.log("unlinking:"+tmpFile)
-        fs.unlink(tmpFile)
-console.log("unlinking:"+resultFilename)
-        fs.unlink(resultFilename)
-        if (req.forceNoHTML || !req.accepts('text/html')) {
-            res.status(200).type('text/plain').send('Successfully uploaded')
-        } else {
-            res.redirect('/manage')
+            console.log("unlinking:" + tmpFile)
+            fs.unlink(tmpFile)
+            console.log("unlinking:" + resultFilename)
+            fs.unlink(resultFilename)
+            if (req.forceNoHTML || !req.accepts('text/html')) {
+                res.status(200).type('text/plain').send('Successfully uploaded')
+            } else {
+                res.redirect('/manage')
+            }
         }
     })
+
 }
 

@@ -1,7 +1,5 @@
 var pug = require('pug')
 
-const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
-
 var sbolmeta = require('sbolmeta')
 
 import serializeSBOL from 'synbiohub/serializeSBOL'
@@ -15,14 +13,15 @@ import config from 'synbiohub/config'
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 import convertToGenBank from 'synbiohub/conversion/convert-to-genbank'
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 const tmp = require('tmp-promise')
 
 var fs = require('mz/fs');
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 
     var sbol
     var componentDefinition
@@ -36,7 +35,7 @@ module.exports = function(req, res) {
         return tmpFilename
     }
 
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     sbol = result.sbol
     componentDefinition = result.object

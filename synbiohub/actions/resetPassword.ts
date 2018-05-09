@@ -4,7 +4,7 @@ const pug = require('pug')
 import db from 'synbiohub/db'
 import config from 'synbiohub/config'
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
     const token = req.params.token.trim()
 

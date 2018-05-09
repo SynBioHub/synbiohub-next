@@ -1,71 +1,49 @@
-import { getType } from 'synbiohub/query/type';
+
 import async from 'async';
 import config from 'synbiohub/config';
-import collection from './collection';
-import componentDefinition from './componentDefinition';
-import moduleDefinition from './moduleDefinition';
-import sequence from './sequence';
-import model from './model';
-import attachment from './attachment';
-import sbolAttachment from './sbolAttachment';
-import genericTopLevel from './genericTopLevel';
-import activity from './activity';
-import agent from './agent';
-import plan from './plan';
-import implementation from './implementation';
-import test from './test';
 import pug from 'pug';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import ViewCollection from 'synbiohub/views/ViewCollection';
+import ViewComponentDefinition from './ViewComponentDefinition';
+import ViewModuleDefinition from 'synbiohub/views/ViewModuleDefinition';
+import ViewSequence from './ViewSequence';
+import ViewModel from './ViewModel';
+import ViewSBOLAttachment from './ViewSBOLAttachment';
+import ViewAttachment from './ViewAttachment';
+import ViewGenericTopLevel from './ViewGenericTopLevel';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId } = getUrisFromReq(req, res);
+    const { graphUri, uri, designId } = getUrisFromReq(req);
 
-    let result = await getType(uri, graphUri)
+    let result = await DefaultMDFetcher.get(req).getType(uri)
 
     console.log(result)
 
-    if(result==='http://sbols.org/v2#Collection') {
-        collection(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#ComponentDefinition') {
-        componentDefinition(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#ModuleDefinition') {
-        moduleDefinition(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#Sequence') {
-        sequence(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#Model') {
-        model(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#Attachment') {
-        sbolAttachment(req, res)
-        return
-    } else if(result==='http://www.w3.org/ns/prov#Activity') {
-        activity(req, res)
-        return
-    } else if(result==='http://www.w3.org/ns/prov#Agent') {
-        agent(req, res)
-        return
-    } else if(result==='http://www.w3.org/ns/prov#Plan') {
-        plan(req, res)
-        return
-    } else if(result==='http://wiki.synbiohub.org/wiki/Terms/synbiohub#Attachment') {
-        attachment(req, res)
-        return
-    } else if(result==='http://sbols.org/v2#Implementation') {
-        implementation(req, res)
-        return
-    } else if(result==='http://intbio.ncl.ac.uk#Test') {
-        test(req, res)
-        return
-    } else {
-        genericTopLevel(req, res)
-        return
+    var view
 
+    if(result==='http://sbols.org/v2#Collection') {
+        view = new ViewCollection()
+    } else if(result==='http://sbols.org/v2#ComponentDefinition') {
+        view = new ViewComponentDefinition()
+    } else if(result==='http://sbols.org/v2#ModuleDefinition') {
+        view = new ViewModuleDefinition()
+    } else if(result==='http://sbols.org/v2#Sequence') {
+        view = new ViewSequence()
+    } else if(result==='http://sbols.org/v2#Model') {
+        view = new ViewModel()
+    } else if(result==='http://sbols.org/v2#Attachment') {
+        view = new ViewSBOLAttachment()
+    } else if(result==='http://wiki.synbiohub.org/wiki/Terms/synbiohub#Attachment') {
+        view = new ViewAttachment()
+    } else {
+        view = new ViewGenericTopLevel()
     }
+
+    await view.prepare(req)
+
+    await view.render(res)
 };
 
 

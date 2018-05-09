@@ -1,14 +1,15 @@
+
 import pug from 'pug';
-import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import sbolmeta from 'sbolmeta';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
     
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol
     const componentDefinition = result.object
@@ -23,12 +24,9 @@ export default async function(req, res) {
                         'xmlns:igem': 'http://synbiohub.org/terms/igem/',
                         'xmlns:genbank': 'http://www.ncbi.nlm.nih.gov/genbank/',
                         'xmlns:annot' : 'http://myannotation.org/',
-                        'xmlns:igem': 'http://parts.igem.org/#',
                         'xmlns:pr' : 'http://partsregistry.org/',
                         'xmlns:grn' : 'urn:bbn.com:tasbe:grn/',
-                        'xmlns:myapp' : 'http://www.myapp.org/',
-                        'xmlns:sbolhub' : 'http://sbolhub.org/',
-                        'xmlns:grn' : 'urn:bbn.com:tasbe:grn/'
+                        'xmlns:myapp' : 'http://www.myapp.org/'
         }))
 };
 

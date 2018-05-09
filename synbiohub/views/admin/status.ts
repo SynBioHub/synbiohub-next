@@ -1,6 +1,6 @@
 
 import pug from 'pug';
-import os from 'os';
+import * as os from 'os';
 import config from 'synbiohub/config';
 
 export default function(req, res) {
@@ -13,8 +13,7 @@ export default function(req, res) {
         nodeVersion: process.version,
         architecture: os.arch(),
         platform: os.type(),
-        osRelease: os.release(),
-        config: config.get()
+        osRelease: os.release()
     }
 	
     res.send(pug.renderFile('templates/views/admin/status.jade', locals))

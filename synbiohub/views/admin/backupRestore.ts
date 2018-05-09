@@ -6,7 +6,7 @@ import config from 'synbiohub/config'
 const spawn = require('child_process').spawn
 
 
-module.exports = function(req, res) {
+export default function(req, res) {
 
     const prefix = req.params.prefix
 

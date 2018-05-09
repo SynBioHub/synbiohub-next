@@ -1,18 +1,18 @@
 
 import pug from 'pug';
-import { fetchSBOLSource } from 'synbiohub/fetch/fetch-sbol-source';
 import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
-import fs from 'mz/fs';
+import * as fs from 'mz/fs';
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 	
-    let tempFilename = await fetchSBOLSource(uri, graphUri)
+    let tempFilename = await DefaultSBOLFetcher.get(req).fetchSBOLSource(uri)
 
     res.status(200).type('application/rdf+xml')
         //.set({ 'Content-Disposition': 'attachment; filename=' + collection.name + '.xml' })

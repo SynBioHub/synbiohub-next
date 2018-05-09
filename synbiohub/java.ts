@@ -1,21 +1,5 @@
 
 
-if(process.env.SBH_NO_JAVA) {
-
-	function nop() {
-		return Promise.resolve(true)
-	}
-
-
-	nop.init = nop
-	nop.shutdown = nop
-
-	module.exports = nop
-
-	return
-
-}
-
 const extend = require('xtend')
 const config = require('./config')
 
@@ -67,14 +51,14 @@ javaProcess.on('close', (exitCode) => {
 
 var jobId = 0
 
-function java(jobType, paramObj) {
+export default async function java(jobType, paramObj):Promise<any> {
 
     const job = extend(paramObj, {
         id: ++ jobId,
         type: jobType
     })
 
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
 
         javaProcess.stdin.write(JSON.stringify(job))
         javaProcess.stdin.write(EOT)
@@ -97,7 +81,7 @@ function java(jobType, paramObj) {
 
 }
 
-function init() {
+export function init() {
 
     return java('initialize', {}).then((result) => {
 
@@ -107,7 +91,7 @@ function init() {
 
 }
 
-function shutdown() {
+export function shutdown() {
 
     return new Promise((resolve, reject) => {
 
@@ -126,10 +110,6 @@ function shutdown() {
     })
 }
 
-java.init = init
-java.shutdown = shutdown
-
-module.exports = java
 
 
 

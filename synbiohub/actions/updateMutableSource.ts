@@ -1,7 +1,7 @@
 
 const pug = require('pug')
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 
 import loadTemplate from 'synbiohub/loadTemplate'
 
@@ -10,10 +10,9 @@ import config from 'synbiohub/config'
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
 
 import wiky from 'synbiohub/wiky/wiky'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
-import getOwnedBy from 'synbiohub/query/ownedBy'
-
-module.exports = function(req, res) {
+export default async function(req, res) {
 
     const uri = req.body.uri
 
@@ -36,7 +35,7 @@ module.exports = function(req, res) {
 	modified: JSON.stringify(modified)
     })
 
-    let ownedBy = await getOwnedBy(uri, graphUri)
+    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
         res.status(401).send('not authorized to edit this submission')

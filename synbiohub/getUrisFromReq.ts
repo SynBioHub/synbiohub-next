@@ -15,7 +15,7 @@ export interface ReqURIInfo {
     edit:boolean
 }
 
-export default function getUrisFromReq(req:any, res:any): ReqURIInfo {
+export default function getUrisFromReq(req:any): ReqURIInfo {
 
     var graphUri:string
     var uri:string
@@ -75,14 +75,7 @@ export default function getUrisFromReq(req:any, res:any): ReqURIInfo {
         const remoteConfig = config.get('remotes')[submissionId]
 
         if (remoteConfig && !remoteConfig.public && !(req.user && req.user.isMember)) {
-
-            var locals = {
-                config: config.get(),
-                section: 'errors',
-                user: req.user,
-                errors: ['Permission Denied']
-            }
-            res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
+            throw new Error('permission denied')
         }
 
     } else {
@@ -108,4 +101,3 @@ export default function getUrisFromReq(req:any, res:any): ReqURIInfo {
         edit: edit
     }
 }
-

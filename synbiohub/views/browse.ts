@@ -1,14 +1,15 @@
 import pug from 'pug';
-import search from 'synbiohub/search';
+import * as search from 'synbiohub/search';
 import config from 'synbiohub/config';
 import loadTemplate from 'synbiohub/loadTemplate';
 import * as sparql from 'synbiohub/sparql/sparql';
-import { getRootCollectionMetadata } from 'synbiohub/query/collection';
 import uriToUrl from 'synbiohub/uriToUrl';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import sha1 from 'sha1'
 
 export default async function (req, res) {
 
-    let collections = await getRootCollectionMetadata(null, req.user)
+    let collections = await DefaultMDFetcher.get(req).getRootCollectionMetadata()
 
     const collectionIcons = config.get('collectionIcons');
 
@@ -19,7 +20,7 @@ export default async function (req, res) {
         collection.url = uriToUrl(collection.uri);
 
         if (req.url.endsWith('/share')) {
-            url += '/' + sha1('synbiohub_' + sha1(collection.uri) + config.get('shareLinkSalt')) + '/share';
+            collection.url += '/' + sha1('synbiohub_' + sha1(collection.uri) + config.get('shareLinkSalt')) + '/share';
         };
 
         collection.icon = collectionIcons[collection.uri];

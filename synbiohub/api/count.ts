@@ -1,13 +1,12 @@
 
-const { getCount } = require('../query/count')
-
 var pug = require('pug')
 
 import config from 'synbiohub/config'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
-    let result = await getCount(req.params.type, null)
+    let result = await DefaultMDFetcher.get(req).getCount(req.params.type)
 
     res.header('content-type', 'text/plain').send(result.toString())
 }

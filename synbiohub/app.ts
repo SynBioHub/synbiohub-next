@@ -20,34 +20,30 @@ import browse from './views/browse';
 import login from './views/login';
 import logout from './views/logout';
 import register from './views/register';
-import resetPassword from './views/resetPassword';
-import editProfile from './views/editProfile';
-import search from './views/search';
+import viewResetPassword from './views/resetPassword';
+import viewEditProfile from './views/editProfile';
+import viewSearch from './views/search';
 import advancedSearch from './views/advancedSearch';
-import submit from './views/submit';
+import viewSubmit from './views/submit';
 import manage from './views/manage';
 import topLevel from './views/topLevel';
-import persistentIdentity from './views/persistentIdentity';
+import persistentIdentityView from './views/persistentIdentity';
 import setup from './views/setup';
-import dataIntegration from './views/dataIntegration';
-import jobs from './views/jobs';
-import * as sparql from './views/sparql';
+import sparqlView from './views/sparql';
 import addOwner from './views/addOwner';
 import shared from './views/shared';
 import visualization from './views/visualization';
-import implementation from './views/implementation';
 import editProfile from './views/editProfile';
 import userProfile from './views/userProfile';
-import org from './views/orgProfile';
 import general from './views/admin/general';
 import status from './views/admin/status';
 import graphs from './views/admin/graphs';
-import * as sparql from './views/admin/sparql';
+import sparqlAdmin from './views/admin/sparql';
 import remotes from './views/admin/remotes';
 import users from './views/admin/users';
 import newUser from './views/admin/newUser';
 import update from './views/admin/update';
-import jobs from './views/admin/jobs';
+import adminJobs from './views/admin/jobs';
 import theme from './views/admin/theme';
 import backup from './views/admin/backup';
 import backupRestore from './views/admin/backupRestore';
@@ -61,40 +57,34 @@ var views = {
     login,
     logout,
     register,
-    resetPassword,
-    editProfile,
-    search,
+    resetPassword: viewResetPassword,
+    search: viewSearch,
     advancedSearch,
-    submit,
+    submit: viewSubmit,
     manage,
     topLevel,
     persistentIdentity,
     setup,
-    dataIntegration,
-    jobs,
-    sparql,
+    sparql: sparqlView,
     addOwner,
     shared,
     visualization,
-    implementation,
 
 
-    editProfile,
+    editProfile: viewEditProfile,
 
     userProfile,
-    org,
 
 
     admin: {
         general,
         status,
         graphs,
-        sparql,
+        sparql: sparqlAdmin,
         remotes,
         users,
         newUser,
         update,
-        jobs,
         theme,
         backup,
         backupRestore,
@@ -103,9 +93,6 @@ var views = {
     }
 }
 
-console.log(views.implementation)
-
-import search from './api/search';
 import sbol from './api/sbol';
 import omex from './api/omex';
 import persistentIdentity from './api/persistentIdentity';
@@ -118,11 +105,10 @@ import rootCollections from './api/rootCollections';
 import subCollections from './api/subCollections';
 import download from './api/download';
 import datatables from './api/datatables';
-import * as sparql from './api/sparql';
+import sparqlApi from './api/sparql';
 import updateWebOfRegistries from './api/updateWebOfRegistries';
 
 var api = {
-    search,
     sbol,
     omex,
     persistentIdentity,
@@ -135,7 +121,7 @@ var api = {
     subCollections,
     download,
     datatables,
-    sparql,
+    sparql: sparqlApi,
     updateWebOfRegistries
 }
 
@@ -145,7 +131,7 @@ import createBenchlingSequence from './actions/createBenchlingSequence';
 import createICEPart from './actions/createICEPart';
 import removeCollection from './actions/removeCollection';
 import cloneSubmission from './actions/cloneSubmission';
-import resetPassword from './actions/resetPassword';
+import actionResetPassword from './actions/resetPassword';
 import setNewPassword from './actions/setNewPassword';
 import remove from './actions/remove';
 import createImplementation from './actions/createImplementation';
@@ -154,8 +140,6 @@ import updateMutableDescription from './actions/updateMutableDescription';
 import updateMutableNotes from './actions/updateMutableNotes';
 import updateMutableSource from './actions/updateMutableSource';
 import updateCitations from './actions/updateCitations';
-import cancelJob from './actions/cancelJob';
-import restartJob from './actions/restartJob';
 import upload from './actions/upload';
 import createSnapshot from './actions/createSnapshot';
 import updateCollectionIcon from './actions/updateCollectionIcon';
@@ -178,7 +162,7 @@ var actions = {
     createICEPart,
     removeCollection,
     cloneSubmission,
-    resetPassword,
+    resetPassword: actionResetPassword,
     setNewPassword,
     remove,
     createImplementation,
@@ -187,8 +171,6 @@ var actions = {
     updateMutableNotes,
     updateMutableSource,
     updateCitations,
-    cancelJob,
-    restartJob,
     upload,
     createSnapshot,
     updateCollectionIcon,
@@ -296,15 +278,6 @@ function App() {
 
     initSSE(app)
 
-    if (config.get('experimental').dataIntegration) {
-        app.get('/jobs', requireUser, views.jobs)
-        app.post('/actions/job/cancel', requireUser, actions.cancelJob)
-        app.post('/actions/job/restart', requireUser, actions.restartJob)
-        app.get('/admin/jobs', requireAdmin, views.admin.jobs);
-        app.all('/user/:userId/:collectionId/:displayId/:version([^\\.]+)/integrate', requireUser, views.dataIntegration);
-        app.all('/public/:collectionId/:displayId/:version([^\\.]+)/integrate', views.dataIntegration);
-    }
-
     app.get('/', views.index);
     app.get('/about', views.about);
 
@@ -349,9 +322,6 @@ function App() {
     app.get('/manage', requireUser, views.manage);
 
     app.get('/shared', requireUser, views.shared);
-
-    // app.get('/implementation/', requireUser, views.implementation)
-    app.get('/user/:userId/:collectionId/:displayId/:version/implementation', requireUser, views.implementation); //TODO FIX URL
 
     app.get('/api/datatables', bodyParser.urlencoded({ extended: true }), api.datatables)
 

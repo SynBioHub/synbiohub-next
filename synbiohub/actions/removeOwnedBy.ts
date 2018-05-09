@@ -1,16 +1,16 @@
 
 import retrieveUris from 'synbiohub/retrieveUris';
 import config from 'synbiohub/config';
-import sparql from 'synbiohub/sparql/sparql';
+import * as sparql from 'synbiohub/sparql/sparql';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import loadTemplate from 'synbiohub/loadTemplate';
-import getOwnedBy from 'synbiohub/query/ownedBy'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
-module.exports = function (req, res) {
+export default async function (req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res);
+    const { graphUri, uri, designId, share } = getUrisFromReq(req);
 
-    let ownedBy = await getOwnedBy(uri, graphUri)
+    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
         res.status(401).send('not authorized to remove an owner')
@@ -34,7 +34,7 @@ module.exports = function (req, res) {
 
     let result = await sparql.updateQuery(sharedRemovalQuery, req.body.userUri)
 
-    return await Promise.all(chunks.map(chunk => {
+    return await Promise.all(chunks.map(async (chunk) => {
 
         let uris = chunk.map(uri => {
             return '<' + uri + '> sbh:ownedBy <' + req.body.userUri + '>';
@@ -47,7 +47,8 @@ module.exports = function (req, res) {
         await sparql.updateQuery(updateQuery, graphUri)
 
         res.redirect(share);
-    }
+    }))
+
 }
 
 

@@ -3,15 +3,16 @@ const fs = require('fs')
 import config from 'synbiohub/config'
 const extend = require('xtend')
 
-import getOwnedBy from 'synbiohub/query/ownedBy'
-
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
-module.exports = function (req, res) {
+import pug = require('pug')
 
-    const { graphUri, uri, designId } = getUrisFromReq(req, res)
+export default async function (req, res) {
 
-    let ownedBy = await getOwnedBy(uri, graphUri)
+    const { graphUri, uri, designId } = getUrisFromReq(req)
+
+    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
         //res.status(401).send('not authorized to edit this submission')
@@ -25,7 +26,7 @@ module.exports = function (req, res) {
     }
 
     if (req.file) {
-        iconFile = req.file
+        let iconFile = req.file
 
         var collectionIcons = config.get('collectionIcons')
         const iconFilename = 'public/local/' + iconFile.originalname

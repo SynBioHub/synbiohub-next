@@ -4,15 +4,14 @@ import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import * as sparql from 'synbiohub/sparql/sparql';
-import getOwnedBy from 'synbiohub/query/ownedBy';
 import pug from 'pug';
-import { getType } from 'synbiohub/query/type';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId, edit } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, edit } = getUrisFromReq(req)
 
     var uriPrefix = uri.substring(0,uri.lastIndexOf('/')+1)
 
@@ -22,14 +21,14 @@ export default async function(req, res) {
 
     var removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
 
-    var type = await getType(uri, graphUri)
+    var type = await DefaultMDFetcher.get(req).getType(uri)
 
     if (type == 'http://sbols.org/v2#Implementation'){
 
       var removeQuery = loadTemplate('sparql/removeImplementation.sparql', templateParams)
     }
 
-    var ownedBy = await getOwnedBy(uri, graphUri)
+    var ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if(!edit && (!req.user || !req.user.username ||
       ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1)) {

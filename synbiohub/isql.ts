@@ -53,5 +53,5 @@ export default function isql(commands) {
     })
 }
 
-module.exports = isql
+export default isql
 

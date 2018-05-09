@@ -4,14 +4,14 @@ import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import * as sparql from 'synbiohub/sparql/sparql';
-import getOwnedBy from 'synbiohub/query/ownedBy';
 import pug from 'pug';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId } = getUrisFromReq(req)
 
     if (!graphUri && !config.get('removePublicEnabled')) {
 
@@ -30,7 +30,7 @@ export default async function(req, res) {
 
     var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
 
-    let ownedBy = await getOwnedBy(uri, graphUri)
+    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if(ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
         //res.status(401).send('not authorized to edit this submission')
@@ -45,10 +45,10 @@ export default async function(req, res) {
 
     await sparql.deleteStaggered(removeQuery, graphUri)
 
-    templateParams = {
-            uri: uri
+    let templateParams2 = {
+        uri: uri
     }
-    removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
+    removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
 
     await sparql.deleteStaggered(removeQuery, graphUri)
     

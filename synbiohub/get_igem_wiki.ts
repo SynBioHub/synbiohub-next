@@ -4,7 +4,7 @@ import request from 'request';
 
 export default async function getIgemWiki(url) {
 
-    var ret = {}
+    var ret:any = {}
 
     await Promise.all([
 

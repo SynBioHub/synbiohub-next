@@ -6,7 +6,7 @@ import * as sparql from 'synbiohub/sparql/sparql';
 import getGraphUriFromTopLevevlUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import sha1 from 'sha1';
 
-export default function (req, res) {
+export default async function (req, res) {
     let databasePrefix = config.get('databasePrefix');
     let userUri = databasePrefix + 'user/' + req.user.username;
     let values = {
@@ -15,40 +15,36 @@ export default function (req, res) {
 
     const sharedCollectionQuery = loadTemplate('./sparql/GetSharedCollection.sparql', values);
 
-    sparql.queryJson(sharedCollectionQuery, req.user.graphUri).then(results => {
+    let results = await sparql.queryJson(sharedCollectionQuery, req.user.graphUri)
         
-        return Promise.all(results.map(result => {
-            let objectGraph = getGraphUriFromTopLevevlUri(result.object, req.user);
-            let queryParameters = {
-                uri: result.object
-            };
-
-            let metadataQuery = loadTemplate('./sparql/GetTopLevelMetadata.sparql', queryParameters);
-            return sparql.queryJson(metadataQuery, objectGraph).then(result => {console.log(result); return result;});
-        }))
-        
-    }).then(objects => {
-        let collated = [];
-
-        objects.forEach(array  => {
-            array.forEach(object => {
-                object.uri = object.persistentIdentity + '/' + object.version;
-                object.url = '/' + object.uri.toString().replace(databasePrefix, '') + '/' + sha1('synbiohub_' + sha1(object.uri) + config.get('shareLinkSalt')) + '/share';
-
-                delete object.object;
-                collated.push(object);
-            })
-        })
-        
-        let locals = {
-            config: config.get(),
-            section: 'shared',
-            user: req.user,
-            searchResults: collated
+    let objects = await Promise.all(results.map(result => {
+        let objectGraph = getGraphUriFromTopLevevlUri(result.object, req.user);
+        let queryParameters = {
+            uri: result.object
         };
 
-        res.send(pug.renderFile('templates/views/shared.jade', locals));
+        let metadataQuery = loadTemplate('./sparql/GetTopLevelMetadata.sparql', queryParameters);
+        return sparql.queryJson(metadataQuery, objectGraph).then(result => { console.log(result); return result; });
+    }))
+        
+    let collated = [];
+
+    objects.forEach(array  => {
+        ;(array as Array<any>).forEach(object => {
+            object.uri = object.persistentIdentity + '/' + object.version;
+            object.url = '/' + object.uri.toString().replace(databasePrefix, '') + '/' + sha1('synbiohub_' + sha1(object.uri) + config.get('shareLinkSalt')) + '/share';
+
+            delete object.object;
+            collated.push(object);
+        })
     })
+    
+    let locals = {
+        config: config.get(),
+        section: 'shared',
+        user: req.user,
+        searchResults: collated
+    };
 
-
-};
+    res.send(pug.renderFile('templates/views/shared.jade', locals));
+}

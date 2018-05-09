@@ -6,7 +6,7 @@ import validator from 'validator';
 import createUser from 'synbiohub/createUser';
 import uuid from 'uuid/v4';
 import theme from 'synbiohub/theme';
-import fs from 'fs';
+import * as fs from 'mz/fs';
 
 export default function (req, res) {
 

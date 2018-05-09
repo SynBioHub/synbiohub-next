@@ -6,13 +6,12 @@ import config from 'synbiohub/config';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import multiparty from 'multiparty';
 import uploads from 'synbiohub/uploads';
-import attachments from 'synbiohub/attachments';
+import * as attachments from 'synbiohub/attachments';
 import streamToString from 'stream-to-string';
-import fetchSBOLObjectRecursive from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import SBOLDocument from 'sboljs';
 import * as sparql from 'synbiohub/sparql/sparql-collate';
-import getOwnedBy from 'synbiohub/query/ownedBy';
 import getAttachmentsForSubject from 'synbiohub/views/getAttachmentsForSubject'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function (req, res) {
 
@@ -20,9 +19,9 @@ export default async function (req, res) {
 
 	const form = new multiparty.Form()
 
-	const { graphUri, uri, designId, share, url, baseUri } = getUrisFromReq(req, res)
+	const { graphUri, uri, designId, share, url, baseUri } = getUrisFromReq(req)
 
-	let ownedBy = await getOwnedBy(uri, graphUri)
+	let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
 	if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
 		return res.status(401).send('not authorized to edit this submission')

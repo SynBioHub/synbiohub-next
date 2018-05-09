@@ -1,16 +1,16 @@
+
 var pug = require('pug')
 
 var extend = require('xtend')
 
-const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
-
-import ice from 'synbiohub/ice'
+import * as ice from 'synbiohub/ice'
 
 import config from 'synbiohub/config'
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
-exports = module.exports = function(req, res) {
+export default async function(req, res) {
 	
     var iceRemote = config.get("defaultICEInstance")
 
@@ -29,28 +29,28 @@ exports = module.exports = function(req, res) {
 		})
 	    }
 	
-	    if (iceRemotes.length > 1) {
-		locals = {
-		    config: config.get(),
-		    section: 'createICEPart',
-		    user: req.user,
-		    iceRemotes: iceRemotes,
-		    submission: {}
+		if (iceRemotes.length > 1) {
+			let locals = {
+				config: config.get(),
+				section: 'createICEPart',
+				user: req.user,
+				iceRemotes: iceRemotes,
+				submission: {}
+			}
+			res.send(pug.renderFile('templates/views/selectICERemote.jade', locals))
+			return
 		}
-		res.send(pug.renderFile('templates/views/selectICERemote.jade', locals))
-		return
-	    }
 
-	    if (iceRemotes.length === 0) {
-		const locals = {
-		    config: config.get(),
-		    section: 'errors',
-		    user: req.user,
-		    errors: [ 'No ICE remote instances configured' ]
+		if (iceRemotes.length === 0) {
+			let locals = {
+				config: config.get(),
+				section: 'errors',
+				user: req.user,
+				errors: ['No ICE remote instances configured']
+			}
+			res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
+			return
 		}
-		res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
-		return
-	    }
 	    
 	    if (iceRemotes.length === 1) {
 		iceRemote = iceRemotes[0].id
@@ -60,9 +60,9 @@ exports = module.exports = function(req, res) {
 	    iceRemote = req.body.iceRemote
 	}
     }
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
     
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
 	const sbol = result.sbol
 	const componentDefinition = result.object

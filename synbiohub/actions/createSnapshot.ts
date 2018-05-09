@@ -1,17 +1,17 @@
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import splitUri from 'synbiohub/splitUri';
-import { fetchSBOLSource } from 'synbiohub/fetch/fetch-sbol-source';
 import prepareSnapshot from 'synbiohub/conversion/prepare-snapshot';
-import fs from 'mz/fs';
+import fs = require('mz/fs');
 import * as sparql from 'synbiohub/sparql/sparql';
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 export default async function(req, res) {
 
-    const { uri, graphUri, baseUri } = getUrisFromReq(req, res)
+    const { uri, graphUri, baseUri } = getUrisFromReq(req)
     const { displayId } = splitUri(uri)
 
-    let tempFilename = await fetchSBOLSource(uri, graphUri)
+    let tempFilename = await DefaultSBOLFetcher.get(req).fetchSBOLSource(uri)
 
     let result = await prepareSnapshot(tempFilename, {
         version: new Date().getTime() + '_snapshot',

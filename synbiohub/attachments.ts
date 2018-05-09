@@ -1,3 +1,4 @@
+
 import loadTemplate from './loadTemplate';
 import sliver from './sliver';
 import config from './config';
@@ -6,9 +7,9 @@ import filesize from 'filesize';
 import assert = require('assert')
 import { URI } from 'sboljs';
 import sha1 from 'sha1';
-import fetchSBOLObjectRecursive from './fetch/fetch-sbol-object-recursive';
+import SBOLFetcherLocal from 'synbiohub/fetch/SBOLFetcherLocal';
 
-function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {
+export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {
 
     //console.log('Adding:'+name+' to:'+topLevelUri)
     const displayId = 'attachment_' + sliver.getId()
@@ -42,7 +43,7 @@ function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHas
     })
 }
 
-function updateAttachment(graphUri, attachmentURI, uploadHash, size) {
+export function updateAttachment(graphUri, attachmentURI, uploadHash, size) {
 
     //console.log('Adding:'+name+' to:'+topLevelUri)
     // TODO: should get version from topLevelUri
@@ -59,7 +60,7 @@ function updateAttachment(graphUri, attachmentURI, uploadHash, size) {
     })
 }
 
-function getTypeFromExtension(filename) {
+export function getTypeFromExtension(filename) {
 
     const extension = filename.slice(filename.lastIndexOf('.') + 1)
 
@@ -68,7 +69,7 @@ function getTypeFromExtension(filename) {
 
 }
 
-function getAttachmentsFromTopLevel(sbol, topLevel, share) {
+export function getAttachmentsFromTopLevel(sbol, topLevel, share) {
 
     const attachments = []
 
@@ -118,17 +119,17 @@ function getAttachmentsFromTopLevel(sbol, topLevel, share) {
 }
 
 
-function getAttachmentsFromList(graphUri, attachmentList, share) {
+export function getAttachmentsFromList(graphUri, attachmentList, share) {
 
     return Promise.all(
         attachmentList.map((attachmentURI) => {
 
             var uri = attachmentURI.attachment
 
-            return fetchSBOLObjectRecursive(uri, graphUri).then((result) => {
+            return new SBOLFetcherLocal(graphUri).fetchSBOLObjectRecursive(uri).then((result) => {
 
-                sbol = result.sbol
-                attachment = result.object
+                let sbol = result.sbol
+                let attachment = result.object
 
                 if (attachment) {
                     let format = attachment.format || attachment.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
@@ -174,11 +175,3 @@ function getAttachmentsFromList(graphUri, attachmentList, share) {
         return Promise.resolve(attachments)
     })
 }
-
-export default {
-    addAttachmentToTopLevel: addAttachmentToTopLevel,
-    updateAttachment: updateAttachment,
-    getTypeFromExtension: getTypeFromExtension,
-    getAttachmentsFromTopLevel: getAttachmentsFromTopLevel,
-    getAttachmentsFromList: getAttachmentsFromList
-};

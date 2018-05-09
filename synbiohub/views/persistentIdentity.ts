@@ -1,5 +1,4 @@
 
-import { getVersion } from 'synbiohub/query/version';
 import async from 'async';
 import config from 'synbiohub/config';
 import pug from 'pug';

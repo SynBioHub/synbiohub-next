@@ -27,8 +27,6 @@ function updateCache() {
 
     sparql.queryJson(query, null).then((results) => {
 
-        titleToUri = []
-
         queryTimer()
 
         const populateTitleToUriTimer = ExecutionTimer('Populate title to URI list')

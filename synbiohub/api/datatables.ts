@@ -1,8 +1,8 @@
 import sha1 from 'sha1';
 import config from 'synbiohub/config';
-import { getCollectionMemberCount, getCollectionMembers } from 'synbiohub/query/collection';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import uriToUrl from 'synbiohub/uriToUrl';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 function datatables(req, res) {
 
@@ -46,9 +46,9 @@ function collectionMembersDatatable(req, res) {
 
     Promise.all([
 
-        getCollectionMemberCount(uri, graphUri),
-        getCollectionMemberCount(uri, graphUri, search),
-        getCollectionMembers(uri, graphUri, limit, offset, sortParams, search)
+        DefaultMDFetcher.get(req).getCollectionMemberCount(uri),
+        DefaultMDFetcher.get(req).getCollectionMemberCount(uri, search),
+        DefaultMDFetcher.get(req).getCollectionMembers(uri, limit, offset, sortParams, search)
 
     ]).then((result) => {
 

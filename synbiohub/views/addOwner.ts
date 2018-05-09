@@ -4,7 +4,7 @@ import config from 'synbiohub/config'
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import addOwnedBy from 'synbiohub/actions/addOwnedBy'
 
-module.exports = function (req, res) {
+export default function (req, res) {
 
     if (req.method === 'POST') {
         post(req, res)
@@ -32,7 +32,7 @@ async function view(req, res) {
     res.send(pug.renderFile('templates/views/addOwner.jade', locals))
 }
 
-function post(req, res) {
+async function post(req, res) {
 
     await addOwnedBy(req, res)
 

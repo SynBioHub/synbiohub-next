@@ -1,15 +1,9 @@
 
-import { getCollectionMetaData } from 'synbiohub/query/collection'
-
 var pug = require('pug')
 
 var async = require('async');
 
 var request = require('request')
-
-const {
-    fetchSBOLObjectRecursive
-} = require('../fetch/fetch-sbol-object-recursive')
 
 import serializeSBOL from 'synbiohub/serializeSBOL'
 
@@ -21,13 +15,15 @@ var extend = require('xtend')
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 
 const tmp = require('tmp-promise')
 
 var fs = require('mz/fs');
 
 import prepareSubmission from 'synbiohub/prepare-submission'
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
 
@@ -81,7 +77,7 @@ export default async function(req, res) {
     var citations = []
     var collectionUri
 
-    const { graphUri, uri, designId } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId } = getUrisFromReq(req)
 
     if (req.method === 'POST') {
         overwrite_merge = req.body.tabState === "new" ? '0' : '2'
@@ -90,9 +86,9 @@ export default async function(req, res) {
         collectionUri = req.body.collections
         name = req.body.name
         description = req.body.description
-        citations = req.body.citations
-        if (citations) {
-            citations = citations.split(',').map(function(pubmedID) {
+
+        if (req.body.citations) {
+            citations = req.body.citations.split(',').map(function(pubmedID) {
                 return pubmedID.trim();
             }).filter(function(pubmedID) {
                 return pubmedID !== '';
@@ -144,7 +140,7 @@ export default async function(req, res) {
     console.log('uri:' + uri)
     console.log('graphUri:' + graphUri)
 
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     sbol = result.sbol
     collection = result.object
@@ -153,7 +149,7 @@ export default async function(req, res) {
 
     console.log('check if exists:' + uri)
 
-    result = await getCollectionMetaData(collectionUri, null /* public store */ )
+    result = await DefaultMDFetcher.get(req).getCollectionMetadata(collectionUri)
 
     if (!result) {
 
@@ -197,110 +193,111 @@ export default async function(req, res) {
         return makePublic()
 
     }
-}
 
 
-async function saveTempFile() {
+    async function saveTempFile() {
 
-    let tmpFilename = await tmp.tmpName()
+        let tmpFilename = await tmp.tmpName()
 
-    await fs.writeFile(tmpFilename, serializeSBOL(sbol))
+        await fs.writeFile(tmpFilename, serializeSBOL(sbol))
 
-    return tmpFilename
-}
-
-async function makePublic() {
-
-    console.log('-- validating/converting');
-
-    let tmpFilename = await saveTempFile()
-
-    console.log('tmpFilename is ' + tmpFilename)
-
-    let result = await prepareSubmission(tmpFilename, {
-
-        uriPrefix: config.get('databasePrefix') + 'public/' + collectionId + '/',
-
-        name: name || '',
-        description: description || '',
-        version: version,
-
-        keywords: [],
-
-        rootCollectionIdentity: config.get('databasePrefix') + 'public/' + collectionId + '/' + collectionId + '_collection' + '/' + version,
-        newRootCollectionDisplayId: collectionId + '_collection',
-        newRootCollectionVersion: version,
-        ownedByURI: config.get('databasePrefix') + 'user/' + req.user.username,
-        creatorName: '',
-        citationPubmedIDs: citations,
-        overwrite_merge: overwrite_merge
-
-    })
-
-    const {
-        success,
-        log,
-        errorLog,
-        resultFilename
-    } = result
-
-    if (!success) {
-
-        const locals = {
-            config: config.get(),
-            section: 'invalid',
-            user: req.user,
-            errors: [errorLog]
-        }
-
-        res.send(pug.renderFile('templates/views/errors/invalid.jade', locals))
-
-        return
+        return tmpFilename
     }
 
-    console.log('upload')
+    async function makePublic() {
 
-    await sparql.uploadFile(null, resultFilename, 'application/rdf+xml')
+        console.log('-- validating/converting');
 
-    if (req.params.version != 'current') {
-        console.log('remove')
+        let tmpFilename = await saveTempFile()
 
-        var designId = req.params.collectionId + '/' + req.params.displayId + '/' + version
-        var uri = config.get('databasePrefix') + 'user/' + encodeURIComponent(req.params.userId) + '/' + designId
+        console.log('tmpFilename is ' + tmpFilename)
 
-        var uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
-        if (uriPrefix.endsWith('_collection')) {
-            uriPrefix = uriPrefix.substring(0, uriPrefix.lastIndexOf('/') + 1)
-        }
+        let result = await prepareSubmission(tmpFilename, {
 
-        var templateParams = {
-            collection: uri,
-            uriPrefix: uriPrefix,
-            version: version
-        }
+            uriPrefix: config.get('databasePrefix') + 'public/' + collectionId + '/',
 
-        var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
-        console.log(removeQuery)
+            name: name || '',
+            description: description || '',
+            version: version,
 
-        await sparql.deleteStaggered(removeQuery, graphUri)
+            keywords: [],
 
-        templateParams = {
-            uri: uri
-        }
-        removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
+            rootCollectionIdentity: config.get('databasePrefix') + 'public/' + collectionId + '/' + collectionId + '_collection' + '/' + version,
+            newRootCollectionDisplayId: collectionId + '_collection',
+            newRootCollectionVersion: version,
+            ownedByURI: config.get('databasePrefix') + 'user/' + req.user.username,
+            creatorName: '',
+            citationPubmedIDs: citations,
+            overwrite_merge: overwrite_merge
 
-        await sparql.deleteStaggered(removeQuery, graphUri)
-
-        console.log('update collection membership')
-        var d = new Date();
-        var modified = d.toISOString()
-        modified = modified.substring(0, modified.indexOf('.'))
-        const updateQuery = loadTemplate('./sparql/UpdateCollectionMembership.sparql', {
-            modified: JSON.stringify(modified)
         })
 
-        await sparql.updateQuery(updateQuery, null)
-    }
+        const {
+            success,
+            log,
+            errorLog,
+            resultFilename
+        } = result
 
-    res.redirect('/manage');
+        if (!success) {
+
+            const locals = {
+                config: config.get(),
+                section: 'invalid',
+                user: req.user,
+                errors: [errorLog]
+            }
+
+            res.send(pug.renderFile('templates/views/errors/invalid.jade', locals))
+
+            return
+        }
+
+        console.log('upload')
+
+        await sparql.uploadFile(null, resultFilename, 'application/rdf+xml')
+
+        if (req.params.version != 'current') {
+            console.log('remove')
+
+            var designId = req.params.collectionId + '/' + req.params.displayId + '/' + version
+            var uri = config.get('databasePrefix') + 'user/' + encodeURIComponent(req.params.userId) + '/' + designId
+
+            var uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
+            if (uriPrefix.endsWith('_collection')) {
+                uriPrefix = uriPrefix.substring(0, uriPrefix.lastIndexOf('/') + 1)
+            }
+
+            var templateParams = {
+                collection: uri,
+                uriPrefix: uriPrefix,
+                version: version
+            }
+
+            var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
+            console.log(removeQuery)
+
+            await sparql.deleteStaggered(removeQuery, graphUri)
+
+            let templateParams2 = {
+                uri: uri
+            }
+            removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
+
+            await sparql.deleteStaggered(removeQuery, graphUri)
+
+            console.log('update collection membership')
+            var d = new Date();
+            var modified = d.toISOString()
+            modified = modified.substring(0, modified.indexOf('.'))
+            const updateQuery = loadTemplate('./sparql/UpdateCollectionMembership.sparql', {
+                modified: JSON.stringify(modified)
+            })
+
+            await sparql.updateQuery(updateQuery, null)
+        }
+
+        res.redirect('/manage');
+    }
 }
+

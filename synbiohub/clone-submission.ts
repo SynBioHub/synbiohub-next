@@ -3,7 +3,7 @@ import java from './java';
 import extend from 'xtend';
 import config from './config';
 
-function cloneSubmission(inFilename, opts) {
+async function cloneSubmission(inFilename, opts) {
 
     opts = extend({
 
@@ -30,12 +30,14 @@ function cloneSubmission(inFilename, opts) {
 
     }, opts)
 
-    return java('cloneSubmission', opts).then((result) => {
+    let result:any = await java('cloneSubmission', opts)
 
-        const { success, log, errorLog, resultFilename } = result
-
-        return Promise.resolve(result)
-    })
+    return {
+        success: result.success,
+        log: result.log,
+        errorLog: result.errorLog,
+        resultFilename: result.resultFiename
+    }
 }
 
 export default cloneSubmission;

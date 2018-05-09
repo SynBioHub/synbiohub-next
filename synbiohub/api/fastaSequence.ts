@@ -1,14 +1,14 @@
 import pug from 'pug';
-import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive';
 import sbolmeta from 'sbolmeta';
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol
     const sequence = result.object

@@ -1,7 +1,7 @@
 
 import config from './config';
 
-function getGraphUriFromTopLevelUri(topLevelUri,user) {
+function getGraphUriFromTopLevelUri(topLevelUri,user?) {
 
     const databasePrefix = config.get('databasePrefix')
 

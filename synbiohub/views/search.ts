@@ -1,7 +1,8 @@
 import pug from 'pug';
-import search from 'synbiohub/search';
+import * as search from 'synbiohub/search';
 import config from 'synbiohub/config';
-import iceSearch from 'synbiohub/query/remote/ice/collection';
+import SBOLFetcherICE from '../fetch/SBOLFetcherICE';
+import MDFetcherICE from 'synbiohub/fetch/MDFetcherICE';
 
 export default function (req, res) {
 
@@ -31,7 +32,7 @@ export default function (req, res) {
                 console.log('collection = ' + collection)
                 if ((collection === config.get('databasePrefix') + 'public/' + remoteConfig.id + '/available/current' || collection.indexOf(config.get('databasePrefix') + 'public/' + remoteConfig.id + '/' + remoteConfig.folderPrefix) !== -1) && remoteConfig.type === 'ice') {
                     usedRemote = true
-                    iceSearch.getCollectionMembers(remoteConfig, collection).then((entries) => {
+                    new MDFetcherICE(remoteConfig).getCollectionMembers(collection).then((entries) => {
 
                         res.header('content-type', 'application/json').send(JSON.stringify(entries))
 
@@ -113,13 +114,13 @@ export default function (req, res) {
 
     // type, storeUrl, query, callback
 
-    var locals = {
+    var locals:any = {
         config: config.get(),
         section: 'search',
         user: req.user
     }
 
-    search(null, criteria, req.query.offset, limit, req.user).then((searchRes) => {
+    search.search(null, criteria, req.query.offset, limit, req.user).then((searchRes) => {
 
         const count = searchRes.count
         const results = searchRes.results

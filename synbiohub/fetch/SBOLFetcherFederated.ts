@@ -1,6 +1,8 @@
 
 import SBOLFetcher from "./SBOLFetcher";
 
+import SBOLDocument = require('sboljs')
+
 export default class SBOLFetcherFederated extends SBOLFetcher {
 
     fetchers:Array<SBOLFetcher>
@@ -13,13 +15,13 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
 
     }
 
-    async fetchSBOLSource(type:string, uri:string):Promise<string> {
+    async fetchSBOLSource(uri:string, type?:string):Promise<string> {
 
         for(let fetcher of this.fetchers) {
 
             try {
 
-                let tempFilename = await fetcher.fetchSBOLSource(type, uri)
+                let tempFilename = await fetcher.fetchSBOLSource(uri, type)
 
                 return tempFilename
 
@@ -29,7 +31,7 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
         }
     }
 
-    async fetchSBOLObjectRecursive(sbol: any, type: string, uri: string):Promise<any> {
+    async fetchSBOLObjectRecursive(uri: string, type?:string, sbol?:SBOLDocument):Promise<any> {
 
         for(let fetcher of this.fetchers) {
 

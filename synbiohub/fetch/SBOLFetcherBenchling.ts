@@ -4,13 +4,11 @@ const SBOLDocument = require('sboljs')
 const Range = require('sboljs/lib/Range')
 const GenericLocation = require('sboljs/lib/GenericLocation')
 
-const request = require('request')
+import * as benchling from 'synbiohub/benchling'
 
-import benchling from '../benchling'
+import splitUri from 'synbiohub/splitUri'
 
-import splitUri from '../splitUri'
-
-import config from '../config'
+import config from 'synbiohub/config'
 
 const doiRegex = require('doi-regex')
 

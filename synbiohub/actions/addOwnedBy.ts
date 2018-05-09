@@ -4,8 +4,8 @@ import * as sparql from 'synbiohub/sparql/sparql'
 import loadTemplate from 'synbiohub/loadTemplate'
 import config from 'synbiohub/config'
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
-import getOwnedBy from 'synbiohub/query/ownedBy'
 import retrieveUris from 'synbiohub/retrieveUris'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function (req, res) {
 
@@ -25,7 +25,7 @@ export default async function (req, res) {
         userUri: userUri
     });
 
-    let ownedBy = await getOwnedBy(uri, graphUri)
+    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
     if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
         //res.status(401).send('not authorized to edit this submission')

@@ -1,5 +1,5 @@
 
-import fs from 'fs';
+import * as fs from 'mz/fs';
 import extend from 'xtend';
 import deepmerge from 'deepmerge';
 

@@ -12,7 +12,7 @@ function shareImages(req,wikiText) {
 
         var matches = wikiText.match(regex) || [];
 
-        for (i = 0; i < matches.length || 0; i++) {
+        for (let i = 0; i < matches.length || 0; i++) {
             var imgUri = matches[i].replace('<img src=\"\/','')
             imgUri = imgUri.replace('/download\">','')
             var hash = sha1('synbiohub_' + sha1(config.get('databasePrefix')+imgUri) + config.get('shareLinkSalt'))

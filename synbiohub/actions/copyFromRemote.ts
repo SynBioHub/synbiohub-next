@@ -1,13 +1,9 @@
 
-import { getCollectionMetaData } from 'synbiohub/query/collection'
-
 var pug = require('pug')
 
 var async = require('async');
 
 var request = require('request')
-
-import { fetchSBOLObjectRecursive } from 'synbiohub/fetch/fetch-sbol-object-recursive'
 
 import serializeSBOL from 'synbiohub/serializeSBOL'
 
@@ -19,69 +15,30 @@ var extend = require('xtend')
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
 
 const tmp = require('tmp-promise')
 
 var fs = require('mz/fs');
 
 import prepareSubmission from 'synbiohub/prepare-submission'
+import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
-module.exports = function (req, res) {
+
+export default async function (req, res) {
 
     req.setTimeout(0) // no timeout
 
-    function copyFromRemoteForm(req, res, collectionId, version, locals) {
 
-        var collectionQuery = 'PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX sbol2: <http://sbols.org/v2#> SELECT ?object ?name WHERE { ?object a sbol2:Collection . FILTER NOT EXISTS { ?otherCollection sbol2:member ?object } OPTIONAL { ?object dcterms:title ?name . }}'
-        var collections
-
-        function sortByNames(a, b) {
-            if (a.name < b.name) {
-                return -1
-            } else {
-                return 1
-            }
-        }
-
-        let collections = await sparql.queryJson(collectionQuery, req.user.graphUri)
-
-        for(let result of collections) {
-            result.uri = result.object
-            result.name = result.name ? result.name : result.uri.toString()
-            delete result.object
-        }
-
-        collections.sort(sortByNames)
-
-        locals = extend({
-            config: config.get(),
-            section: 'copyFromRemote',
-            user: req.user,
-            collections: collections,
-            submission: {
-                id: collectionId || '',
-                version: '1',
-                name: '',
-                description: '',
-                citations: ''
-            },
-            errors: {}
-        }, locals)
-
-        res.send(pug.renderFile('templates/views/copyFromRemote.jade', locals))
-
-        return
-    }
-
-    var overwrite_merge = "unset"
+    var overwrite_merge:string|number = "unset"
     var collectionId = req.params.collectionId
     var version = req.params.version
     var name
     var description
     var citations = []
 
-    const { graphUri, uri, designId } = getUrisFromReq(req, res)
+    let { graphUri, uri, designId } = getUrisFromReq(req)
 
     if (req.method === 'POST') {
 
@@ -99,12 +56,12 @@ module.exports = function (req, res) {
         console.log(overwrite_merge)
         collectionId = req.body.id
         version = req.body.version
-        collectionUri = req.body.collections
+        let collectionUri = req.body.collections
         name = req.body.name
         description = req.body.description
-        citations = req.body.citations
-        if (citations) {
-            citations = citations.split(',').map(function (pubmedID) {
+
+        if (req.body.citations) {
+            citations = req.body.citations.split(',').map(function (pubmedID) {
                 return pubmedID.trim();
             }).filter(function (pubmedID) {
                 return pubmedID !== '';
@@ -112,6 +69,9 @@ module.exports = function (req, res) {
         } else {
             citations = []
         }
+
+
+        var collectionUri
 
         var errors = []
         if (overwrite_merge === "0" || overwrite_merge === "1") {
@@ -157,7 +117,7 @@ module.exports = function (req, res) {
     console.log('uri:' + uri)
     console.log('graphUri:' + req.user.graphUri)
 
-    let result = await fetchSBOLObjectRecursive(uri, req.user.graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     var sbol = result.sbol
     var collection = result.object
@@ -165,15 +125,14 @@ module.exports = function (req, res) {
     if (version === 'current')
     version = '1'
 
-    var graphUri = req.user.graphUri
-
-    var uri = collectionUri
+    graphUri = req.user.graphUri
+    uri = collectionUri
 
     console.log('check if exists:' + uri)
 
-    let result = await getCollectionMetaData(uri, graphUri)
+    let result2 = await DefaultMDFetcher.get(req).getCollectionMetadata(uri)
 
-    if (!result) {
+    if (!result2) {
 
         /* not found */
         console.log('not found')
@@ -188,7 +147,7 @@ module.exports = function (req, res) {
 
     }
 
-    const metaData = result
+    const metaData = result2
 
     if (overwrite_merge === '0') {
         // Prevent make public
@@ -200,7 +159,8 @@ module.exports = function (req, res) {
     } else if (overwrite_merge === '1') {
         // Overwrite
         console.log('overwrite')
-        uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
+
+        let uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
         uriPrefix = uriPrefix.substring(0, uriPrefix.lastIndexOf('/') + 1)
 
         var templateParams = {
@@ -213,10 +173,10 @@ module.exports = function (req, res) {
 
         await sparql.deleteStaggered(removeQuery, req.user.graphUri)
 
-        templateParams = {
+        let templateParams2 = {
             uri: uri
         }
-        removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
+        removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
 
         await sparql.deleteStaggered(removeQuery, req.user.graphUri)
 
@@ -290,5 +250,47 @@ module.exports = function (req, res) {
         return res.redirect('/manage');
     }
 };
+
+async function copyFromRemoteForm(req, res, collectionId, version, locals) {
+
+    var collectionQuery = 'PREFIX dcterms: <http://purl.org/dc/terms/> PREFIX sbol2: <http://sbols.org/v2#> SELECT ?object ?name WHERE { ?object a sbol2:Collection . FILTER NOT EXISTS { ?otherCollection sbol2:member ?object } OPTIONAL { ?object dcterms:title ?name . }}'
+
+    function sortByNames(a, b) {
+        if (a.name < b.name) {
+            return -1
+        } else {
+            return 1
+        }
+    }
+
+    let collections = await sparql.queryJson(collectionQuery, req.user.graphUri)
+
+    for(let result of collections) {
+        result.uri = result.object
+        result.name = result.name ? result.name : result.uri.toString()
+        delete result.object
+    }
+
+    collections.sort(sortByNames)
+
+    locals = extend({
+        config: config.get(),
+        section: 'copyFromRemote',
+        user: req.user,
+        collections: collections,
+        submission: {
+            id: collectionId || '',
+            version: '1',
+            name: '',
+            description: '',
+            citations: ''
+        },
+        errors: {}
+    }, locals)
+
+    res.send(pug.renderFile('templates/views/copyFromRemote.jade', locals))
+
+    return
+}
 
 

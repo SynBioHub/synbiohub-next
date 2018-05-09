@@ -1,27 +1,25 @@
 
-import { getType } from 'synbiohub/query/type';
 import async from 'async';
 import config from 'synbiohub/config';
 
 //var fastaCollection = require('./fastaCollection')
 
 import fastaComponentDefinition from './fastaComponentDefinition';
-
 import fastaCollection from './fastaCollection';
 
 //var fastaModule = require('./fastaModule')
 
 import fastaSequence from './fastaSequence';
 
-import config from 'synbiohub/config';
 import pug from 'pug';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 
-    let result = await getType(uri, graphUri)
+    let result = await DefaultMDFetcher.get(req).getType(uri)
 
     if(result && result==='http://sbols.org/v2#ComponentDefinition') { 
         fastaComponentDefinition(req, res)
@@ -44,7 +42,7 @@ return
 fastaGenericTopLevel(req, res)
 return
     } */ else {
-        locals = {
+        let locals = {
             config: config.get(),
             section: 'errors',
             user: req.user,

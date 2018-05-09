@@ -1,6 +1,4 @@
 
-var { getVersion } = require('../query/version')
-
 var async = require('async')
 
 import config from 'synbiohub/config'
@@ -8,6 +6,7 @@ import config from 'synbiohub/config'
 var pug = require('pug')
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 var sbol = require('./sbol')
 
@@ -15,15 +14,15 @@ const { fetchSBOLSource } = require('../fetch/fetch-sbol-source')
 
 const fs = require('mz/fs')
 
-module.exports =  asyncfunction(req, res) {
+export default async function(req, res) {
 
-    const { graphUri, uri, designId, url } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, url } = getUrisFromReq(req)
 
-    let result = await getVersion(uri, graphUri)
+    let result = await DefaultMDFetcher.get(req).getVersion(uri)
 	
     var newUri = uri + '/' + result
 
-    let tempFilename = await fetchSBOLSource(newUri, graphUri)
+    let tempFilename = await fetchSBOLSource(newUri)
 
     res.status(200).type('application/rdf+xml')
     //.set({ 'Content-Disposition': 'attachment; filename=' + collection.name + '.xml' })

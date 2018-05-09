@@ -1,5 +1,5 @@
 
-import fs from 'fs';
+import * as fs from 'mz/fs';
 
 export default function loadTemplate(filename, args) {
 

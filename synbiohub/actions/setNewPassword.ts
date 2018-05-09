@@ -6,7 +6,7 @@ import db from 'synbiohub/db'
 const sha1 = require('sha1')
 import config from 'synbiohub/config'
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
     const token = req.body.token.trim()
 

@@ -1,101 +1,24 @@
+import ViewTopLevelWithMetadata from "./ViewTopLevelWithMetadata";
 
-var getAttachmentsForSubject = require('./getAttachmentsForSubject');
+import { Request, Response } from 'express'
 
-const { getCollectionMetaData,
-    getCollectionMembers,
-    getCollectionMemberCount,
-    getContainingCollections
-} = require('../query/collection')
+export default class ViewCollection extends ViewTopLevelWithMetadata {
 
-import getOwnedBy from 'synbiohub/query/ownedBy'
+    constructor() {
 
-import filterAnnotations from 'synbiohub/filterAnnotations'
+        super()
 
-import loadTemplate from 'synbiohub/loadTemplate'
-
-var sbolmeta = require('sbolmeta')
-
-var formatSequence = require('sequence-formatter')
-
-var async = require('async')
-
-import sparql from 'synbiohub/sparql/sparql-collate'
-
-import prefixify from 'synbiohub/prefixify'
-
-var pug = require('pug')
-
-var getDisplayList = require('visbol/lib/getDisplayList')
-
-import config from 'synbiohub/config'
-
-import wiky from 'synbiohub/wiky/wiky.js'
-
-var getCitationsForSubject = require('./getCitationsForSubject')
-
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
-
-var sha1 = require('sha1');
-
-import util from 'synbiohub/util'
-
-import uriToUrl from 'synbiohub/uriToUrl'
-
-import getAttachmentsFromList from 'synbiohub/attachments'
-
-import shareImages from 'synbiohub/shareImages'
-
-module.exports = function (req, res) {
-
-    console.log('collection view')
-
-    var locals = {
-        config: config.get(),
-        section: 'collection',
-        user: req.user
     }
 
-    var collections = []
-    var citations = []
+    async prepare(req: Request) {
 
-    var offset = 0
-    if (req.query.offset) {
-        offset = req.query.offset
-    }
-    var limit = config.get('defaultLimit')
-    if (req.query.limit) {
-        limit = req.query.limit
-    }
-
-    const { graphUri, uri, designId, share, url } = getUrisFromReq(req, res)
-
-    var sbol
-    var collection
-
-    var mappings = {}
-
-    var members = []
-
-    var memberCount = 0
-
-    var collectionIcon
-
-    const collectionIcons = config.get('collectionIcons')
-
-    if (collectionIcons[uri])
-        collectionIcon = collectionIcons[uri]
-
-    var templateParams = {
-        uri: uri
-    }
+        await super.prepare(req)
 
 
-    let metaData = await getCollectionMetaData(uri, graphUri)
-
-    let collections = await getContainingCollections(uri, graphUri)
-
-    var attachments = await getAttachmentsForSubject(uri, graphUri)
-
+        /*
+    let metaData = await DefaultMDFetcher.get(req).getCollectionMetadata(uri)
+    let collections = await DefaultMDFetcher.get(req).getContainingCollections(uri)
+    var attachments = await getAttachmentsForSubject(uri)
 
     var sbolNS = 'http://sbols.org/v2#'
     members.sort((a, b) => {
@@ -123,8 +46,7 @@ module.exports = function (req, res) {
             return ((a.displayId < b.displayId) ? -1 : ((a.displayId > b.displayId) ? 1 : 0));
         }
     })
-
-    locals.collections = collections
+    
 
     var removed = 0
     var created = metaData.created
@@ -190,7 +112,7 @@ module.exports = function (req, res) {
 
         members: members.map((member) => {
             if (!member.displayId) removed++
-            memberUrl = uriToUrl(member.uri)
+            let memberUrl = uriToUrl(member.uri)
             if (member.uri.toString().startsWith(config.get('databasePrefix'))) {
                 if (req.url.toString().endsWith('/share')) {
                     memberUrl += '/' + sha1('synbiohub_' + sha1(member.uri) + config.get('shareLinkSalt')) + '/share'
@@ -330,27 +252,15 @@ locals.rdfType = {
     })
 
     locals.annotations = filterAnnotations(req, annotations);
+    
+    */
 
-    res.send(pug.renderFile('templates/views/collection.jade', locals))
-};
 
-function listNamespaces(xmlAttribs) {
+    }
 
-    var namespaces = [];
+    async render(res:Response) {
 
-    Object.keys(xmlAttribs).forEach(function (attrib) {
+        res.render('templates/views/collection.jade', this)
 
-        var tokens = attrib.split(':');
-
-        if (tokens[0] === 'xmlns') {
-
-            namespaces.push({
-                prefix: tokens[1],
-                uri: xmlAttribs[attrib]
-            })
-        }
-    });
-
-    return namespaces;
+    }
 }
-

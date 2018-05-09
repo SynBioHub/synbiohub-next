@@ -1,16 +1,23 @@
 
-var resolveBatch = config.get('resolveBatch')
-
-var webOfRegistries = config.get('webOfRegistries')
-
-var databasePrefix = config.get('databasePrefix')
-
 import request = require('request-promise')
 import SBOLFetcher from 'synbiohub/fetch/SBOLFetcher';
 import n3ToSBOL from 'synbiohub/conversion/n3-to-sbol';
 import saveN3ToRdfXml from 'synbiohub/conversion/save-n3-to-rdfxml';
 
 import fs = require('mz/fs')
+
+import SBOLDocument = require('sboljs')
+
+import tmp from 'tmp-promise'
+
+import * as sparql from 'synbiohub/sparql/sparql'
+import serializeSBOL from 'synbiohub/serializeSBOL';
+import config from 'synbiohub/config';
+
+
+var resolveBatch = config.get('resolveBatch')
+var webOfRegistries = config.get('webOfRegistries')
+var databasePrefix = config.get('databasePrefix')
 
 export default class SBOLFetcherLocal extends SBOLFetcher {
 
@@ -54,12 +61,12 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
     * file can be sent as the response?
     *
     */
-    async fetchSBOLSource(type: string, objectUri: string) {
+    async fetchSBOLSource(uri:string, type:string) {
 
         const sbol = new SBOLDocument()
 
         sbol._resolving = {};
-        sbol._rootUri = objectUri
+        sbol._rootUri = uri
 
         /* First check if this object is a collection.  If so, we can use the
         * specialized collection query to retrieve it without a recursive crawl.
@@ -69,7 +76,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
             '?coll a <http://sbols.org/v2#Collection> .',
             'FILTER(?coll = <' + sbol._rootUri + '>)',
             '}'
-        ].join('\n'))
+        ].join('\n'), this.graphUri)
 
         // TODO: temporarily removed, need to add recursive crawl after this 
         // to ensure non-local objects are fetched.
@@ -78,7 +85,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
             /* It's a collection.  Hooray, we can use the more efficient
             * collection fetcher!
             */
-            return await this.fetchCollectionSBOLSource(sbol, type, objectUri)
+            return await this.fetchCollectionSBOLSource(uri, type, sbol)
 
         } else {
 
@@ -97,7 +104,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
             * TODO: this causes the query to check for a collection to
             * run again
             */
-            let res = await fetchSBOLObjectRecursive(sbol, type, objectUri)
+            let res = await this.fetchSBOLObjectRecursive(uri, type, sbol)
 
             let tmpFilename = await tmp.tmpName()
 
@@ -123,7 +130,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
     * TODO: make the recursive crawl fail for things that are obviously too big
     * to resolve everything.
     */
-    async fetchSBOLObjectRecursive(sbol:any, type:string, uri:string) {
+    async fetchSBOLObjectRecursive(uri:string, type?:string, sbol?:SBOLDocument) {
 
         sbol._resolving = {};
         sbol._rootUri = uri
@@ -163,7 +170,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
     }
 
-    private async fetchCollectionSBOLSource(sbol, type, objectUri) {
+    private async fetchCollectionSBOLSource(uri:string, type?:string, sbol?:SBOLDocument) {
 
         var graphs = ''
         //if (graphUri) {

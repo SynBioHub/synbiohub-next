@@ -1,18 +1,17 @@
 var pug = require('pug')
 
-const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
-
 var sbolmeta = require('sbolmeta')
 
 import config from 'synbiohub/config'
 
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import DefaultSBOLFetcher from '../fetch/DefaultSBOLFetcher';
 
-module.exports = function(req, res) {
+export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 
-    let result = await fetchSBOLObjectRecursive(uri, graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol
     const componentDefinition = result.object
@@ -27,7 +26,7 @@ module.exports = function(req, res) {
         lines.push('>' + meta.name + ' sequence ' + (i + 1)
             + ' (' + sequence.length + ' ' + sequence.lengthUnits + ')')
 
-        for(var i = 0; i < sequence.length; ) {
+        for(let i = 0; i < sequence.length; ) {
 
             lines.push(sequence.elements.substr(i, charsPerLine))
             i += charsPerLine

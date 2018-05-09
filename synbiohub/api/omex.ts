@@ -6,20 +6,20 @@ import config from 'synbiohub/config'
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 const fs = require('mz/fs')
 
-module.exports = function (req, res) {
+export default async function (req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req, res)
+    const { graphUri, uri, designId, share } = getUrisFromReq(req)
 
     var archiveName
 
-    let fileName = await fetchSBOLSource(uri, graphUri)
+    let fileName = await fetchSBOLSource(uri)
 
     console.log("sbol file for archive:" + fileName)
 
 
-    let result = await buildCombineArchive(sbolFilename, []);
+    let result = await buildCombineArchive(fileName, []);
 
     archiveName = result.resultFilename;
     var stat = fs.statSync(archiveName);

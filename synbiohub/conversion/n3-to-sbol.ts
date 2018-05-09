@@ -1,7 +1,7 @@
 
 import saveN3ToRdfXml from './save-n3-to-rdfxml';
 import java from 'synbiohub/java';
-import fs from 'mz/fs';
+import * as fs from 'mz/fs';
 import config from 'synbiohub/config';
 
 

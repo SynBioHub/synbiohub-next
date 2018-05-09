@@ -1,7 +1,4 @@
 
-const { getCollectionMetaData } = require('../query/collection')
-const { fetchSBOLObjectRecursive } = require('../fetch/fetch-sbol-object-recursive')
-
 import loadTemplate from 'synbiohub/loadTemplate'
 
 var pug = require('pug')
@@ -24,15 +21,17 @@ import getUrisFromReq from 'synbiohub/getUrisFromReq'
 
 import cloneSubmission from 'synbiohub/clone-submission'
 
-import sparql from 'synbiohub/sparql/sparql'
+import * as sparql from 'synbiohub/sparql/sparql'
+import DefaultSBOLFetcher from '../fetch/DefaultSBOLFetcher';
+import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 const tmp = require('tmp-promise')
 
-module.exports = function(req, res) {
+export default function(req, res) {
 
     if(req.method === 'POST') {
 
-        var submissionData = {
+        let submissionData = {
             id: req.body.id || '',
             version: req.body.version || '',
             overwrite_merge: req.body.overwrite_merge || ''
@@ -42,7 +41,7 @@ module.exports = function(req, res) {
 
     } else {
 
-        var submissionData = {
+        let submissionData = {
             id: req.params.collectionId || '',
             version: req.params.version || ''
         }
@@ -52,7 +51,7 @@ module.exports = function(req, res) {
     }
 }
 
-function cloneForm(req, res, submissionData, locals) {
+async function cloneForm(req, res, submissionData, locals) {
 
     req.setTimeout(0) // no timeout
 	
@@ -70,7 +69,7 @@ function cloneForm(req, res, submissionData, locals) {
 }
 	
 
-function clonePost(req, res, submissionData) {
+async function clonePost(req, res, submissionData) {
 
     var submissionFile = '';
 
@@ -103,16 +102,16 @@ function clonePost(req, res, submissionData) {
     var convertedSBOL
     var xml
 
-    const { designId, uri, graphUri } = getUrisFromReq(req, res)
+    const { designId, uri, graphUri } = getUrisFromReq(req)
 
-    let result = await fetchSBOLObjectRecursive(uri, req.user.graphUri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     let sbol = result.sbol
     let collection = result.object
 
     var newUri = config.get('databasePrefix') + 'user/' + encodeURIComponent(req.user.username) + '/' + submissionData.id + '/' + submissionData.id + '_collection' + '/' + submissionData.version
 
-    let metaData = await getCollectionMetaData(newUri, graphUri)
+    let metaData = await DefaultMDFetcher.get(req).getCollectionMetadata(newUri)
 
     if (!metaData) {
         return doClone()
@@ -131,7 +130,7 @@ function clonePost(req, res, submissionData) {
 
         // Overwrite
         console.log('overwrite')
-        uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
+        let uriPrefix = uri.substring(0, uri.lastIndexOf('/'))
         uriPrefix = uriPrefix.substring(0, uriPrefix.lastIndexOf('/') + 1)
 
         var templateParams = {
@@ -141,13 +140,15 @@ function clonePost(req, res, submissionData) {
         }
         console.log('removing ' + templateParams.uriPrefix)
         var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
-        return sparql.deleteStaggered(removeQuery, graphUri).then(() => {
-            templateParams = {
-                uri: uri
-            }
-            removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
-            sparql.deleteStaggered(removeQuery, graphUri).then(doClone)
-        })
+
+        await sparql.deleteStaggered(removeQuery, graphUri)
+
+        let templateParams2 = {
+            uri: uri
+        }
+
+        removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
+        sparql.deleteStaggered(removeQuery, graphUri).then(doClone)
 
     } else {
 
@@ -167,7 +168,7 @@ function clonePost(req, res, submissionData) {
         }
     }
 
-    function saveTempFile() {
+    async function saveTempFile() {
 
         let tmpFilename = await tmp.tmpName()
 
@@ -176,7 +177,7 @@ function clonePost(req, res, submissionData) {
         return tmpFilename
     }
 
-    function doClone() {
+    async function doClone() {
 
         console.log('-- validating/converting');
 

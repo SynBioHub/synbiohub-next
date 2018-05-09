@@ -44,7 +44,7 @@ function post(req, res) {
         })
     }
 
-    var mail = {}
+    var mail:any = {}
     mail.sendgridApiKey = req.body.key;
     mail.fromAddress = req.body.fromEmail;
     config.set('mail', mail)

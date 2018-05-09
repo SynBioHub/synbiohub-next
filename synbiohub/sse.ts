@@ -5,7 +5,7 @@ import Multimap from 'multimap';
 
 const connections = new Multimap()
 
-function initSSE(app) {
+export function initSSE(app) {
 
     app.get('/sse/*', (req, res, next) => {
 
@@ -19,16 +19,11 @@ function initSSE(app) {
     })
 }
 
-function push(path, eventName, data) {
+export function push(path, eventName, data) {
 
     connections.get(path).forEach((sse) => {
         sse.send(data || {}, eventName)
     })
 
 }
-
-export default {
-    initSSE: initSSE,
-    push: push
-};
 

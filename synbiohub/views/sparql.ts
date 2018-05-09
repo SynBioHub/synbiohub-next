@@ -21,7 +21,7 @@ export default function(req, res) {
 
 };
 
-function form(req, res, locals) {
+function form(req, res, locals?) {
 
     const defaultQuery = []
 
