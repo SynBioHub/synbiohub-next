@@ -30,7 +30,6 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
     roles:Array<any>
     types:Array<any>
     components:Array<any>
-    sequences:Array<any>
     displayList:any
 
     async prepare(req:Request) {
@@ -64,9 +63,7 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
         }
 
         
-        this.sequences = this.object.sequences
-
-        for(let sequence of this.sequences) {
+        for(let sequence of this.meta.sequences) {
             if (sequence.uri.toString().startsWith(config.get('databasePrefix'))) {
                 sequence.url = '/' + sequence.uri.toString().replace(config.get('databasePrefix'), '')
                 if (sequence.uri.toString().startsWith(config.get('databasePrefix') + 'user/') && req.url.toString().endsWith('/share')) {
