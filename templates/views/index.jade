@@ -3,10 +3,6 @@ extends ../layouts/default.jade
 
 block head
     style.
-        body {
-            background-color: #f6f6f6;
-        }
-
         .grey-page-mark {
             background-color: #f6f6f6;
         }
@@ -65,14 +61,6 @@ block breadcrumbs
 block content
 
     div.container.container-fluid
-        div.row
-            div.col-md-2
-            div.col-md-8(style='text-align: center;')
-                if config.instanceLogo
-                    img.about-logo(src=config.instanceLogo,width='100%')
-                else
-                    h1 #{config.instanceName}
-
         div.row
             div.col-md-2
             div.col-md-8.sbh-frontpage-blurb
