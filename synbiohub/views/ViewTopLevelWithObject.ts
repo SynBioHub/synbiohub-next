@@ -134,7 +134,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
             meta.url += '/' + sha1('synbiohub_' + sha1(meta.uri) + config.get('shareLinkSalt')) + '/share'
         }
 
-        if (meta.isReplacedBy.uri != '') {
+        if (meta.isReplacedBy && meta.isReplacedBy.uri != '') {
             meta.isReplacedBy.uri = '/' + meta.isReplacedBy.uri.toString().replace(config.get('databasePrefix'), '')
             meta.isReplacedBy.id = meta.isReplacedBy.uri.toString().replace('/public/', '').replace('/1', '') + ' '
             meta.isReplacedBy.id = meta.isReplacedBy.id.substring(meta.isReplacedBy.id.indexOf('/') + 1)
