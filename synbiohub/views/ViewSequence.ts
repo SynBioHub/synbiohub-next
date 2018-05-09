@@ -20,13 +20,17 @@ export default class ViewSequence extends ViewTopLevelWithObject {
 
         await super.prepare(req)
 
+        this.rdfType = {
+            name: 'Sequence'
+        }
+
         this.setTopLevelMetadata(req, sbolmeta.summarizeSequence(this.object))
 
         this.blastUrl = this.meta.type === 'AminoAcid' ?
             'http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome' :
             'http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome'
 
-        this.formatted = formatSequence(this.meta.elements)
+        this.meta.formatted = formatSequence(this.object.elements)
     }
 
     async render(res:Response) {
