@@ -6,6 +6,9 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
+block topLevelIcon
+    span.topLevelIcon.fa.fa-book
+
 block modal
     div.modal.fade#iconModal(tabindex="-1", role="dialog")
         div.modal-dialog(role="document")
@@ -34,7 +37,6 @@ block modal
                     button.btn.btn-primary(type="submit", form="iconForm") Save changes
 
 block topLevelPreview
-    h3 Members
     table.table.table-striped.entry-detail-table.sbh-collection-members-datatable
         thead
             th Name

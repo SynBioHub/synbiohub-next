@@ -10,7 +10,7 @@ block body
 
         nav.navbar.navbar-fixed-top
             div.content
-                a(href='/')
+                a(href='/').sbh-corner-logo
                     if config.instanceLogo
                         img.pull-left.instance-logo(src=config.instanceLogo,height=50)
                     else
@@ -75,6 +75,7 @@ block body
         div.sbol-breadcrumbs
             block breadcrumbs
 
+        div.clearfix
         block content
 
         div.clearfix

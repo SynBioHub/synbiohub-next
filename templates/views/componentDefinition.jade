@@ -1,18 +1,10 @@
 
 extends ../layouts/topLevel.jade
 
-block implementation
-    a(href=meta.url + '/createImplementation')
-        span.fa.fa-simplybuilt
-        span.blue-text  Implementation
-
 block topLevelPreview
     if meta.displayList
-        div.row
-            div.col-md-12.text-center
+        div.sbh-visbol-container
             div#design
-            
-            
 
 block topLevelPropertyTable
 
@@ -27,36 +19,16 @@ block topLevelPropertyTable
                             != ' (Version '+sequence.version+')'
                     br
 
-    if meta.protein !== undefined
-        if meta.protein.pI !== undefined
-            tr
-                td pI
-                td #{meta.protein.pI}
-                td
-        if meta.protein.locatedIn !== undefined
-            tr
-                td Located in
-                td
-                    for locatedIn in meta.protein.locatedIn
-                        if locatedIn.term
-                            a(href=locatedIn.uri) #{locatedIn.description}
-                        else
-                            a(href=locatedIn.uri) #{locatedIn.uri}
-                        br
-                td
+block topLevelButtonsSearch
+    li
+        a(href=href=meta.url + '/uses',title='Find all uses of this '+rdfType.name) Find Uses
+    li
+        if meta.igemDominant.description == 'true' && !meta.remote
+            a.btn.btn-success(href=meta.url + '/twins',title='This is a dominant twin') Find Twins
+        else if !meta.remote
+            a(href=meta.url + '/twins',title='This is NOT a dominant twin') Twins
 
 block topLevelButtons
-    li.dropdown.btn.btn-primary
-        span.fa.fa-search
-            span.caret
-        ul.dropdown-menu.dropdown-toggle
-            li
-                a(href=href=meta.url + '/uses',title='Find all uses of this '+rdfType.name) Find Uses
-            li
-                if meta.igemDominant.description == 'true' && !meta.remote
-                    a.btn.btn-success(href=meta.url + '/twins',title='This is a dominant twin') Find Twins
-                else if !meta.remote
-                    a(href=meta.url + '/twins',title='This is NOT a dominant twin') Twins
     if createImplementation
         li.dropdown.btn.btn-success
             a(href=meta.url + '/createImplementation',title='Create Implementation',style="color:white")

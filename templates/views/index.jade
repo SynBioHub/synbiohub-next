@@ -3,8 +3,8 @@ extends ../layouts/default.jade
 
 block head
     style.
-        .grey-page-mark {
-            background-color: #f6f6f6;
+        .sbh-corner-logo {
+            display: none;
         }
 
         .top-search-form {
@@ -62,6 +62,14 @@ block content
 
     div.container.container-fluid
 
+        div.row
+            div.col-md-12.text-center
+                if config.instanceLogo
+                    img.instance-logo(src=config.instanceLogo,height=100)
+                    br
+                else
+                    div
+                        h1(style='margin-left: 15px;') #{config.instanceName}
         div.row
             div.col-md-2
             div.col-md-8.sbh-frontpage-blurb
