@@ -40,9 +40,6 @@ block head
         .navbar {
         }
 
-        .sbol-breadcrumbs {
-        }
-
         .sbol-logo-dark-single-line {
             display: none;
         }
@@ -52,12 +49,6 @@ block head
             margin-bottom: 10px;
         }
 
-block breadcrumbs
-    ul
-        li
-            span.fa.fa-home
-            |  Home
-
 block content
 
     div.container.container-fluid
@@ -65,7 +56,7 @@ block content
         div.row
             div.col-md-12.text-center
                 if config.instanceLogo
-                    img.instance-logo(src=config.instanceLogo,height=100)
+                    img.instance-logo-home(src=config.instanceLogo)
                     br
                 else
                     div
