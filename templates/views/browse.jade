@@ -70,10 +70,16 @@ block content
 
         div.search-results-scroll-area
             div.clearfix
-            div.search-results
-
-                each collection in collections
-                    +collection-item(collection)
+            if collections.length === 0
+                div.text-center
+                    i
+                        | Nothing to show. Perhaps you need to
+                        a(href='/submit')  submit 
+                        | something first?
+            else
+                div.search-results
+                    each collection in collections
+                        +collection-item(collection)
 
 
 

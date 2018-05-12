@@ -63,12 +63,12 @@ block content
                                     a(href=attachmentDownloadURL) Download Attachment
             li.dropdown.btn.btn-primary
                 span.fa.fa-search
-                    span.caret
-                    if !meta.remote && rdfType.name != 'Collection' && rdfType.name != 'Component'
-                        li.dropdown.btn.btn-primary
+                    ul.dropdown-menu.dropdown-toggle
+                        if !meta.remote && rdfType.name != 'Collection' && rdfType.name != 'Component'
+                            li
                                 a(href=meta.url + '/uses',title='Find all uses of this '+rdfType.name,style="color:white")
                                     span.fa.fa-search
-                    block topLevelButtonsSearch
+                        block topLevelButtonsSearch
             block topLevelButtons
             li.dropdown.btn.btn-primary
                 if meta.triplestore != 'public'
