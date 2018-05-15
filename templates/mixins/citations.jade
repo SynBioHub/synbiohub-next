@@ -3,10 +3,9 @@ mixin citations(src, submissionCitations, canEdit)
     div#sbh-citations(data-src=src)
         if (submissionCitations.length == 0) 
             if canEdit
-                h4
-                    a#sbh-add-citations(href='#')
-                        span.fa.fa-plus
-                        i  Add reference...
+                a.sbh-add-mutable#sbh-add-citations(href='#')
+                    span.fa.fa-plus
+                    i  Add reference...
         else
             if canEdit
                 div.pull-left

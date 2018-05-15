@@ -21,7 +21,14 @@ $('.sbh-download-picture').click(function () {
 })
 
 
-$('.sbh-datatable').DataTable()
+$('.sbh-datatable').DataTable({
+    processing: false,
+    serverSide: false,
+
+    searching: false,
+    ordering: false,
+    paging: false
+})
 
 $(document).on('click', '.sbh-datatable .save', function () {
 
@@ -123,9 +130,18 @@ if (typeof meta !== 'undefined') {
     $('.sbh-collection-members-datatable').DataTable({
         processing: true,
         serverSide: true,
+        lengthChange: false,
+
+        dom: "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'p>>" +
+            "<'row'<'col-sm-12'tr>>",
 
         searching: !meta.remote,
         ordering: !meta.remote,
+
+        "oLanguage": {
+            "sSearch": ""
+        },
+
 	order: [[2, "asc"]],
         
 	ajax: {
@@ -139,6 +155,9 @@ if (typeof meta !== 'undefined') {
         }
 
     })
+
+    $('.dataTables_filter input').prop('placeholder', 'Search')
+
 }
 
 $('.sbh-registries-datatable').DataTable({
@@ -147,7 +166,9 @@ $('.sbh-registries-datatable').DataTable({
 
     searching: false,
     ordering: false,
-    paging: false
+    paging: false,
+
+
 })
 
 $(document).on('click', '.save-registry', function () {

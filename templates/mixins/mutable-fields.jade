@@ -3,10 +3,9 @@ mixin mutable-description(src, desc, canEdit)
     div#sbh-description(data-src=src)
         if (desc == '') 
             if canEdit
-                h4
-                    a#sbh-add-description(href='#')
-                        span.fa.fa-plus
-                        i  Add description...
+                a.sbh-add-mutable#sbh-add-description(href='#')
+                    span.fa.fa-plus
+                    i  Add description...
         else
             if canEdit
                 div.pull-left
@@ -20,10 +19,9 @@ mixin mutable-notes(src, notes, canEdit)
     div#sbh-notes(data-src=src)
         if (notes == '') 
             if canEdit
-                h4
-                    a#sbh-add-notes(href='#')
-                        span.fa.fa-plus
-                        i  Add notes...
+                a.sbh-add-mutable#sbh-add-notes(href='#')
+                    span.fa.fa-plus
+                    i  Add notes...
         else
             if canEdit
                 div.pull-left
@@ -37,10 +35,9 @@ mixin mutable-source(src, source, canEdit)
     div#sbh-source(data-src=src)
         if (source == '') 
             if canEdit
-                h4
-                    a#sbh-add-source(href='#')
-                        span.fa.fa-plus
-                        i  Add source...
+                a.sbh-add-mutable#sbh-add-source(href='#')
+                    span.fa.fa-plus
+                    i  Add source...
         else
             if canEdit
                 div.pull-left

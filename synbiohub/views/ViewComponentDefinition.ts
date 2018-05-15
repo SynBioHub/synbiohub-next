@@ -17,6 +17,8 @@ import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import uriToUrl from 'synbiohub/uriToUrl';
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
+import SBOLDocument = require('sboljs')
+
 import { Request, Response } from 'express'
 
 export default class ViewComponentDefinition extends ViewTopLevelWithObject {
@@ -80,10 +82,26 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
         }
 
 
-        // TODO
-        //if (isDNA) {
+        let types = this.object.types.map((type) => type.toString())
+
+        let isDNA = types.indexOf(SBOLDocument.terms.dnaRegion) !== -1
+
+        if (isDNA) {
             this.meta.displayList = getDisplayList(this.object, config, req.url.toString().endsWith('/share'))
-        //}
+        }
+
+
+        if(isDNA) {
+            this.meta.topLevelHumanType = 'DNA Part'
+        } else if(types.indexOf(SBOLDocument.terms.rnaRegion) !== -1) {
+            this.meta.topLevelHumanType = 'RNA Part'
+        } else if(types.indexOf(SBOLDocument.terms.protein) !== -1) {
+            this.meta.topLevelHumanType = 'Protein'
+        } else if(types.indexOf(SBOLDocument.terms.smallMolecule) !== -1) {
+            this.meta.topLevelHumanType = 'Small Molecule'
+        } else {
+            this.meta.topLevelHumanType = 'Part'
+        }
     }
 
     async render(res:Response) {
