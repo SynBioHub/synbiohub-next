@@ -8,64 +8,59 @@ block body
     body
         block modal
 
-        nav.navbar.navbar-fixed-top
-            div.content
-                a(href='/').sbh-corner-logo
-                    if config.instanceLogo
-                        img.pull-left.instance-logo(src=config.instanceLogo,height=50)
+        nav.navbar.navbar-expand-lg
+            a(href='/').navbar-brand
+                if config.instanceLogo
+                    img.instance-logo(src=config.instanceLogo)
+                else
+                    h1(style='margin-left: 15px;') #{config.instanceName}
+
+            button.navbar-toggler(type="button",data-toggle="collapse",data-target="#navbarSupportedContent",aria-controls="navbarSupportedContent",aria-expanded="false",aria-label="Toggle navigation")
+                span.navbar-toggler-icon
+
+            div.collapse.navbar-collapse#navbarSupportedContent
+                ul.navbar-nav.mr-auto
+                    li.nav-item
+                        a(href='/submit').nav-link
+                            span.fa.fa-cloud-upload
+                            span Submit
+                    li.nav-item
+                        a(href='/about').nav-link
+                            span.fa.fa-info-circle
+                            span About
+
+                    if locals.user
+                        li.nav-item
+                            a(href='/shared').nav-link
+                                span.fa.fa-bolt
+                                span Shared with Me
+                        li.nav-item
+                            a(href='/manage').nav-link
+                                span.fa.fa-align-left
+                                span Submissions
+                        if locals.user.isAdmin
+                            li.nav-item
+                                a(href='/admin').nav-link
+                                    span.fa.fa-cogs
+                                    span Admin
+                        li.nav-item
+                            a(href='/profile').nav-link
+                                span.fa.fa-id-card
+                                span Profile 
+                        li.nav-item
+                            a(href='/logout').nav-link
+                                span.fa.fa-sign-out
+                                span Sign Out
                     else
-                        div.pull-left
-                            h1(style='margin-left: 15px;') #{config.instanceName}
-
+                        li.nav-item
+                            a(href='/login').nav-link
+                                span.fa.fa-sign-in
+                                span Login or Register
                 if section != 'search'
-                    div.pull-left
-                        form(action='search').top-search-form
-                            input.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
-                            button(type='submit').submit Search
+                    form(action='search').form-inline
+                        input.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
+                        button(type='submit').btn.btn-primary Search
 
-                div.pull-right.menu
-                    ul
-                        li
-                            a(href='/submit')
-                                span.fa.fa-cloud-upload
-                                span.blue-text  Submit
-                        li
-                            a(href='/about')
-                                span.fa.fa-info-circle
-                                span.blue-text  About
-
-                        if locals.user
-                            li
-                                a(href='/shared')
-                                    span.fa.fa-bolt
-                                    span.blue-text  Shared with Me
-                            li
-                                a(href='/manage')
-                                    span.fa.fa-align-left
-                                    span.blue-text  Submissions
-                            if config.experimental.dataIntegration
-                                li
-                                    a(href='/jobs')
-                                        span.fa.fa-tasks
-                                        span.blue-text  Jobs
-                            if locals.user.isAdmin
-                                li
-                                    a(href='/admin')
-                                        span.fa.fa-cogs
-                                        span.blue-text  Admin
-                            li
-                                a(href='/profile') 
-                                    span.fa.fa-id-card
-                                    span.blue-text  Profile 
-                            li
-                                a(href='/logout')
-                                    span.fa.fa-sign-out
-                                    span.blue-text  Sign Out
-                        else
-                            li
-                                a(href='/login')
-                                    span.fa.fa-sign-in
-                                    span.blue-text  Login or Register
 
 
         div.clearfix
