@@ -18,8 +18,7 @@ block jsState
         }
 
 block content
-    br
-    div.container
+    div.container-fluid.ml-5
         div.row.text-center
             div.col-md-12
                 h1 #{meta.name?meta.name:meta.id}
@@ -38,12 +37,6 @@ block content
                     h4
                         != meta.description
 
-        if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
-            div.row.text-center
-                div.col-md-12
-                    i Derived from 
-                        a(href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) #{meta.wasDerivedFrom}
-
         div.row.text-center
             div.col-md-12.sbh-toplevel-preview
                 block topLevelPreview
@@ -56,6 +49,12 @@ block content
                         li
                             span.fa.fa-ellipsis-h
 
+
+        if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
+            div.row
+                div.col-md-12
+                    i Derived from 
+                        a(href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) #{meta.wasDerivedFrom}
 
         div.row.entry-heading
             div.col-sm-6.entry-title

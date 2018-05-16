@@ -9,68 +9,58 @@ block body
         block modal
 
         nav.navbar.navbar-expand-lg
-            a(href='/').navbar-brand
-                if config.instanceLogo
-                    img.instance-logo(src=config.instanceLogo)
-                else
-                    h1(style='margin-left: 15px;') #{config.instanceName}
-
-            button.navbar-toggler(type="button",data-toggle="collapse",data-target="#navbarSupportedContent",aria-controls="navbarSupportedContent",aria-expanded="false",aria-label="Toggle navigation")
-                span.navbar-toggler-icon
-
-            div.collapse.navbar-collapse#navbarSupportedContent
-                ul.navbar-nav.mr-auto
-                    li.nav-item
-                        a(href='/submit').nav-link
-                            span.fa.fa-cloud-upload
-                            span Submit
-                    li.nav-item
-                        a(href='/about').nav-link
-                            span.fa.fa-info-circle
-                            span About
-
-                    if locals.user
-                        li.nav-item
-                            a(href='/shared').nav-link
-                                span.fa.fa-bolt
-                                span Shared with Me
-                        li.nav-item
-                            a(href='/manage').nav-link
-                                span.fa.fa-align-left
-                                span Submissions
-                        if locals.user.isAdmin
-                            li.nav-item
-                                a(href='/admin').nav-link
-                                    span.fa.fa-cogs
-                                    span Admin
-                        li.nav-item
-                            a(href='/profile').nav-link
-                                span.fa.fa-id-card
-                                span Profile 
-                        li.nav-item
-                            a(href='/logout').nav-link
-                                span.fa.fa-sign-out
-                                span Sign Out
+            div.sbh-navbar-top
+                a(href='/').navbar-brand
+                    if config.instanceLogo
+                        img.instance-logo(src=config.instanceLogo)
                     else
-                        li.nav-item
-                            a(href='/login').nav-link
-                                span.fa.fa-sign-in
-                                span Login or Register
-                if section != 'search'
+                        h1(style='margin-left: 15px;') #{config.instanceName}
+
+                button.navbar-toggler(type="button",data-toggle="collapse",data-target="#navbarSupportedContent",aria-controls="navbarSupportedContent",aria-expanded="false",aria-label="Toggle navigation")
+                    span.navbar-toggler-icon
+
+                div.collapse.navbar-collapse#navbarSupportedContent
                     form(action='search').form-inline
                         input.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
-                        button(type='submit').btn.btn-primary Search
-
-
-
-        div.clearfix
+                    ul.navbar-nav.mr-0
+                        if locals.user
+                            li.nav-item
+                                a(href='/submit').nav-link
+                                    span.fa.fa-cloud-upload
+                                    span Submit
+                            li.nav-item
+                                a(href='/shared').nav-link
+                                    span.fa.fa-bolt
+                                    span Shared with Me
+                            li.nav-item
+                                a(href='/manage').nav-link
+                                    span.fa.fa-align-left
+                                    span Submissions
+                            if locals.user.isAdmin
+                                li.nav-item
+                                    a(href='/admin').nav-link
+                                        span.fa.fa-cogs
+                                        span Admin
+                            li.nav-item
+                                a(href='/profile').nav-link
+                                    span.fa.fa-id-card
+                                    span Profile
+                            li.nav-item
+                                a(href='/logout').nav-link
+                                    span.fa.fa-sign-out
+                                    span Logout
+                        else
+                            li.nav-item
+                                a(href='/login').nav-link.mr-0
+                                    span.fa.fa-sign-in
+                                    span Login or Register
+            if locals.breadcrumbs
+                div.sbh-breadcrumbs
+                    for crumb in locals.breadcrumbs.crumbs
+                        a(href=crumb.uri) #{crumb.title}
 
         block intro
 
-        div.sbol-breadcrumbs
-            block breadcrumbs
-
-        div.clearfix
         block content
 
         div.clearfix

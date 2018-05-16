@@ -6,6 +6,9 @@ import config from "synbiohub/config";
 
 export default class MDFetcherICE extends MDFetcher {
 
+    getName(uri: string): Promise<string> {
+        throw new Error("Method not implemented.");
+    }
     getOwnedBy(uri: string): Promise<string> {
         throw new Error("Method not implemented.");
     }

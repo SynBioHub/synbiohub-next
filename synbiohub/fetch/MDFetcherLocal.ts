@@ -277,6 +277,25 @@ export default class MDFetcherLocal extends MDFetcher {
         }
     }
 
+    async getName(uri) {
+
+        var query = loadTemplate('./sparql/GetName.sparql', {
+            uri: uri
+        })
+
+        let result = await sparql.queryJson(query, this.graphUri)
+
+        if (result && result[0]) {
+
+            return result[0].name
+
+        } else {
+
+            throw new Error('getName: ' + uri + ' not found')
+
+        }
+    }
+
     async getType(uri) {
 
         let result = await sparql.queryJson('SELECT ?type WHERE { <' + uri + '> a ?type }', this.graphUri)

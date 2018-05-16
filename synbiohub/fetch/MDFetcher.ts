@@ -15,6 +15,7 @@ export default abstract class MDFetcher {
 
     abstract async getCount(type:string):Promise<any>
 
+    abstract async getName(uri:string):Promise<string>
     abstract async getType(uri:string):Promise<string>
     abstract async getVersion(uri:string):Promise<string>
 

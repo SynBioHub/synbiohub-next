@@ -13,6 +13,7 @@ import { Request } from 'express'
 import filterAnnotations from "../filterAnnotations";
 import getCitationsForSubject from "./getCitationsForSubject";
 import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
+import Breadcrumbs from "../Breadcrumbs";
 
 export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
@@ -23,6 +24,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     sbol:SBOLDocument
     object:any
 
+    breadcrumbs:Breadcrumbs
 
     sbolUrl:string
     searchUsesUrl:string
@@ -41,6 +43,8 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
         this.sbol = result.sbol
         this.object = result.object
         this.remote = result.remote
+
+        this.breadcrumbs = await Breadcrumbs.fromTopLevelObject(req, this.object)
 
         this.sbolUrl = this.uriInfo.url + '/' + this.object.displayId + '.xml'
 

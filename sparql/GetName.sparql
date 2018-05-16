@@ -1,0 +1,8 @@
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX sbol2: <http://sbols.org/v2#>
+
+SELECT ?name WHERE {
+    <$uri> dcterms:title|sbol2:displayId ?name .
+}
+

@@ -4,6 +4,7 @@ html {
 
 body {
     margin: 0;
+    padding: 0;
     color: #2C3E50;
     height: 100%;
     font-family: 'Roboto', sans-serif;
@@ -1673,7 +1674,57 @@ ul, li {
 }
 
 .navbar {
+    flex-direction: column;
+    padding: 0;
 }
 
+.sbh-navbar-top {
+    flex: 1;
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgb(237, 237, 237);
+
+    padding: 8px;
+}
+
+.sbh-breadcrumbs {
+    flex: 1;
+    width: 100%;
+
+    background-color: rgb(237, 237, 237);
+
+    padding: 4px;
+    padding-left: 16px;
+}
+
+.navbar-nav {
+}
+
+.navbar-nav .nav-item {
+}
+
+#navbarSupportedContent {
+    flex: 1;
+    display: flex;
+    border-bottom-left-radius: 8px;
+    justify-content: space-between;
+}
+
+#navbarSupportedContent a {
+}
+
+.nav-link {
+    color: #2C3E50;
+    font-weight: bold;
+}
+
+.nav-link span.fa {
+    padding-right: 6px;
+    color: @baseColor;
+}
 
 
