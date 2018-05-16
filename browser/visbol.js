@@ -8,7 +8,9 @@ if(document.getElementById('design')
 
     var design = new visbol.Design({
         element: document.getElementById('design'),
-        font: sbolv
+        font: sbolv,
+        omitRootTitle: true,
+        omitRootBorder: true
     });
 
     design.setDisplayList(meta.displayList);
