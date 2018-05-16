@@ -38,7 +38,6 @@ block content
                     h4
                         != meta.description
 
-
         if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
             div.row.text-center
                 div.col-md-12
@@ -70,9 +69,9 @@ block content
                         a(href=meta.isReplacedBy.uri) #{meta.isReplacedBy.id}
                         | as a replacement.
 
-            if (collectionIcon)
-                div.col-sm-6.sbh-collection-icon
-                    img(src=collectionIcon)
+                if (collectionIcon)
+                    div.col-sm-6.sbh-collection-icon
+                        img(src=collectionIcon)
 
         div.row
             div.col-md-11
@@ -82,19 +81,19 @@ block content
                         a(href='/search/dc:creator=\''+meta.creator.description+'\'&',title='Find all records created by this person')
                             span.fa.fa-search
 
-                if meta.created.description && meta.created.description != ''
-                    h5 Date created:
-                        != meta.created.description
-                        a(href='/search/createdBefore='+meta.created.description.split(' ')[0]+'&createdAfter='+meta.created.description.split(' ')[0]+'&',title='Find all records created on this date')
-                            span.fa.fa-search
+                    if meta.created.description && meta.created.description != ''
+                        h5 Date created:
+                            != meta.created.description
+                            a(href='/search/createdBefore='+meta.created.description.split(' ')[0]+'&createdAfter='+meta.created.description.split(' ')[0]+'&',title='Find all records created on this date')
+                                span.fa.fa-search
 
-                if meta.modified.description && meta.modified.description != ''
-                    h5 Date modified:
-                        != meta.modified.description
-                        a(href='/search/modifiedBefore='+meta.modified.description.split(' ')[0]+'&modifiedAfter='+meta.modified.description.split(' ')[0]+'&',title='Find all records modified on this date')
-                            span.fa.fa-search
+                    if meta.modified.description && meta.modified.description != ''
+                        h5 Date modified:
+                            != meta.modified.description
+                            a(href='/search/modifiedBefore='+meta.modified.description.split(' ')[0]+'&modifiedAfter='+meta.modified.description.split(' ')[0]+'&',title='Find all records modified on this date')
+                                span.fa.fa-search
 
-                block topLevelBelowTitle
+                    block topLevelBelowTitle
 
         .container
             div#accordion.card-group
