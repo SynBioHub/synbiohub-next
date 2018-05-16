@@ -18,6 +18,8 @@ export default abstract class ViewTopLevel extends View {
 
     async prepare(req:Request) {
 
+        await super.prepare(req)
+
         this.uriInfo = getUrisFromReq(req)
 
     }

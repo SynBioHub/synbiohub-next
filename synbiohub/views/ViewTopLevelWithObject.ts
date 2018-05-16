@@ -34,7 +34,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
     async prepare(req:Request) {
 
-        super.prepare(req)
+        await super.prepare(req)
 
         let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.uriInfo.uri)
 

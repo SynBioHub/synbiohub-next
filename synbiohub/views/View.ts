@@ -5,6 +5,7 @@ import config from 'synbiohub/config'
 export default abstract class View {
 
     config:any
+    user:any
 
     constructor() {
 
@@ -12,7 +13,12 @@ export default abstract class View {
 
     }
 
-    abstract async prepare(req:Request)
+    async prepare(req:Request) {
+
+        this.user = req.user
+
+    }
+
     abstract async render(res:Response)
 
 }
