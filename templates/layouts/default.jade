@@ -56,8 +56,13 @@ block body
                                     span Login or Register
             if locals.breadcrumbs
                 div.sbh-breadcrumbs
-                    for crumb in locals.breadcrumbs.crumbs
-                        a(href=crumb.uri) #{crumb.title}
+                    ul
+                        for crumb, i in locals.breadcrumbs.crumbs
+                            li
+                                if i < locals.breadcrumbs.crumbs.length - 1
+                                    a(href=crumb.uri) #{crumb.title}
+                                else
+                                    | #{crumb.title}
 
         block intro
 

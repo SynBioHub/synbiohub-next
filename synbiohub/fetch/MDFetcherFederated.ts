@@ -3,9 +3,6 @@ import MDFetcher from "synbiohub/fetch/MDFetcher";
 
 export default class MDFetcherFederated extends MDFetcher {
 
-    getName(uri: string): Promise<string> {
-        throw new Error("Method not implemented.");
-    }
     fetchers:Array<MDFetcher>
 
     constructor(fetchers:Array<MDFetcher>) {
@@ -160,6 +157,16 @@ export default class MDFetcherFederated extends MDFetcher {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getVersion(uri)
+            } catch(e) {
+                continue
+            }
+        }
+    }
+
+    async getName(uri: string): Promise<string> {
+        for(let fetcher of this.fetchers) {
+            try {
+                return await fetcher.getName(uri)
             } catch(e) {
                 continue
             }

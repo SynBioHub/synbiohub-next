@@ -19,7 +19,7 @@ block jsState
 
 block content
     div.container-fluid.ml-5
-        div.row.text-center
+        div.row
             div.col-md-12
                 h1 #{meta.name?meta.name:meta.id}
                     | 
@@ -32,12 +32,12 @@ block content
                             span.fa.fa-star
                 span.sbh-toplevel-type #{meta.topLevelHumanType}
         if meta.description && meta.description != ''
-            div.row.text-center
+            div.row
                 div.col-md-12
                     h4
                         != meta.description
 
-        div.row.text-center
+        div.row
             div.col-md-12.sbh-toplevel-preview
                 block topLevelPreview
                 div.sbh-toplevel-buttons

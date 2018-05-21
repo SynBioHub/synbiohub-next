@@ -16,15 +16,15 @@ export default class Breadcrumbs {
     //
     static async fromTopLevelObject(req:Request, object:any):Promise<Breadcrumbs> {
 
-        let crumb = new Breadcrumb(object.uri, object.name)
+        let crumb = new Breadcrumb(object.uri.toString(), object.name)
 
-        let collections:any = DefaultMDFetcher.get(req).getContainingCollections(object)
+        let collections:any = await DefaultMDFetcher.get(req).getContainingCollections(object.uri.toString())
 
         if(collections.length > 0) {
 
             // TODO: get collection with most? members rather than just first one returned
 
-            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0])
+            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0].uri)
             
             return otherCrumbs.join(new Breadcrumbs([ crumb ]))
 
@@ -41,13 +41,13 @@ export default class Breadcrumbs {
 
         let crumb = new Breadcrumb(uri, name)
 
-        let collections:any = DefaultMDFetcher.get(req).getContainingCollections(uri)
+        let collections:any = await DefaultMDFetcher.get(req).getContainingCollections(uri)
 
         if(collections.length > 0) {
 
             // TODO: get collection with most? members rather than just first one returned
 
-            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0])
+            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0].uri)
             
             return otherCrumbs.join(new Breadcrumbs([ crumb ]))
 
