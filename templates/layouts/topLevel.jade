@@ -18,19 +18,29 @@ block jsState
         }
 
 block content
-    div.container-fluid.ml-5
+    br
+    div.container-fluid.px-5
         div.row
-            div.col-md-12
-                br
-                h1
-                    block topLevelIcon
-                    |  #{meta.name?meta.name:meta.id}
-                    if meta.sbhBookmark && meta.sbhBookmark.description == 'true'
-                        a(href='http://wiki.synbiohub.org/Terms/synbiohub#bookmark',title='Bookmarked Parts')
-                            span.fa.fa-bookmark
-                    if meta.sbhStar && meta.sbhStar.description == 'true'
-                        a(href='http://wiki.synbiohub.org/Terms/synbiohub#star',title='Starred Parts')
-                            span.fa.fa-star
+            div.col
+                div.d-flex
+                    div
+                        h1
+                            block topLevelIcon
+                            |  #{meta.name?meta.name:meta.id}
+                            if meta.sbhBookmark && meta.sbhBookmark.description == 'true'
+                                a(href='http://wiki.synbiohub.org/Terms/synbiohub#bookmark',title='Bookmarked Parts')
+                                    span.fa.fa-bookmark
+                            if meta.sbhStar && meta.sbhStar.description == 'true'
+                                a(href='http://wiki.synbiohub.org/Terms/synbiohub#star',title='Starred Parts')
+                                    span.fa.fa-star
+                    div.sbh-toplevel-buttons.ml-auto
+                        ul
+                            li
+                                span.fa.fa-download
+                            li
+                                span.fa.fa-share
+                            li
+                                span.fa.fa-ellipsis-h
         if meta.description && meta.description != ''
             div.row
                 div.col-md-12
@@ -47,14 +57,6 @@ block content
         div.row
             div.col-md-12.sbh-toplevel-preview
                 block topLevelPreview
-                div.sbh-toplevel-buttons
-                    ul
-                        li
-                            span.fa.fa-download
-                        li 
-                            span.fa.fa-share
-                        li
-                            span.fa.fa-ellipsis-h
 
         div.row.entry-heading
             div.col-sm-6.entry-title

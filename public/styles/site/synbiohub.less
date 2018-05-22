@@ -1624,10 +1624,10 @@ ul, li {
 }
 
 .sbh-toplevel-buttons {
+}
+
+.sbh-toplevel-buttons ul {
     display: inline-block;
-    height: 50%;
-    position: absolute;
-    top: 25%;
 }
 
 .sbh-toplevel-buttons li {
@@ -1635,6 +1635,11 @@ ul, li {
     font-size: 18pt;
     color: #333;
     cursor: pointer;
+    display: inline-block;
+}
+
+.sbh-toplevel-buttons li:not(:first-child) {
+    padding-left: 10px;
 }
 
 .sbh-toplevel-buttons li:hover {

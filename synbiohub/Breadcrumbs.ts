@@ -35,6 +35,7 @@ export default class Breadcrumbs {
         }
     }
 
+
     static async fromTopLevelURI(req:Request, uri:string):Promise<Breadcrumbs> {
 
         let name = await DefaultMDFetcher.get(req).getName(uri)
