@@ -21,21 +21,28 @@ block content
     div.container-fluid.ml-5
         div.row
             div.col-md-12
-                h1 #{meta.name?meta.name:meta.id}
-                    | 
+                br
+                h1
                     block topLevelIcon
+                    |  #{meta.name?meta.name:meta.id}
                     if meta.sbhBookmark && meta.sbhBookmark.description == 'true'
                         a(href='http://wiki.synbiohub.org/Terms/synbiohub#bookmark',title='Bookmarked Parts')
                             span.fa.fa-bookmark
                     if meta.sbhStar && meta.sbhStar.description == 'true'
                         a(href='http://wiki.synbiohub.org/Terms/synbiohub#star',title='Starred Parts')
                             span.fa.fa-star
-                span.sbh-toplevel-type #{meta.topLevelHumanType}
         if meta.description && meta.description != ''
             div.row
                 div.col-md-12
                     h4
                         != meta.description
+
+
+        if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
+            div.row
+                div.col-md-12
+                    i Derived from 
+                        a(href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) #{meta.wasDerivedFrom}
 
         div.row
             div.col-md-12.sbh-toplevel-preview
@@ -44,17 +51,10 @@ block content
                     ul
                         li
                             span.fa.fa-download
-                        li
+                        li 
                             span.fa.fa-share
                         li
                             span.fa.fa-ellipsis-h
-
-
-        if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
-            div.row
-                div.col-md-12
-                    i Derived from 
-                        a(href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) #{meta.wasDerivedFrom}
 
         div.row.entry-heading
             div.col-sm-6.entry-title
@@ -94,131 +94,129 @@ block content
 
                     block topLevelBelowTitle
 
-        .container
-            div#accordion.card-group
-                div.card.w-50
-                    div.card-header
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
-                            | <b>Details</b>
-                    div.card-body
-                        table.table.table-striped.entry-detail-table
+        div.card.w-100
+            div.card-header
+                a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
+                    | <b>Details</b>
+            div.card-body
+                table.table.table-striped.entry-detail-table
 
-                            if meta.labels && meta.labels.length > 0
-                                tr
-                                    td Labels
-                                    td #{meta.labels.join(', ')}
+                    if meta.labels && meta.labels.length > 0
+                        tr
+                            td Labels
+                            td #{meta.labels.join(', ')}
 
-                            if meta.types && meta.types.length > 0
-                                tr
-                                    td Types
-                                    td
-                                        for type in meta.types
-                                            if type.description
-                                                != type.description.name
-                                                a(href=type.term,title='Learn more about this type')
-                                                    span.fa.fa-info-circle
-                                                a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
-                                                    span.fa.fa-search
-                                            else
-                                                != type.uri
-                                                a(href=type.uri,title='Learn more about this type')
-                                                    span.fa.fa-info-circle
-                                                a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
-                                                    span.fa.fa-search
-                                            br
+                    if meta.types && meta.types.length > 0
+                        tr
+                            td Types
+                            td
+                                for type in meta.types
+                                    if type.description
+                                        != type.description.name
+                                        a(href=type.term,title='Learn more about this type')
+                                            span.fa.fa-info-circle
+                                        a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
+                                            span.fa.fa-search
+                                    else
+                                        != type.uri
+                                        a(href=type.uri,title='Learn more about this type')
+                                            span.fa.fa-info-circle
+                                        a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
+                                            span.fa.fa-search
+                                    br
 
-                            if meta.roles && meta.roles.length > 0
-                                tr
-                                    td Roles
-                                    td
-                                        for role in meta.roles
-                                            if role.description
-                                                != role.description.name
-                                                a(href=role.term,title='Learn more about this role')
-                                                    span.fa.fa-info-circle
-                                                a(href='/search/role=<'+encodeURIComponent(role.uri)+'>&',title='Find all records with this role')
-                                                    span.fa.fa-search
-                                            else
-                                                != role.term
-                                                a(href=role.uri,title='Learn more about this role')
-                                                    span.fa.fa-info-circle
-                                                a(href='/search/role=<'+encodeURIComponent(role.uri)+'>&',title='Find all records with this role')
-                                                    span.fa.fa-search
-                                            br
+                    if meta.roles && meta.roles.length > 0
+                        tr
+                            td Roles
+                            td
+                                for role in meta.roles
+                                    if role.description
+                                        != role.description.name
+                                        a(href=role.term,title='Learn more about this role')
+                                            span.fa.fa-info-circle
+                                        a(href='/search/role=<'+encodeURIComponent(role.uri)+'>&',title='Find all records with this role')
+                                            span.fa.fa-search
+                                    else
+                                        != role.term
+                                        a(href=role.uri,title='Learn more about this role')
+                                            span.fa.fa-info-circle
+                                        a(href='/search/role=<'+encodeURIComponent(role.uri)+'>&',title='Find all records with this role')
+                                            span.fa.fa-search
+                                    br
 
-                            block topLevelPropertyTable
+                    block topLevelPropertyTable
 
-                        block topLevelBelowPropertyTable
+                block topLevelBelowPropertyTable
 
-                if collections.length > 0
-                    div.card.w-50
-                        div.card-header
-                            a.accordion-toggle(data-toggle='collapse')
-                                | <b>Collections</b>
-                        div.card-body
-                            table.table.table-striped.entry-detail-table
-                                tr
-                                    td
-                                        for collection in collections
-                                            a(href=collection.url,title=collection.name) #{collection.name} &nbsp;
-                                                a(href='/search/collection=<'+encodeURIComponent(collection.uri)+'>&',title='Find all records in this collection')
-                                                    span.fa.fa-search
-                                            br
+        if collections.length > 0
+            div.card.w-100
+                div.card-header
+                    a.accordion-toggle(data-toggle='collapse')
+                        | <b>Collections</b>
+                div.card-body
+                    table.table.table-striped.entry-detail-table
+                        tr
+                            td
+                                for collection in collections
+                                    a(href=collection.url,title=collection.name) #{collection.name} &nbsp;
+                                        a(href='/search/collection=<'+encodeURIComponent(collection.uri)+'>&',title='Find all records in this collection')
+                                            span.fa.fa-search
+                                    br
 
-                if meta.builds && meta.builds.length > 0
-                    .panel.panel-default
-                        .panel-heading
-                            h4.panel-title
-                                a.accordion-toggle(data-toggle='collapse', href='#collapseFive')
-                                    | <b>Built Designs</b>
-                        #collapseFive.panel-collapse.collapse
-                            .panel-body
-                                div.row
-                                    div.col-md-12
-                                        table.table.table-striped.entry-detail-table
-                                                tr
-                                                td
-                                                    for impl in meta.builds
-                                                        a(href=impl)
-                                                            != impl
-                                                            br
-                if annotations && annotations.length > 0
-                    div.card.w-50
-                        div.card-header
-                                a.accordion-toggle(data-toggle='collapse', href='#collapseSix')
-                                    | <b>Other Properties</b>
-                        div.card-body
-                            table.table.table-striped.entry-detail-table
-                                for annotation in annotations
-                                    tr
-                                        td #{annotation.name}
-                                            a(href=annotation.nameDef,title='Learn more about this annotation type')
-                                                span.fa.fa-info-circle
-                                        if (annotation.type === 'uri')
-                                            td #{annotation.value}
-                                                a(href=annotation.url,title='Learn more about this annotation value')
-                                                    span.fa.fa-info-circle &nbsp;
-                                                a(href = '/search/<' + encodeURIComponent(annotation.nameDef) + '>=<' + encodeURIComponent(annotation.uri) + '>&', title = 'Find all records with this annotation')
-                                                    span.fa.fa-search
-                                                if(canEdit && annotation.removeOwner)
-                                                    form.form-inline(style="display: inline" method='POST', action=annotation.removeOwner)
-                                                        input(type='hidden' name='userUri' value=config.databasePrefix + annotation.value)
-                                                        button.fakelink(type='submit')
-                                                            | &nbsp;
-                                                            span.fa.fa-trash
-                                        else
-                                            td #{annotation.value.toString()} &nbsp;
-                                                a(href = '/search/<' + encodeURIComponent(annotation.nameDef) + '>=' + encodeURIComponent('\''+annotation.value.replace('\'','\\\'')+'\'') + '&', title = 'Find all records with this annotation')
-                                                    span.fa.fa-search
+        if meta.builds && meta.builds.length > 0
+            .panel.panel-default
+                .panel-heading
+                    h4.panel-title
+                        a.accordion-toggle(data-toggle='collapse', href='#collapseFive')
+                            | <b>Built Designs</b>
+                #collapseFive.panel-collapse.collapse
+                    .panel-body
+                        div.row
+                            div.col-md-12
+                                table.table.table-striped.entry-detail-table
+                                        tr
+                                        td
+                                            for impl in meta.builds
+                                                a(href=impl)
+                                                    != impl
+                                                    br
+        if annotations && annotations.length > 0
+            div.card.w-100
+                div.card-header
+                        a.accordion-toggle(data-toggle='collapse', href='#collapseSix')
+                            | <b>Other Properties</b>
+                div.card-body
+                    table.table.table-striped.entry-detail-table
+                        for annotation in annotations
+                            tr
+                                td #{annotation.name}
+                                    a(href=annotation.nameDef,title='Learn more about this annotation type')
+                                        span.fa.fa-info-circle
+                                if (annotation.type === 'uri')
+                                    td #{annotation.value}
+                                        a(href=annotation.url,title='Learn more about this annotation value')
+                                            span.fa.fa-info-circle &nbsp;
+                                        a(href = '/search/<' + encodeURIComponent(annotation.nameDef) + '>=<' + encodeURIComponent(annotation.uri) + '>&', title = 'Find all records with this annotation')
+                                            span.fa.fa-search
+                                        if(canEdit && annotation.removeOwner)
+                                            form.form-inline(style="display: inline" method='POST', action=annotation.removeOwner)
+                                                input(type='hidden' name='userUri' value=config.databasePrefix + annotation.value)
+                                                button.fakelink(type='submit')
+                                                    | &nbsp;
+                                                    span.fa.fa-trash
+                                else
+                                    td #{annotation.value.toString()} &nbsp;
+                                        a(href = '/search/<' + encodeURIComponent(annotation.nameDef) + '>=' + encodeURIComponent('\''+annotation.value.replace('\'','\\\'')+'\'') + '&', title = 'Find all records with this annotation')
+                                            span.fa.fa-search
 
 
 
-                div.card.w-50
-                    div.card-header
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseSeven')
-                            | <b>Attachments</b>
-                    div.card-body
-                        +attachments(meta.url, meta.attachments, canEdit)
+        div.card.w-100
+            div.card-header
+                a.accordion-toggle(data-toggle='collapse', href='#collapseSeven')
+                    | <b>Attachments</b>
+            div.card-body
+                +attachments(meta.url, meta.attachments, canEdit)
 
         if meta.iGemMainPage
             .panel.panel-default
