@@ -13,11 +13,12 @@ block body
         nav.pushy.pushy-right
             div.pushy-content
                 ul
-                    each item in menu.items
-                        li.pushy-link
-                            a(href=item.url)
-                                span.fa(class=item.faIconClass)
-                                span #{item.title}
+                    if typeof(menu) !== 'undefined'
+                        each item in menu.items
+                            li.pushy-link
+                                a(href=item.url)
+                                    span.fa(class=item.faIconClass)
+                                    span #{item.title}
 
 
         div.site-overlay
@@ -34,11 +35,12 @@ block body
                         form(action='search').form-inline.flex-grow-1
                             input.form-control.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
                         ul.navbar-nav.mr-0
-                            each item in menu.items
-                                li.nav-item
-                                    a(href=item.url).nav-link
-                                        span.fa(class=item.faIconClass)
-                                        span #{item.title}
+                            if typeof(menu) !== 'undefined'
+                                each item in menu.items
+                                    li.nav-item
+                                        a(href=item.url).nav-link
+                                            span.fa(class=item.faIconClass)
+                                            span #{item.title}
                     div#navbarNotSupportedContent
                         button.btn.menu-btn
                             span.fa.fa-bars
