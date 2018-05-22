@@ -1733,8 +1733,6 @@ ul, li {
     width: 100%;
 }
 
-#navbarSupportedContent a {
-}
 
 .nav-link {
     color: #2C3E50;
@@ -1780,4 +1778,24 @@ ul, li {
 .sbh-sequence pre {
     background-color: #eee;
     padding: 6px;
+}
+
+
+
+
+@media screen and (min-width: 1300px) {
+    #navbarSupportedContent {
+        display: inline;
+    }
+    #navbarNotSupportedContent {
+        display: none !important;
+    }
+}
+@media not screen and (min-width: 1300px) {
+    #navbarSupportedContent {
+        display: none !important;
+    }
+    #navbarNotSupportedContent {
+        display: inline;
+    }
 }
