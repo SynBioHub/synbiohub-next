@@ -36,8 +36,9 @@ block content
                                     label(for="agent") Researcher
                                     select.form-control(name='agent', id="agent")
                                             option(value='', selected='selected') The name of the researcher who built the design.
-                                            for agent in agents
-                                              option(value = agent) #{agent}
+                                            - for(var i=0;i< agent_names.length;i++) {
+                                              option(value = [agent_uris[i],agent_names[i]]) #{agent_names[i]}
+                                            - }
                         div.row
                             div.col-md-12
                                 div.form-group-100.required

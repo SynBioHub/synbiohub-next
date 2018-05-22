@@ -52,6 +52,7 @@ import backup from './views/admin/backup';
 import backupRestore from './views/admin/backupRestore';
 import registries from './views/admin/registries';
 import mail from './views/admin/mail';
+import createImplementation from './views/createImplementation';
 
 var views = {
     index,
@@ -72,6 +73,7 @@ var views = {
     addOwner,
     shared,
     visualization,
+    createImplementation,
 
 
     editProfile: viewEditProfile,
@@ -373,6 +375,10 @@ function App() {
 
     app.get('/:type/count', api.count)
     app.get('/rootCollections', api.rootCollections)
+
+    // Implementation endpoints
+
+    app.all('/user/:userId/:collectionId/:displayId/:version/createImplementation', requireUser, views.createImplementation);
 
     // PersistentIdentity endpoints
     app.get('/public/:collectionId/:displayId', views.persistentIdentity);
