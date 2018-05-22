@@ -20,8 +20,8 @@ block body
                     span.navbar-toggler-icon
 
                 div.collapse.navbar-collapse#navbarSupportedContent
-                    form(action='search').form-inline
-                        input.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
+                    form(action='search').form-inline.flex-grow-1
+                        input.form-control.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
                     ul.navbar-nav.mr-0
                         if locals.user
                             li.nav-item
@@ -54,7 +54,7 @@ block body
                                 a(href='/login').nav-link.mr-0
                                     span.fa.fa-sign-in
                                     span Login or Register
-            if locals.breadcrumbs
+            if locals.breadcrumbs && locals.breadcrumbs.crumbs.length > 1
                 div.sbh-breadcrumbs
                     ul
                         for crumb, i in locals.breadcrumbs.crumbs
