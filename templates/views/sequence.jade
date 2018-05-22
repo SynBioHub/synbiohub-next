@@ -3,11 +3,18 @@ extends ../layouts/topLevel.jade
 
 include ../mixins/blast-button.jade
 
-block topLevelBelowPropertyTable
+block topLevelIcon
+    span.topLevelIcon.fa.fa-bars
+
+block topLevelPreview
     if meta.elements
         div.row
             div.col-md-12
-                div.pull-right
-                    +blast-button(meta)
-                h4 Sequence (#{meta.length} #{meta.lengthUnits})
-                pre #{meta.formatted}
+                div.sbh-sequence
+                    div.sbh-sequence-title
+                        div.float-right
+                            +blast-button(meta)
+                        | Sequence (#{meta.length} #{meta.lengthUnits})
+                    div.sbh-sequence-body
+                        pre #{meta.formatted}
+
