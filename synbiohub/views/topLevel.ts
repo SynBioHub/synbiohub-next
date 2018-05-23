@@ -12,6 +12,7 @@ import ViewModel from './ViewModel';
 import ViewSBOLAttachment from './ViewSBOLAttachment';
 import ViewAttachment from './ViewAttachment';
 import ViewGenericTopLevel from './ViewGenericTopLevel';
+import ViewImplementation from './ViewImplementation';
 
 export default async function(req, res) {
 
@@ -37,6 +38,10 @@ export default async function(req, res) {
         view = new ViewSBOLAttachment()
     } else if(result==='http://wiki.synbiohub.org/wiki/Terms/synbiohub#Attachment') {
         view = new ViewAttachment()
+    
+    } else if(result==='http://sbols.org/v2#Implementation'){
+        view = new ViewImplementation()
+
     } else {
         view = new ViewGenericTopLevel()
     }
