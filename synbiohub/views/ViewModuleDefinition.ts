@@ -34,7 +34,7 @@ export default class ViewModuleDefinition extends ViewTopLevelWithObject {
     functionalComponents:Array<any>
     interactions:Array<any>
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

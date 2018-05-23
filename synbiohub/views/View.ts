@@ -19,7 +19,7 @@ export default abstract class View {
 
     }
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         this.user = req.user
 

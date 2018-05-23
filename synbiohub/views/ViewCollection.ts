@@ -16,7 +16,7 @@ export default class ViewCollection extends ViewTopLevelWithObject {
 
     }
 
-    async prepare(req: Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

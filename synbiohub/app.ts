@@ -9,7 +9,7 @@ import browserifyMiddleware = require('browserify-middleware')
 import UglifyJS = require('uglify-es')
 
 
-import { Router } from 'express'
+import { Router, Application } from 'express'
 
 import config from './config';
 import SequelizeStoreFactory = require('connect-sequelize')
@@ -205,7 +205,7 @@ browserifyMiddleware.settings({
 
 function App() {
 
-    var app:Router = express()
+    var app:Application = express()
 
 
     app.set('view engine', 'pug')

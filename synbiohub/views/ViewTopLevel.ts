@@ -5,6 +5,7 @@ import wiky from "synbiohub/wiky/wiky";
 import shareImages from "synbiohub/shareImages";
 import config from 'synbiohub/config'
 import sha1 = require('sha1')
+import { SBHRequest } from "synbiohub/SBHRequest";
 
 export default abstract class ViewTopLevel extends View {
 
@@ -16,7 +17,7 @@ export default abstract class ViewTopLevel extends View {
 
     }
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
@@ -31,7 +32,7 @@ export default abstract class ViewTopLevel extends View {
     // TODO get rid of this
     meta:any
      
-    protected setTopLevelMetadata(req:Request, meta:any) {
+    protected setTopLevelMetadata(req:SBHRequest, meta:any) {
         if (meta.description != '') {
             meta.description = wiky.process(meta.description, {})
         }

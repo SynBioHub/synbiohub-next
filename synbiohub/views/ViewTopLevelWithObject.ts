@@ -9,11 +9,12 @@ import config from "synbiohub/config";
 import uriToUrl from "synbiohub/uriToUrl";
 import sha1 = require('sha1')
 
-import { Request } from 'express'
+import { Request, Response } from 'express'
 import filterAnnotations from "../filterAnnotations";
 import getCitationsForSubject from "./getCitationsForSubject";
 import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 import Breadcrumbs from "../Breadcrumbs";
+import { SBHRequest } from "synbiohub/SBHRequest";
 
 export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
@@ -34,7 +35,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     submissionCitations:Array<any>
     collections:Array<any>
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
@@ -98,7 +99,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     // TODO get rid of this
     meta:any
      
-    protected setTopLevelMetadata(req:Request, meta:any) {
+    protected setTopLevelMetadata(req:SBHRequest, meta:any) {
 
         meta.attachments = attachments.getAttachmentsFromTopLevel(this.sbol, this.object,
             req.url.toString().endsWith('/share'))

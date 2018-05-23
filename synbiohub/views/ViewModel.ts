@@ -12,7 +12,7 @@ export default class ViewModel extends ViewTopLevelWithObject {
 
     meta:any
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

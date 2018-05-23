@@ -22,7 +22,7 @@ export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
     size:string
     attachmentIsImage:boolean
 
-    async prepare(req: Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
