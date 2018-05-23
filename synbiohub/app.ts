@@ -32,7 +32,6 @@ import addOwner from './views/addOwner';
 import shared from './views/shared';
 import visualization from './views/visualization';
 import editProfile from './views/editProfile';
-import userProfile from './views/userProfile';
 import general from './views/admin/general';
 import status from './views/admin/status';
 import graphs from './views/admin/graphs';
@@ -63,8 +62,6 @@ var views = {
 
 
     editProfile: viewEditProfile,
-
-    userProfile,
 
 
     admin: {
@@ -150,6 +147,7 @@ import { SBHRequest } from 'synbiohub/SBHRequest';
 import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 import ViewLogin from 'synbiohub/views/ViewLogin';
 import ViewManage from 'synbiohub/views/ViewManage';
+import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
 
 var actions = {
     logout,
@@ -307,7 +305,7 @@ function App() {
     app.post('/setNewPassword', actions.setNewPassword);
     app.all('/editProfile', requireUser, views.editProfile);
 
-    app.get('/user/:username', views.userProfile)
+    app.get('/user/:username', dispatchToView(ViewUserProfile))
     //app.get('/org/:orgID', views.orgProfile)
 
     app.post('/updateMutableDescription', requireUser, actions.updateMutableDescription);
