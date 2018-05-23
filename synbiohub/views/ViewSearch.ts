@@ -16,8 +16,6 @@ enum ResultMode {
 
 export default class ViewSearch extends View {
 
-    entries:any[]
-
     results:any[]
     resultMode:ResultMode
 
@@ -26,15 +24,16 @@ export default class ViewSearch extends View {
     numResultsTotal:number
     limit:number
 
+    searchQuery:string
+
 
     constructor() {
 
         super()
 
-        this.entries = []
-
         this.resultMode = ResultMode.HTML
         this.limit = 50
+        this.searchQuery = ''
     }
 
     async prepare(req:SBHRequest) {
@@ -49,6 +48,7 @@ export default class ViewSearch extends View {
 
         if (req.params.query && req.params.query != '*') {
             criteria.push(search.lucene(req.params.query));
+            this.searchQuery = req.params.query
         }
 
         if (req.originalUrl.toString().endsWith('/uses')) {

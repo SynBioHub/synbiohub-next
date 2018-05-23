@@ -61,6 +61,7 @@ export default class ViewAdvancedSearch extends View {
     lastResultNum:number
     numResultsTotal:number
     limit:number
+    searchQuery:string
 
 
     constructor() {
@@ -221,6 +222,8 @@ export default class ViewAdvancedSearch extends View {
         }
         query += req.body.description
         criteria.push(criteriaStr)
+
+        this.searchQuery = query
 
         if (req.originalUrl.endsWith('/createCollection')) {
             limit = 10000
