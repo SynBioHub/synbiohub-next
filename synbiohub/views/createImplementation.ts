@@ -44,8 +44,6 @@ async function submitForm(req, res, submissionData, locals){
     var plan_names = []
     var plan_uris = []
 
-    console.log(uri)
-
     var submissionData = extend({
         createdBy: req.user,
     }, submissionData)
@@ -170,6 +168,7 @@ async function submitPost(req, res){
     var prefix = baseUri
     var displayId = fields['design_name'][0].replace(/\s+/g, '')
     var version = '1'
+    var collection_url = baseUri + '/' + baseUri.split('/').pop() + '_collection/' + version 
 
     var templateParams = {
         uri: prefix + '/' + displayId + '/' + version
@@ -259,6 +258,7 @@ async function submitPost(req, res){
 
         var impl = doc.implementation(prefix + '/' + displayId + '/' + version)
         impl.displayId = displayId
+        impl.name = displayId
         impl.persistentIdentity = prefix + '/' + impl.displayId
         impl.version = version
         impl.description = fields['description'][0]
@@ -269,6 +269,9 @@ async function submitPost(req, res){
         impl.wasDerivedFrom = uri
         impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
         impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
+
+        var col = doc.collection(collection_url)
+        col.addMember(impl)
 
         console.log(doc.serializeXML())
 

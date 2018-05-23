@@ -43,6 +43,8 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
 
 
+        
+
     }
 
 
