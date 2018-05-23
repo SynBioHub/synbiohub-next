@@ -25,7 +25,6 @@ import register from './views/register';
 import viewResetPassword from './views/resetPassword';
 import viewEditProfile from './views/editProfile';
 import viewSubmit from './views/submit';
-import manage from './views/manage';
 import topLevel from './views/topLevel';
 import persistentIdentityView from './views/persistentIdentity';
 import setup from './views/setup';
@@ -54,7 +53,6 @@ var views = {
     register,
     resetPassword: viewResetPassword,
     submit: viewSubmit,
-    manage,
     topLevel,
     persistentIdentity: persistentIdentityView,
     setup,
@@ -151,6 +149,7 @@ import ViewSearch from 'synbiohub/views/ViewSearch';
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 import ViewLogin from 'synbiohub/views/ViewLogin';
+import ViewManage from 'synbiohub/views/ViewManage';
 
 var actions = {
     logout,
@@ -321,7 +320,7 @@ function App() {
     app.post('/remoteSubmit/', forceNoHTML, /*requireUser,*/ views.submit); // Deprecated
 
     app.get('/autocomplete/:query', api.autocomplete)
-    app.get('/manage', requireUser, views.manage);
+    app.get('/manage', requireUser, dispatchToView(ViewManage))
 
     app.get('/shared', requireUser, views.shared);
 
