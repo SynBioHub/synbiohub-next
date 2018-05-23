@@ -13,7 +13,7 @@ const request = require('request')
 const multiparty = require('multiparty')
 const uriToUrl = require('../uriToUrl')
 const attachments = require('../attachments')
-const uploads = require('../uploads')
+import uploads from '../uploads'
 const fs = require('mz/fs')
 import db from 'synbiohub/db'
 
@@ -72,15 +72,13 @@ async function submitForm(req, res, submissionData, locals){
 
     let users = await db.model.User.findAll()
 
+
     locals = extend({
       agent_names: users.map(x=>x.name),
       agent_uris: users.map(x=>x.graphUri),
       plan_names: plan_names,
       plan_uris: plan_uris
     }, locals)
-
-    // console.log(users)
-
 
     res.send(pug.renderFile('templates/views/createImplementation.jade', locals))
 

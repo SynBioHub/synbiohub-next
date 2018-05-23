@@ -2,6 +2,13 @@
 extends ../layouts/default.jade
 include ../mixins/attachments.jade
 
+block breadcrumbs
+    ul
+        li
+            span.fa.fa-cloud-upload
+            |  Built Design Submission
+
+
 block content
     div.submission-container(align='center')
         div.submission-header
@@ -12,7 +19,7 @@ block content
             div.tab-content
             form(method='post',enctype='multipart/form-data')
                         if errors.length > 0
-                            
+
                             each error in errors
                                 div.alert.alert-danger
                                     p #{error}
@@ -24,11 +31,6 @@ block content
                                 div.form-group-100.required
                                     label(for="design_name") Design Name
                                     input.form-control(name='design_name',id="design_name",placeholder='The name of the built design.', value=submission.design_name)
-                        div.row
-                            div.col-md-12
-                                div.form-group-100.required
-                                    label(for="plan") Lab Protocol Used
-                                    input.form-control(name='plan',id="plan",placeholder='The name of the lab protocol used to build the design.', value=submission.plan)
 
                         div.row
                             div.col-md-12
@@ -52,26 +54,58 @@ block content
                                     input.form-control(name='location', id="location"
                                             placeholder='Physical location of the live design e.g. Fridge A, Tray 2', value=submission.location)
 
-                        .panel.panel-default
-                            .panel-heading
-                                h4.panel-title
-                                    a.accordion-toggle(data-toggle='collapse', href='#collapseSix')
-                                        | <b>Please upload a file describing the lab protocol</b>
-                            #collapseSix.panel-collapse.collapse
-                                .panel-body
+                        div.row
+                            div.col-md-12
+                              div.form-group-100.required
+                                    div
+                                      label(for="agent") Lab Protocol Used
+                                      input(type="checkbox", style='margin-left:50px', data-toggle='collapse', data-target='.collapseForm', id="ast1", name="plan_submission_type[]")
+                                      | Create a new Lab Protocol
+              
+
+                        div.row
+                            div.col-md-12
+                                div.form-group-100.required
+                                    .collapseForm.panel-collapse.in
+                                        .panel-body
+                                        select.form-control(name='plan1', id="plan1")
+                                                option(value='', selected='selected') The name of the Lab Protocol used to build the design.
+                                                - for(var i=0;i< plan_names.length;i++) {
+                                                  option(value = [plan_uris[i],plan_names[i]]) #{plan_names[i]}
+                                                - }
+
+
+                        div.row
+                            
+                                .collapseForm.panel-collapse.collapse
+                                    .panel-body
                                     div.row
-                                        div.col-md-12
-                                            
-                                            if canEdit
+                                    div.col-md-12
+                                        div.form-group-100.required
+                                            label(for="plan") Lab Protocol Used
+                                            input.form-control(name='plan2',id="plan2",placeholder='The name of the lab protocol used to build the design.', value=submission.plan2)
+
+
+                                    .panel.panel-default
+                                        .panel-heading
+                                            h4.panel-title
+                                                a.accordion-toggle(data-toggle='collapse', href='#collapse')
+                                                    | <b>Please upload a file describing the lab protocol</b>
+                                        #collapse.panel-collapse.collapse.in
+                                            .panel-body
                                                 div.row
-                                                        div.col-xs-6
-                                                            div.input-group
-                                                                label.input-group-btn
-                                                                    span.btn.btn-primary
-                                                                        | Select file(s)&hellip;
-                                                                        input(type="file",name="file",style="display: none;",multiple)
-                                                                input(type="text",class="form-control",readonly)
-                                                        div.col-xs-3
+                                                    div.col-md-12
+
+                                                        if canEdit
+                                                            div.row
+                                                                    div.col-xs-6
+                                                                        div.input-group
+                                                                            label.input-group-btn
+                                                                                span.btn.btn-primary
+                                                                                    | Select file(s)&hellip;
+                                                                                    input(type="file",name="file",style="display: none;",multiple)
+                                                                            input(type="text",class="form-control",readonly)
+                                                                    div.col-xs-3
 
                         div.row
                             div.col-md-12
