@@ -8,6 +8,8 @@ import * as attachments from 'synbiohub/attachments'
 import config from "synbiohub/config";
 import uriToUrl from "synbiohub/uriToUrl";
 import sha1 = require('sha1')
+import loadTemplate from 'synbiohub/loadTemplate';
+import {queryJson} from '../sparql/sparql';
 
 import { Request, Response } from 'express'
 import filterAnnotations from "../filterAnnotations";
@@ -34,6 +36,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     annotations:Array<any>
     submissionCitations:Array<any>
     collections:Array<any>
+    builds:Array<any>
 
     async prepare(req:SBHRequest) {
 
@@ -84,9 +87,29 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
             }
         })
 
+        let templateParams = {
+            uri: this.uriInfo.uri
+        }
+
+
         this.submissionCitations = await getCitationsForSubject(this.uriInfo.uri, this.uriInfo.graphUri)
 
         this.collections = await DefaultMDFetcher.get(req).getContainingCollections(this.uriInfo.uri)
+
+        let query = loadTemplate('sparql/getImplementations.sparql', templateParams)
+
+        let query_results:any = await queryJson(query, this.uriInfo.graphUri)
+        
+        query_results = JSON.parse(JSON.stringify(query_results))
+
+        this.builds = []
+
+        for(let impl of query_results){
+            // console.log(impl)
+
+            this.builds.push(impl['s'])
+
+        }
 
     }
 

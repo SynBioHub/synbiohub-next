@@ -165,23 +165,20 @@ block content
                                             span.fa.fa-search
                                     br
 
-        if meta.builds && meta.builds.length > 0
-            .panel.panel-default
-                .panel-heading
-                    h4.panel-title
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseFive')
-                            | <b>Built Designs</b>
-                #collapseFive.panel-collapse.collapse
-                    .panel-body
-                        div.row
-                            div.col-md-12
-                                table.table.table-striped.entry-detail-table
-                                        tr
-                                        td
-                                            for impl in meta.builds
-                                                a(href=impl)
-                                                    != impl
-                                                    br
+        if builds && builds.length > 0
+            div.card.w-100
+                div.card-header
+                    a.accordion-toggle(data-toggle='collapse')
+                        | <b>Built Designs</b>
+                div.card-body
+                    table.table.table-striped.entry-detail-table
+                            tr
+                            td
+                                for impl in builds
+                                    a(href=impl)
+                                        != impl
+                                        br
+
         if annotations && annotations.length > 0
             div.card.w-100
                 div.card-header
