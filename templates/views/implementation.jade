@@ -6,6 +6,8 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
+
+
 block jsState
     script meta =
         != JSON.stringify(meta)
@@ -18,7 +20,8 @@ block jsState
         }
 
 
-block content
+
+block imp
 
     div.clearfix
 
