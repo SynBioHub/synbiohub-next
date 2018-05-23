@@ -25,7 +25,6 @@ import logout from './views/logout';
 import register from './views/register';
 import viewResetPassword from './views/resetPassword';
 import viewEditProfile from './views/editProfile';
-import viewSearch from './views/search';
 import advancedSearch from './views/advancedSearch';
 import viewSubmit from './views/submit';
 import manage from './views/manage';
@@ -58,7 +57,6 @@ var views = {
     logout,
     register,
     resetPassword: viewResetPassword,
-    search: viewSearch,
     advancedSearch,
     submit: viewSubmit,
     manage,
@@ -154,6 +152,8 @@ import setAdministratorEmail from './actions/admin/updateAdministratorEmail';
 import dispatchToView from 'synbiohub/views/dispatchToView';
 import ViewBrowse from 'synbiohub/views/ViewBrowse';
 import ViewSPARQL from 'synbiohub/views/ViewSPARQL';
+import ViewSearch from 'synbiohub/views/ViewSearch';
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 var actions = {
     makePublic,
@@ -330,7 +330,10 @@ function App() {
     app.get('/api/datatables', bodyParser.urlencoded({ extended: true }), api.datatables)
 
     app.get('/admin', requireAdmin, views.admin.status);
-    app.get('/admin/search/:query?', views.search);
+
+    // TODO: ???
+    app.get('/admin/search/:query?', dispatchToView(ViewSearch))
+
     app.get('/admin/graphs', requireAdmin, views.admin.graphs);
     app.get('/admin/sparql', requireAdmin, views.admin.sparql);
     app.get('/admin/remotes', requireAdmin, views.admin.remotes);
@@ -360,16 +363,16 @@ function App() {
     app.post('/admin/federate', requireAdmin, bodyParser.urlencoded({ extended: true }), actions.admin.federate);
     app.post('/admin/retrieveFromWebOfRegistries', requireAdmin, actions.admin.retrieve);
 
-    app.get('/search/:query?', views.search);
-    app.get('/searchCount/:query?', views.search);
-    app.get('/remoteSearch/:query?', forceNoHTML, views.search); /// DEPRECATED, use /search
+    app.get('/search/:query?', dispatchToView(ViewSearch));
+    app.get('/searchCount/:query?', dispatchToView(ViewSearch));
+    app.get('/remoteSearch/:query?', forceNoHTML, dispatchToView(ViewSearch)); /// DEPRECATED, use /search
     app.get('/advancedSearch', views.advancedSearch);
     app.post('/advancedSearch', views.advancedSearch);
-    app.get('/advancedSearch/:query?', views.search);
+    app.get('/advancedSearch/:query?', dispatchToView(ViewSearch));
 
     app.get('/createCollection', views.advancedSearch);
     app.post('/createCollection', views.advancedSearch);
-    app.get('/createCollection/:query?', views.search);
+    app.get('/createCollection/:query?', dispatchToView(ViewSearch));
 
     app.get('/:type/count', api.count)
     app.get('/rootCollections', api.rootCollections)
@@ -381,11 +384,11 @@ function App() {
     // PersistentIdentity endpoints
     app.get('/public/:collectionId/:displayId', views.persistentIdentity);
     app.get('/public/:collectionId/:displayId/sbol', api.persistentIdentity);
-    app.get('/public/:collectionId/:displayId/search/:query?', views.search);
+    app.get('/public/:collectionId/:displayId/search/:query?', dispatchToView(ViewSearch));
 
     app.get('/user/:userId/:collectionId/:displayId', views.persistentIdentity);
     app.get('/user/:userId/:collectionId/:displayId/sbol', api.sbol);
-    app.get('/user/:userId/:collectionId/:displayId/search/:query?', views.search);
+    app.get('/user/:userId/:collectionId/:displayId/search/:query?', dispatchToView(ViewSearch));
 
     // TODO: missing share endpoints, perhaps okay
 
@@ -466,20 +469,20 @@ function App() {
     // TODO: should perhaps be able to add icon to private collection, but it will be tricky to update on makePublic
 
     // Search endpoints
-    app.get('/public/:collectionId/:displayId/:version/search/:query?', views.search);
+    app.get('/public/:collectionId/:displayId/:version/search/:query?', dispatchToView(ViewSearch));
     app.get('/public/:collectionId/:displayId/:version/subCollections', api.subCollections);
-    app.get('/public/:collectionId/:displayId/:version/twins', views.search);
-    app.get('/public/:collectionId/:displayId/:version/uses', views.search);
+    app.get('/public/:collectionId/:displayId/:version/twins', dispatchToView(ViewSearch));
+    app.get('/public/:collectionId/:displayId/:version/uses', dispatchToView(ViewSearch));
 
-    app.get('/user/:userId/:collectionId/:displayId/:version/search/:query?', views.search);
+    app.get('/user/:userId/:collectionId/:displayId/:version/search/:query?', dispatchToView(ViewSearch));
     app.get('/user/:userId/:collectionId/:displayId/:version/subCollections', api.subCollections);
-    app.get('/user/:userId/:collectionId/:displayId/:version/twins', views.search);
-    app.get('/user/:userId/:collectionId/:displayId/:version/uses', views.search);
+    app.get('/user/:userId/:collectionId/:displayId/:version/twins', dispatchToView(ViewSearch));
+    app.get('/user/:userId/:collectionId/:displayId/:version/uses', dispatchToView(ViewSearch));
 
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/search/:query?', views.search);
+    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/search/:query?', dispatchToView(ViewSearch));
     app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/subCollections', api.subCollections);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/twins', views.search);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/uses', views.search);
+    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/twins', dispatchToView(ViewSearch));
+    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/uses', dispatchToView(ViewSearch));
 
     // Update owner endpoints
     app.get('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner);
