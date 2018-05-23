@@ -3,6 +3,7 @@ import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewModel extends ViewTopLevelWithObject {
 

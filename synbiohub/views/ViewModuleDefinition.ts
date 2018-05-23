@@ -19,6 +19,7 @@ import uriToUrl from 'synbiohub/uriToUrl';
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewModuleDefinition extends ViewTopLevelWithObject {
 

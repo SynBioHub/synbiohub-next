@@ -32,7 +32,6 @@ import manage from './views/manage';
 import topLevel from './views/topLevel';
 import persistentIdentityView from './views/persistentIdentity';
 import setup from './views/setup';
-import sparqlView from './views/sparql';
 import addOwner from './views/addOwner';
 import shared from './views/shared';
 import visualization from './views/visualization';
@@ -66,7 +65,6 @@ var views = {
     topLevel,
     persistentIdentity: persistentIdentityView,
     setup,
-    sparql: sparqlView,
     addOwner,
     shared,
     visualization,
@@ -155,6 +153,7 @@ import retrieve from './actions/admin/retrieveFromWoR';
 import setAdministratorEmail from './actions/admin/updateAdministratorEmail';
 import dispatchToView from 'synbiohub/views/dispatchToView';
 import ViewBrowse from 'synbiohub/views/ViewBrowse';
+import ViewSPARQL from 'synbiohub/views/ViewSPARQL';
 
 var actions = {
     makePublic,
@@ -510,7 +509,7 @@ function App() {
 //    app.get('/user/:userId/:collectionId/:displayId/:version/:query?', views.topLevel);
     app.get('/user/:userId/:collectionId/:displayId(*)/:version', views.topLevel);
 
-    app.get('/sparql', sparql)
+    app.get('/sparql', dispatchToView(ViewSPARQL))
     app.post('/sparql', bodyParser.urlencoded({ extended: true }), sparql)
 
     function sparql(req, res) {
@@ -520,7 +519,7 @@ function App() {
 
         let accept = req.header('accept');
         if (accept && accept.indexOf('text/html') !== -1) {
-            views.sparql(req, res)
+            dispatchToView(ViewSPARQL)(req, res)
         } else {
             api.sparql(req, res)
         }

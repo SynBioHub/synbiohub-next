@@ -20,6 +20,7 @@ import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 import SBOLDocument = require('sboljs')
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewComponentDefinition extends ViewTopLevelWithObject {
 
@@ -34,7 +35,7 @@ export default class ViewComponentDefinition extends ViewTopLevelWithObject {
     components:Array<any>
     displayList:any
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

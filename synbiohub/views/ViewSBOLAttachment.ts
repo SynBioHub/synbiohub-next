@@ -6,6 +6,7 @@ import { Request, Response } from 'express'
 import config from 'synbiohub/config';
 
 import sha1 = require('sha1')
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
 

@@ -3,6 +3,7 @@ import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewGenericTopLevel extends ViewTopLevelWithObject {
 
@@ -12,7 +13,7 @@ export default class ViewGenericTopLevel extends ViewTopLevelWithObject {
 
     meta:any
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

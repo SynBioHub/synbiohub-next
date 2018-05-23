@@ -4,6 +4,7 @@ import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 import formatSequence = require('sequence-formatter')
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewSequence extends ViewTopLevelWithObject {
 
@@ -16,7 +17,7 @@ export default class ViewSequence extends ViewTopLevelWithObject {
     blastUrl:string
     formatted:string
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 

@@ -7,6 +7,7 @@ import extend = require('xtend')
 import ViewTopLevelWithObject from "synbiohub/views/ViewTopLevelWithObject";
 
 import sbolmeta = require('sbolmeta')
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default class ViewCollection extends ViewTopLevelWithObject {
 
