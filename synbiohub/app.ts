@@ -25,7 +25,6 @@ import logout from './views/logout';
 import register from './views/register';
 import viewResetPassword from './views/resetPassword';
 import viewEditProfile from './views/editProfile';
-import advancedSearch from './views/advancedSearch';
 import viewSubmit from './views/submit';
 import manage from './views/manage';
 import topLevel from './views/topLevel';
@@ -57,7 +56,6 @@ var views = {
     logout,
     register,
     resetPassword: viewResetPassword,
-    advancedSearch,
     submit: viewSubmit,
     manage,
     topLevel,
@@ -154,6 +152,7 @@ import ViewBrowse from 'synbiohub/views/ViewBrowse';
 import ViewSPARQL from 'synbiohub/views/ViewSPARQL';
 import ViewSearch from 'synbiohub/views/ViewSearch';
 import { SBHRequest } from 'synbiohub/SBHRequest';
+import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 
 var actions = {
     makePublic,
@@ -366,12 +365,11 @@ function App() {
     app.get('/search/:query?', dispatchToView(ViewSearch));
     app.get('/searchCount/:query?', dispatchToView(ViewSearch));
     app.get('/remoteSearch/:query?', forceNoHTML, dispatchToView(ViewSearch)); /// DEPRECATED, use /search
-    app.get('/advancedSearch', views.advancedSearch);
-    app.post('/advancedSearch', views.advancedSearch);
+    app.all('/advancedSearch', dispatchToView(ViewAdvancedSearch));
     app.get('/advancedSearch/:query?', dispatchToView(ViewSearch));
 
-    app.get('/createCollection', views.advancedSearch);
-    app.post('/createCollection', views.advancedSearch);
+    app.get('/createCollection', dispatchToView(ViewAdvancedSearch));
+    app.post('/createCollection', dispatchToView(ViewAdvancedSearch));
     app.get('/createCollection/:query?', dispatchToView(ViewSearch));
 
     app.get('/:type/count', api.count)
