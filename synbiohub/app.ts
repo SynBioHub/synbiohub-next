@@ -20,7 +20,7 @@ import cache from './cache';
 import apiTokens from './apiTokens';
 import ViewIndex from './views/ViewIndex';
 import about from './views/about';
-import logout from './views/logout';
+import logout from './actions/logout';
 import register from './views/register';
 import viewResetPassword from './views/resetPassword';
 import viewEditProfile from './views/editProfile';
@@ -51,7 +51,6 @@ import createImplementation from './views/createImplementation';
 
 var views = {
     about,
-    logout,
     register,
     resetPassword: viewResetPassword,
     submit: viewSubmit,
@@ -154,6 +153,7 @@ import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 import ViewLogin from 'synbiohub/views/ViewLogin';
 
 var actions = {
+    logout,
     makePublic,
     copyFromRemote,
     createBenchlingSequence,
@@ -301,7 +301,7 @@ function App() {
 
     app.all('/login', dispatchToView(ViewLogin));
     app.post('/remoteLogin', forceNoHTML, dispatchToView(ViewLogin)); // Deprecated
-    app.all('/logout', views.logout);
+    app.all('/logout', actions.logout);
     app.all('/register', views.register);
     app.all('/resetPassword/token/:token', actions.resetPassword);
     app.all('/resetPassword', views.resetPassword);
