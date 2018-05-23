@@ -2,11 +2,15 @@
 import { Request, Response } from 'express'
 import config from 'synbiohub/config'
 import Menu, { MenuItem } from 'synbiohub/Menu';
+import { SBHRequest } from 'synbiohub/SBHRequest';
 
 export default abstract class View {
 
     config:any
     user:any
+
+    title:string
+    metaDesc:string
     menu:Menu
 
     constructor() {
@@ -15,7 +19,8 @@ export default abstract class View {
 
         this.menu = new Menu()
 
-
+        this.title = 'Untitled View'
+        this.metaDesc = 'No meta description set for this view - please set one!'
 
     }
 

@@ -18,9 +18,8 @@ import db from './db';
 import { initSSE } from './sse';
 import cache from './cache';
 import apiTokens from './apiTokens';
-import index from './views/index';
+import ViewIndex from './views/ViewIndex';
 import about from './views/about';
-import browse from './views/browse';
 import login from './views/login';
 import logout from './views/logout';
 import register from './views/register';
@@ -55,9 +54,7 @@ import mail from './views/admin/mail';
 import createImplementation from './views/createImplementation';
 
 var views = {
-    index,
     about,
-    browse,
     login,
     logout,
     register,
@@ -156,6 +153,8 @@ import deleteUser from './actions/admin/deleteUser';
 import federate from './actions/admin/federate';
 import retrieve from './actions/admin/retrieveFromWoR';
 import setAdministratorEmail from './actions/admin/updateAdministratorEmail';
+import dispatchToView from 'synbiohub/views/dispatchToView';
+import ViewBrowse from 'synbiohub/views/ViewBrowse';
 
 var actions = {
     makePublic,
@@ -248,7 +247,7 @@ function App() {
         }
     })
 
-    app.use(function (req, res, next) {
+    app.use(function (req:SBHRequest, res, next) {
 
         var userID = req.session.user
 
@@ -284,7 +283,7 @@ function App() {
 
     initSSE(app)
 
-    app.get('/', views.index);
+    app.get('/', dispatchToView(ViewIndex));
     app.get('/about', views.about);
 
     if (config.get('firstLaunch')) {
@@ -292,7 +291,7 @@ function App() {
         app.post('/setup', uploadToMemory.single('logo'), views.setup);
     }
 
-    app.all('/browse', views.browse);
+    app.all('/browse', dispatchToView(ViewBrowse))
 
 
     function forceNoHTML(req, res, next) {
