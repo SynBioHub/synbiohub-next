@@ -19,7 +19,6 @@ import { initSSE } from './sse';
 import cache from './cache';
 import apiTokens from './apiTokens';
 import ViewIndex from './views/ViewIndex';
-import about from './views/about';
 import logout from './actions/logout';
 import register from './views/register';
 import viewResetPassword from './views/resetPassword';
@@ -48,7 +47,6 @@ import mail from './views/admin/mail';
 import createImplementation from './views/createImplementation';
 
 var views = {
-    about,
     register,
     resetPassword: viewResetPassword,
     submit: viewSubmit,
@@ -278,7 +276,6 @@ function App() {
     initSSE(app)
 
     app.get('/', dispatchToView(ViewIndex));
-    app.get('/about', views.about);
 
     if (config.get('firstLaunch')) {
         app.get('/setup', views.setup);
