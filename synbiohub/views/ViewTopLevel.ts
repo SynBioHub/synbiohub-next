@@ -6,15 +6,19 @@ import shareImages from "synbiohub/shareImages";
 import config from 'synbiohub/config'
 import sha1 = require('sha1')
 import { SBHRequest } from "synbiohub/SBHRequest";
+import Menu, { MenuItem } from "../Menu";
 
 export default abstract class ViewTopLevel extends View {
 
     uriInfo:ReqURIInfo
 
+    topLevelDownloadMenu:Menu
+    topLevelShareMenu:Menu
+    topLevelOtherMenu:Menu
+
     constructor() {
 
         super()
-
     }
 
     async prepare(req:SBHRequest) {
@@ -68,7 +72,35 @@ export default abstract class ViewTopLevel extends View {
         }
 
         this.meta = meta
+
+        this.buildTopLevelMenus()
     }
+
+    private buildTopLevelMenus() {
+
+        let id = this.meta.id
+
+        this.topLevelDownloadMenu = new Menu()
+        this.topLevelDownloadMenu.addItem(new MenuItem('Download SBOL', this.uriInfo.url + '/' + id + '.xml', 'fa-download'))
+        this.topLevelDownloadMenu.addItem(new MenuItem('Download COMBINE archive', this.uriInfo.url + '/' + id + '.omex', 'fa-download'))
+        this.topLevelDownloadMenu.addItem(new MenuItem('Download GenBank', this.uriInfo.url + '/' + id + '.gb', 'fa-download'))
+        this.topLevelDownloadMenu.addItem(new MenuItem('Download FASTA', this.uriInfo.url + '/' + id + '.fasta', 'fa-download'))
+        this.topLevelDownloadMenu.addItem(new MenuItem('Download Image', '/sbol', 'fa-image'))
+
+        this.topLevelShareMenu = new Menu()
+        this.topLevelShareMenu.addItem(new MenuItem('Get Share Link', '/sbol', 'fa-link'))
+        this.topLevelShareMenu.addItem(new MenuItem('Send to Benchling', this.uriInfo + '/' + id + '/createBenchlingSequence', 'fa-external-link-alt'))
+        this.topLevelShareMenu.addItem(new MenuItem('Send to ICE', this.uriInfo + '/' + id + '/createICEPart', 'fa-external-link-alt'))
+        this.topLevelShareMenu.addItem(new MenuItem('Add Owner', '/sbol', 'fa-users'))
+        this.topLevelShareMenu.addItem(new MenuItem('Make Public', '/sbol', 'fa-globe'))
+
+        this.topLevelOtherMenu = new Menu()
+        this.topLevelOtherMenu.addItem(new MenuItem('Find Uses', this.uriInfo + '/' + id + '/uses', 'fa-search'))
+        this.topLevelOtherMenu.addItem(new MenuItem('Find Matching Parts', this.uriInfo + '/' + id + '/twins', 'fa-search'))
+        this.topLevelOtherMenu.addItem(new MenuItem('Delete Part', '/sbol', 'fa-trash-alt'))
+
+    }
+
      
 
 

@@ -36,11 +36,20 @@ block content
                     div.sbh-toplevel-buttons.ml-auto
                         ul
                             li
-                                span.fa.fa-download
+                                span.fa.fa-download(data-toggle='dropdown')
+                                div.dropdown-menu
+                                    for item in topLevelDownloadMenu.items
+                                        a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
                             li
-                                span.fa.fa-share
+                                span.fa.fa-share(data-toggle='dropdown')
+                                div.dropdown-menu
+                                    for item in topLevelShareMenu.items
+                                        a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
                             li
-                                span.fa.fa-ellipsis-h
+                                span.fa.fa-ellipsis-h(data-toggle='dropdown')
+                                div.dropdown-menu
+                                    for item in topLevelOtherMenu.items
+                                        a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
         if meta.description && meta.description != ''
             div.row
                 div.col-md-12

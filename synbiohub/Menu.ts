@@ -28,5 +28,9 @@ export class MenuItem {
         this.subItems = []
     }
 
+    addSubItem(item:MenuItem) {
+        this.subItems.push(item)
+    }
+
 }
 
