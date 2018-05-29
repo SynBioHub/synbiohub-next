@@ -284,7 +284,7 @@ async function submitPost(req, res){
 
         if (files['file'][0]['size'] != 0){
 
-          return attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+          await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
           files['file'][0]['originalFilename'], hash, size, mime,
           graphUri.split('/').pop)
         }
