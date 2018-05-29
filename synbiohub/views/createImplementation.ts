@@ -20,8 +20,6 @@ import db from 'synbiohub/db'
 
 export default function(req, res) {
 
-    const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
-
     if (req.method === 'POST'){
 
       submitPost(req, res)
@@ -41,6 +39,7 @@ async function submitForm(req, res, submissionData, locals){
     const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
     req.setTimeout(0) // no timeout
+    
     var plan_names = []
     var plan_uris = []
 
