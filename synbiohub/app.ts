@@ -45,6 +45,7 @@ import backupRestore from './views/admin/backupRestore';
 import registries from './views/admin/registries';
 import mail from './views/admin/mail';
 import createImplementation from './views/createImplementation';
+import createTest from './views/createTest';
 
 var views = {
     register,
@@ -57,6 +58,7 @@ var views = {
     shared,
     visualization,
     createImplementation,
+    createTest,
 
 
     editProfile: viewEditProfile,
@@ -371,6 +373,11 @@ function App() {
     // Implementation endpoints
 
     app.all('/user/:userId/:collectionId/:displayId/:version/createImplementation', requireUser, views.createImplementation);
+
+    // Test endpoints
+
+    app.all('/user/:userId/:collectionId/:displayId/:version/createTest', requireUser, views.createTest);
+
 
     // PersistentIdentity endpoints
     app.get('/public/:collectionId/:displayId', views.persistentIdentity);
