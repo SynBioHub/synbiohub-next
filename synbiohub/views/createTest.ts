@@ -32,7 +32,7 @@ export default function(req, res) {
 }
 
 async function submitForm(req, res, submissionData, locals){
-    
+
     const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
     req.setTimeout(0) // no timeout
@@ -84,182 +84,168 @@ async function submitPost(req, res){
 
     req.setTimeout(0) // no timeout
   
-    const form = new multiparty.Form()
-  
-    form.on('error', (err) => {
-        res.status(500).send(err)
-    })
-  
-    form.parse(req, (err, fields, files) => {
-  
-      console.log(fields)
-  
-      console.log(files)
-  
-      var errors = []
-  
-      const submissionData = {
-  
-        experiment_name: fields['experiment_name'][0],
-        agent: fields['agent'][0],
+    let { fields, files } = await parseForm(req)
+
+    console.log(fields)
+
+    console.log(files)
+
+    var errors = []
+
+    const submissionData = {
+
+    experiment_name: fields['experiment_name'][0],
+    agent: fields['agent'][0],
+    description: fields['description'][0],
+    metadata: fields['metadata'][0],
+    dataurl: fields['dataurl'][0]
+
+    }
+
+    var chosen_plan = ''
+    var chosen_plan_uri = ''
+
+
+    if (fields['experiment_name'][0] === ''){
+
+    errors.push('Please give the experiment a name.')
+
+    }
+
+    if (fields['agent'][0] === ''){
+
+    errors.push('Please mention who performed the experiment.')
+
+    }
+
+    if (fields['description'][0] === ''){
+
+    errors.push('Please mention the purpose of this experiment.')
+
+    }
+
+    if ('plan_submission_type[]' in fields){
+
+    if (fields['plan2'][0] === ''){
+
+        errors.push('Please mention which protocol was used in the lab.')
+
+    }
+
+    else {
+
+        chosen_plan = fields['plan2'][0]
+    }
+
+    if (files['file'][0]['size'] === 0){
+
+        errors.push('Please upload a file describing the lab protocol.')
+
+    }
+
+    }
+
+    else{
+
+    if (fields['plan1'][0] === ''){
+
+        errors.push('Please select the protocol that was used in the lab.')
+
+    }
+
+    else {
+
+        chosen_plan = JSON.parse(fields['plan1'])[1]
+        chosen_plan_uri = JSON.parse(fields['plan1'])[0]
+    }
+
+    }
+
+    if (files['metadata_file'][0]['size'] === 0){
+
+        errors.push('Please upload a file containing metadata for the experiment.')
+
+    }
+
+    if (fields['dataurl'][0] === ''){
+    errors.push('Please specify a URL that contains the experimental data.')
+    }
+
+
+    if (errors.length > 0) {
+        if (req.forceNoHTML || !req.accepts('text/html')) {
+            res.status(500).type('text/plain').send(errors)
+            return
+        } else {
+            return submitForm(req, res, submissionData, {
+                errors: errors
+            })
+        }
+    }
+
+    else{
+
+    var prefix = baseUri
+    var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
+    var version = '1'
+
+
+    let fileStream = fs.createReadStream(files['file'][0]['path']);
+
+    let uploadInfo = await uploads.createUpload(fileStream)
+
+    var { hash, size, mime } = uploadInfo
+
+    if (files['file'][0]['size'] != 0){
+
+    await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+    files['file'][0]['originalFilename'], hash, size, mime,
+    graphUri.split('/').pop)
+    }
+
+    let metaFileStream = fs.createReadStream(files['metadata_file'][0]['path']);
+
+    let metaUploadInfo = uploads.createUpload(metaFileStream)
+
+    var { hash, size, mime } = uploadInfo
+
+    if (files['metadata_file'][0]['size'] != 0){
+
+        await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + displayId + '/' + version,
+        files['metadata_file'][0]['originalFilename'], hash, size, mime,
+        graphUri.split('/').pop)
+    }
+
+    var form_vals = {
+
+        prefix: prefix,
+        displayId: displayId,
+        version: version,
+        agent_str: JSON.parse(fields['agent'])[1],
+        agent_uri: JSON.parse(fields['agent'])[0],
         description: fields['description'][0],
-        metadata: fields['metadata'][0],
-        dataurl: fields['dataurl'][0]
-  
-      }
-  
-      var chosen_plan = ''
-      var chosen_plan_uri = ''
-  
-  
-      if (fields['experiment_name'][0] === ''){
-  
-        errors.push('Please give the experiment a name.')
-  
-      }
-  
-      if (fields['agent'][0] === ''){
-  
-        errors.push('Please mention who performed the experiment.')
-  
-      }
-  
-      if (fields['description'][0] === ''){
-  
-        errors.push('Please mention the purpose of this experiment.')
-  
-      }
-  
-      if ('plan_submission_type[]' in fields){
-  
-        if (fields['plan2'][0] === ''){
-  
-            errors.push('Please mention which protocol was used in the lab.')
-  
-        }
-  
-        else {
-  
-          chosen_plan = fields['plan2'][0]
-        }
-  
-        if (files['file'][0]['size'] === 0){
-  
-            errors.push('Please upload a file describing the lab protocol.')
-  
-        }
-  
-      }
-  
-      else{
-  
-        if (fields['plan1'][0] === ''){
-  
-            errors.push('Please select the protocol that was used in the lab.')
-  
-        }
-  
-        else {
-  
-          chosen_plan = JSON.parse(fields['plan1'])[1]
-          chosen_plan_uri = JSON.parse(fields['plan1'])[0]
-        }
-  
-      }
-  
-      if (files['metadata_file'][0]['size'] === 0){
-  
-          errors.push('Please upload a file containing metadata for the experiment.')
-  
-      }
-  
-      if (fields['dataurl'][0] === ''){
-        errors.push('Please specify a URL that contains the experimental data.')
-      }
-  
-  
-  
-      if (errors.length > 0) {
-          if (req.forceNoHTML || !req.accepts('text/html')) {
-              res.status(500).type('text/plain').send(errors)
-              return
-          } else {
-              return submitForm(req, res, submissionData, {
-                  errors: errors
-              })
-          }
-      }
-  
-      else{
-  
-        var prefix = baseUri
-        var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
-        var version = '1'
-  
-  
-        let fileStream = fs.createReadStream(files['file'][0]['path']);
-  
-        return uploads.createUpload(fileStream).then((uploadInfo) => {
-  
-          const { hash, size, mime } = uploadInfo
-  
-          if (files['file'][0]['size'] != 0){
-  
-            return attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-            files['file'][0]['originalFilename'], hash, size, mime,
-            graphUri.split('/').pop)
-          }
-        }).then(() => {
-  
-          let fileStream = fs.createReadStream(files['metadata_file'][0]['path']);
-  
-          return uploads.createUpload(fileStream).then((uploadInfo) => {
-  
-            const { hash, size, mime } = uploadInfo
-  
-            if (files['metadata_file'][0]['size'] != 0){
-  
-              return attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + displayId + '/' + version,
-              files['metadata_file'][0]['originalFilename'], hash, size, mime,
-              graphUri.split('/').pop)
-            }
-          }).then( async () => {
-  
-            var form_vals = {
-  
-              prefix: prefix,
-              displayId: displayId,
-              version: version,
-              agent_str: JSON.parse(fields['agent'])[1],
-              agent_uri: JSON.parse(fields['agent'])[0],
-              description: fields['description'][0],
-              dataurl: fields['dataurl'][0],
-              chosen_plan: chosen_plan,
-              chosen_plan_uri: chosen_plan_uri,
-              graphUri: graphUri,
-              uri: uri
-  
-            }
-  
-            var sbol_results = await createSBOLTest(form_vals)
-  
-            var doc = sbol_results[0]
-  
-            var col_uri = sbol_results[1]
-  
-            await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
-  
-            res.redirect(col_uri)
-  
-          })
-  
-  
-        })
-  
-      }
-  
-    })
-  
+        dataurl: fields['dataurl'][0],
+        chosen_plan: chosen_plan,
+        chosen_plan_uri: chosen_plan_uri,
+        graphUri: graphUri,
+        uri: uri
+
+    }
+
+    var sbol_results = await createSBOLTest(form_vals)
+
+    var doc = sbol_results[0]
+
+    var col_uri = sbol_results[1]
+
+    await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
+
+    res.redirect(col_uri)
+
+
+    }
+
+
   
 
 }
