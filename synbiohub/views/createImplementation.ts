@@ -4,7 +4,7 @@
 var loadTemplate = require('../loadTemplate')
 import config from 'synbiohub/config'
 var pug = require('pug')
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
+import getUrisFromReq from 'synbiohub/getUrisFromReq';
 var sparql = require('../sparql/sparql')
 var SBOLDocument = require('sboljs')
 var extend = require('xtend')
@@ -276,7 +276,7 @@ async function submitPost(req, res){
 
         await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
 
-        let fileStream = fs.createReadStream(files['file'][0]['path']);
+        let fileStream = await fs.createReadStream(files['file'][0]['path']);
 
         var uploadInfo = await uploads.createUpload(fileStream)
 

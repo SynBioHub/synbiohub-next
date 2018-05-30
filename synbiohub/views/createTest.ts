@@ -189,31 +189,33 @@ async function submitPost(req, res){
     var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
     var version = '1'
 
-
-    let fileStream = fs.createReadStream(files['file'][0]['path']);
-
-    let uploadInfo = await uploads.createUpload(fileStream)
-
-    var { hash, size, mime } = uploadInfo
+    let temp = graphUri.split('/').pop()
 
     if (files['file'][0]['size'] != 0){
 
-    await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-    files['file'][0]['originalFilename'], hash, size, mime,
-    graphUri.split('/').pop)
+        let fileStream = await fs.createReadStream(files['file'][0]['path']);
+
+        let uploadInfo = await uploads.createUpload(fileStream)
+    
+        var { hash, size, mime } = uploadInfo
+    
+        await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+        files['file'][0]['originalFilename'], hash, size, mime,
+        temp)
     }
 
-    let metaFileStream = fs.createReadStream(files['metadata_file'][0]['path']);
-
-    let metaUploadInfo = uploads.createUpload(metaFileStream)
-
-    var { hash, size, mime } = uploadInfo
 
     if (files['metadata_file'][0]['size'] != 0){
 
+        let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
+
+        let metaUploadInfo = await uploads.createUpload(metaFileStream)
+    
+        var { hash, size, mime } = metaUploadInfo
+
         await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + displayId + '/' + version,
         files['metadata_file'][0]['originalFilename'], hash, size, mime,
-        graphUri.split('/').pop)
+        temp)
     }
 
     var form_vals = {

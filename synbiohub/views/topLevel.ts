@@ -13,6 +13,9 @@ import ViewSBOLAttachment from './ViewSBOLAttachment';
 import ViewAttachment from './ViewAttachment';
 import ViewGenericTopLevel from './ViewGenericTopLevel';
 import ViewImplementation from './ViewImplementation';
+import ViewTest from './ViewTest';
+
+var sparql = require('../sparql/sparql')
 
 export default async function(req, res) {
 
@@ -25,7 +28,21 @@ export default async function(req, res) {
     var view
 
     if(result==='http://sbols.org/v2#Collection') {
-        view = new ViewCollection()
+
+        let test_query = "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> SELECT ?o WHERE {<" + uri +  "> sbh:Test ?o}"
+
+        let result = await sparql.queryJson(test_query, graphUri)
+
+        if (result.length === 1){
+            view = new ViewTest()
+        }
+
+        else{
+            view = new ViewCollection()
+
+        }
+
+        
     } else if(result==='http://sbols.org/v2#ComponentDefinition') {
         view = new ViewComponentDefinition()
     } else if(result==='http://sbols.org/v2#ModuleDefinition') {
