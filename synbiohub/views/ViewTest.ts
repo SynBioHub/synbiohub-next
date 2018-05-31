@@ -43,7 +43,7 @@ export default class ViewTest extends ViewTopLevelWithObject{
         this.agent = activity_sbol.object.associations[0].agent.name
         this.plan = activity_sbol.object.associations[0].plan.name
 
-        this.meta.planattachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
+        this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
 
 
         const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
@@ -60,18 +60,17 @@ export default class ViewTest extends ViewTopLevelWithObject{
             req.url.toString().endsWith('/share'))
 
 
-            for (let attachment of this.meta.metadataattachments){
-				if (attachment.size === 0){
-					this.meta.dataurl = attachment.url
-				}
+        for (let attachment of this.meta.metadataattachments){
+            if (attachment.size === 0){
+                this.meta.dataurl = attachment.url
+            }
+
+        // console.log(metadataAttachmentList)
+
 
 		}
 
-        console.log(this.meta.metadataattachments)
-
     }
-
-
 
     async render(res:Response) {
 
