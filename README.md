@@ -2,7 +2,7 @@
 
 <hr>
 
-<img src="https://raw.githubusercontent.com/SynBioHub/synbiohub-lab/master/logos/synbiohub.svg" width="100%" />
+<img src="logos/synbiohub.svg" width="100%" />
 
 ![](https://david-dm.org/synbiohub/synbiohub-lab.svg) 
 
