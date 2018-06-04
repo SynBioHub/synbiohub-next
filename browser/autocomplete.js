@@ -19,5 +19,37 @@ $('.sbh-autocomplete').typeahead({
 
 })
 
+$('.organism-autocomplete').typeahead({
+    hint: false,
+    highlight: true,
+    minLength: 7,
+    limit: 2,
+  },
+  {
+    name: 'organisms',
+    source: function findMatches(query, syncResults, asyncResults) {
+
+        $.getJSON('/organisms/' + query, function(data) {
+            
+            console.log(data)
+            
+            syncResults(data);
+
+        })
+
+        .success(function(data) { 
+            
+            asyncResults(data); 
+            
+       
+        })
+
+
+
+        }
+      
+  });
+
+
 $('.twitter-typeahead').css('display', 'inline')
 

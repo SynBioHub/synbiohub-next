@@ -9,6 +9,8 @@ import browserifyMiddleware = require('browserify-middleware')
 import UglifyJS = require('uglify-es')
 
 
+
+// console.log(organisms['Pseudomonas sp. DP-3'])
 import { Router, Application } from 'express'
 
 import config from './config';
@@ -46,6 +48,8 @@ import registries from './views/admin/registries';
 import mail from './views/admin/mail';
 import createImplementation from './views/createImplementation';
 import createTest from './views/createTest';
+import organisms from './loadOrganisms';
+
 
 var views = {
     register,
@@ -110,7 +114,8 @@ var api = {
     download,
     datatables,
     sparql: sparqlApi,
-    updateWebOfRegistries
+    updateWebOfRegistries,
+    organisms
 }
 
 import makePublic from './actions/makePublic';
@@ -317,6 +322,7 @@ function App() {
     app.post('/remoteSubmit/', forceNoHTML, /*requireUser,*/ views.submit); // Deprecated
 
     app.get('/autocomplete/:query', api.autocomplete)
+    app.get('/organisms/:query', api.organisms)
     app.get('/manage', requireUser, dispatchToView(ViewManage))
 
     app.get('/shared', requireUser, views.shared);
