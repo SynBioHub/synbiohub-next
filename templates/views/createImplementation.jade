@@ -6,7 +6,7 @@ block breadcrumbs
     ul
         li
             span.fa.fa-cloud-upload
-            |  Built Design Submission
+            |  Construct Submission
 
 
 block content
@@ -14,7 +14,7 @@ block content
         div.submission-header
             span(style='font-size: 3.3em').fa.fa-cloud-upload
             p(style='font-size: 1.7em; font-weight: bolder')
-                | Tell us about your built design!
+                | Tell us about your construct!
 
             div.tab-content
             form(method='post',enctype='multipart/form-data')
@@ -29,8 +29,8 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="design_name") Design Name
-                                    input.form-control(name='design_name',id="design_name",placeholder='The name of the built design.', value=submission.design_name)
+                                    label(for="construct_name") Construct Name
+                                    input.form-control(name='construct_name',id="construct_name",placeholder='The name of the built design.', value=submission.construct_name)
 
                         div.row
                             div.col-md-12

@@ -45,6 +45,7 @@ export default class ViewTest extends ViewTopLevelWithObject{
 
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
 
+        this.meta.metadataattachments = getAttachmentsFromTopLevel(activity_sbol, activity_sbol.object, req.url.toString().endsWith('/share'))
 
         const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
@@ -54,21 +55,19 @@ export default class ViewTest extends ViewTopLevelWithObject{
 
         var getAttachmentsQuery = loadTemplate('sparql/GetAttachments.sparql', templateParams)
 
-		let metadataAttachmentList = await sparql.queryJson(getAttachmentsQuery, graphUri)
+		let dataurlAttachmentList = await sparql.queryJson(getAttachmentsQuery, graphUri)
 
-        this.meta.metadataattachments = await getAttachmentsFromList(graphUri, metadataAttachmentList,
+        let dataurlAttachment = await getAttachmentsFromList(graphUri, dataurlAttachmentList,
             req.url.toString().endsWith('/share'))
 
 
-        for (let attachment of this.meta.metadataattachments){
-            if (attachment.size === 0){
-                this.meta.dataurl = attachment.url
+        for (let attachment of dataurlAttachment){
+            if (attachment['size'] === 0){
+                this.meta.dataurl = attachment['url']
             }
+        }
 
-        // console.log(metadataAttachmentList)
-
-
-		}
+        console.log(dataurlAttachment)
 
     }
 

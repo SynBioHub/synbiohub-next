@@ -189,6 +189,28 @@ async function submitPost(req, res){
     var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
     var version = '1'
 
+
+    var form_vals = {
+
+        prefix: prefix,
+        displayId: displayId,
+        version: version,
+        agent_str: JSON.parse(fields['agent'])[1],
+        agent_uri: JSON.parse(fields['agent'])[0],
+        description: fields['description'][0],
+        dataurl: fields['dataurl'][0],
+        chosen_plan: chosen_plan,
+        chosen_plan_uri: chosen_plan_uri,
+        graphUri: graphUri,
+        uri: uri
+
+    }
+
+    var sbol_results = await createSBOLTest(form_vals)
+    var doc = sbol_results[0]
+    var col_uri = sbol_results[1]
+    var activity_uri = doc.provActivities[0].uri.toString()
+
     let temp = graphUri.split('/').pop()
 
     if (files['file'][0]['size'] != 0){
@@ -213,32 +235,10 @@ async function submitPost(req, res){
     
         var { hash, size, mime } = metaUploadInfo
 
-        await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + displayId + '/' + version,
+        await attachments.addAttachmentToTopLevel(graphUri, baseUri, activity_uri,
         files['metadata_file'][0]['originalFilename'], hash, size, mime,
         temp)
     }
-
-    var form_vals = {
-
-        prefix: prefix,
-        displayId: displayId,
-        version: version,
-        agent_str: JSON.parse(fields['agent'])[1],
-        agent_uri: JSON.parse(fields['agent'])[0],
-        description: fields['description'][0],
-        dataurl: fields['dataurl'][0],
-        chosen_plan: chosen_plan,
-        chosen_plan_uri: chosen_plan_uri,
-        graphUri: graphUri,
-        uri: uri
-
-    }
-
-    var sbol_results = await createSBOLTest(form_vals)
-
-    var doc = sbol_results[0]
-
-    var col_uri = sbol_results[1]
 
     await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
 
@@ -336,9 +336,7 @@ async function createSBOLTest(form_vals){
     col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#Test', 'true') //HACK TO MAKE IT A DIFFERENT KIND OF COLLECTION
   
     var dataAttachment = doc.attachment(dataurl)
-  
     dataAttachment.source = dataurl
-  
     col.addAttachment(dataAttachment)
   
     console.log(doc.serializeXML())

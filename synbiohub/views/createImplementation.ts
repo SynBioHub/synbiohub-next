@@ -91,7 +91,7 @@ async function submitPost(req, res){
     var errors = []
 
     const submissionData = {
-        design_name: fields['design_name'][0],
+        construct_name: fields['construct_name'][0],
         plan1: fields['plan1'][0],
         plan2: fields['plan2'][0],
         agent: fields['agent'][0],
@@ -103,7 +103,7 @@ async function submitPost(req, res){
     var chosen_plan = ''
     var chosen_plan_uri = ''
 
-    if (fields['design_name'][0] === ''){
+    if (fields['construct_name'][0] === ''){
 
         errors.push('Please give the built design a name.')
 
@@ -165,7 +165,7 @@ async function submitPost(req, res){
     }
 
     var prefix = baseUri
-    var displayId = fields['design_name'][0].replace(/\s+/g, '')
+    var displayId = fields['construct_name'][0].replace(/\s+/g, '')
     var version = '1'
     var collection_url = baseUri + '/' + baseUri.split('/').pop() + '_collection/' + version 
 
