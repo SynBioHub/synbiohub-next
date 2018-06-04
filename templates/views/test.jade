@@ -2,6 +2,9 @@
 extends ../layouts/topLevel.jade
 
 
+block topLevelIcon
+    span.topLevelIcon.fa.fa-flask
+
 block topLevelBelowPropertyTable
     a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Built Design
     br
