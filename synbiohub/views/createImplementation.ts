@@ -179,17 +179,14 @@ async function submitPost(req, res){
 
     var templateParams = {
         uri: prefix + '/' + displayId + '/' + version
-
     }
 
-    var countQuery = "PREFIX sbol2: <http://sbols.org/v2#> SELECT * WHERE { <" + templateParams['uri'] + "> a sbol2:Implementation}"
-
+    var countQuery = "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> SELECT * WHERE { <" + templateParams['uri'] + "> sbh:topLevel  <" + templateParams['uri'] + ">}"
     var count = await sparql.queryJson(countQuery, graphUri)
-
     count = JSON.parse(JSON.stringify(count))
 
     if (count!=0){
-      errors.push('A built design with this name already exists.')
+      errors.push('An entry with this name already exists.')
 
     }
 

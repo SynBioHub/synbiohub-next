@@ -177,6 +177,27 @@ async function submitPost(req, res){
     errors.push('Please specify a URL that contains the experimental data.')
     }
 
+    var prefix = baseUri
+    var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
+    var version = '1'
+
+
+    var templateParams = {
+        uri: prefix + '/' + displayId + '/' + version
+    }
+
+
+    var countQuery = "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> SELECT * WHERE { <" + templateParams['uri'] + "> sbh:topLevel  <" + templateParams['uri'] + ">}"
+    var count = await sparql.queryJson(countQuery, graphUri)
+    count = JSON.parse(JSON.stringify(count))
+
+    console.log(count)
+
+    if (count!=0){
+      errors.push('An entry with this name already exists.')
+
+    }
+
 
     if (errors.length > 0) {
         if (req.forceNoHTML || !req.accepts('text/html')) {
@@ -190,11 +211,6 @@ async function submitPost(req, res){
     }
 
     else{
-
-    var prefix = baseUri
-    var displayId = fields['experiment_name'][0].replace(/\s+/g, '')
-    var version = '1'
-
 
     var form_vals = {
 
