@@ -15,6 +15,7 @@ public/local/*
 unzipped/*
 jsbml.log
 dist/
+bin/fmaprefix
 
 
 
