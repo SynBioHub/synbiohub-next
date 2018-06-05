@@ -17,6 +17,7 @@ const attachments = require('../attachments')
 import uploads from '../uploads'
 const fs = require('mz/fs')
 import db from 'synbiohub/db'
+import FMAPrefix from '../FMAPrefix'
 
 export default function(req, res) {
 
@@ -203,6 +204,9 @@ async function submitPost(req, res){
 
     else{
 
+        var org_search = await FMAPrefix.search('./alls.txt', fields['organism'][0])
+        var taxId = org_search[0].split('|')[1]
+
         var form_vals = {
 
             prefix: prefix,
@@ -213,6 +217,7 @@ async function submitPost(req, res){
             description: fields['description'][0],
             location: fields['location'][0],
             organism: fields['organism'][0],
+            taxId: taxId,
             chosen_plan: chosen_plan,
             chosen_plan_uri: chosen_plan_uri,
             graphUri: graphUri,
@@ -220,6 +225,7 @@ async function submitPost(req, res){
             collection_url: collection_url
     
         }
+        
 
         var sbol_results = await createSBOLImplementation(form_vals)
         var doc = sbol_results[0]
@@ -264,6 +270,9 @@ async function createSBOLImplementation(form_vals){
     var location = form_vals['location']
     var description = form_vals['description']
     var organism = form_vals['organism']
+    var taxId = form_vals['taxId']
+
+
 
     var doc= new SBOLDocument();
     var document = doc
@@ -331,8 +340,8 @@ async function createSBOLImplementation(form_vals){
     impl.wasDerivedFrom = uri
     impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
     impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
-    impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', organism)
-
+    impl.addUriAnnotation('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
+    impl.addStringAnnotation('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
     var col = doc.collection(collection_url)
     col.addMember(impl)
 

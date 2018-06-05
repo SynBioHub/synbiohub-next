@@ -62,19 +62,11 @@ block content
                                     input.form-control(name='dataurl',id="dataurl",placeholder='URL that stores the experimental data', value=submission.dataurl)
   
 
-
-                        div.row
-                            div.col-md-12
-                                div.form-group-100.required
-                                    label(for="metadata") Experiment Parameters
-                                    input.form-control(name='metadata',id="metadata",placeholder='Metadata for the experiment performed', value=submission.metadata)
-
-
                         div.card.w-100
                             div.card-header
                                 h6.panel-title
                                     a.accordion-toggle(data-toggle='collapse', href='#collapseSix')
-                                        | <b>Please upload a file describing the experiment metadata</b>
+                                        | <b>Experiment paramters for the experiment performed</b>
                             #collapseSix.panel-collapse
                                 .panel-body
                                     div.row

@@ -37,7 +37,7 @@ $('.organism-autocomplete').typeahead({
 
         })
 
-        .success(function(data) { 
+        .success(function(data) {
             
             asyncResults(data); 
             

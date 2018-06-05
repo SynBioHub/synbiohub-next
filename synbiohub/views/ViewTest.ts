@@ -21,6 +21,7 @@ export default class ViewTest extends ViewTopLevelWithObject{
     plan:string
     dataurl:string
     organism:string
+    taxId:string
 
 
 
@@ -48,8 +49,10 @@ export default class ViewTest extends ViewTopLevelWithObject{
 
         this.meta.metadataattachments = getAttachmentsFromTopLevel(activity_sbol, activity_sbol.object, req.url.toString().endsWith('/share'))
 
-        this.organism = this.annotations[1]['value']
+        this.organism = this.annotations[4]['value']
+        this.taxId = this.annotations[0]['uri']
 
+        console.log(this.annotations)
         const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
         var templateParams = {

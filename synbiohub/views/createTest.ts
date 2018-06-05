@@ -15,6 +15,8 @@ const attachments = require('../attachments')
 import uploads from '../uploads'
 const fs = require('mz/fs')
 import db from 'synbiohub/db'
+import FMAPrefix from '../FMAPrefix'
+
 
 export default function(req, res) {
 
@@ -86,10 +88,6 @@ async function submitPost(req, res){
   
     let { fields, files } = await parseForm(req)
 
-    console.log(fields)
-
-    console.log(files)
-
     var errors = []
 
     const submissionData = {
@@ -97,7 +95,6 @@ async function submitPost(req, res){
     experiment_name: fields['experiment_name'][0],
     agent: fields['agent'][0],
     description: fields['description'][0],
-    metadata: fields['metadata'][0],
     dataurl: fields['dataurl'][0]
 
     }
@@ -191,8 +188,6 @@ async function submitPost(req, res){
     var count = await sparql.queryJson(countQuery, graphUri)
     count = JSON.parse(JSON.stringify(count))
 
-    console.log(count)
-
     if (count!=0){
       errors.push('An entry with this name already exists.')
 
@@ -212,60 +207,65 @@ async function submitPost(req, res){
 
     else{
 
-    var form_vals = {
 
-        prefix: prefix,
-        displayId: displayId,
-        version: version,
-        agent_str: JSON.parse(fields['agent'])[1],
-        agent_uri: JSON.parse(fields['agent'])[0],
-        description: fields['description'][0],
-        dataurl: fields['dataurl'][0],
-        organism: fields['organism'][0],
-        chosen_plan: chosen_plan,
-        chosen_plan_uri: chosen_plan_uri,
-        graphUri: graphUri,
-        uri: uri
+        var org_search = await FMAPrefix.search('./alls.txt', fields['organism'][0])
+        var taxId = org_search[0].split('|')[1]
 
-    }
+        var form_vals = {
 
-    var sbol_results = await createSBOLTest(form_vals)
-    var doc = sbol_results[0]
-    var col_uri = sbol_results[1]
-    var activity_uri = doc.provActivities[0].uri.toString()
+            prefix: prefix,
+            displayId: displayId,
+            version: version,
+            agent_str: JSON.parse(fields['agent'])[1],
+            agent_uri: JSON.parse(fields['agent'])[0],
+            description: fields['description'][0],
+            dataurl: fields['dataurl'][0],
+            organism: fields['organism'][0],
+            taxId: taxId,
+            chosen_plan: chosen_plan,
+            chosen_plan_uri: chosen_plan_uri,
+            graphUri: graphUri,
+            uri: uri
 
-    let temp = graphUri.split('/').pop()
+        }
 
-    if (files['file'][0]['size'] != 0){
+        var sbol_results = await createSBOLTest(form_vals)
+        var doc = sbol_results[0]
+        var col_uri = sbol_results[1]
+        var activity_uri = doc.provActivities[0].uri.toString()
 
-        let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        let temp = graphUri.split('/').pop()
 
-        let uploadInfo = await uploads.createUpload(fileStream)
-    
-        var { hash, size, mime } = uploadInfo
-    
-        await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-        files['file'][0]['originalFilename'], hash, size, mime,
-        temp)
-    }
+        if (files['file'][0]['size'] != 0){
+
+            let fileStream = await fs.createReadStream(files['file'][0]['path']);
+
+            let uploadInfo = await uploads.createUpload(fileStream)
+        
+            var { hash, size, mime } = uploadInfo
+        
+            await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            temp)
+        }
 
 
-    if (files['metadata_file'][0]['size'] != 0){
+        if (files['metadata_file'][0]['size'] != 0){
 
-        let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
+            let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
 
-        let metaUploadInfo = await uploads.createUpload(metaFileStream)
-    
-        var { hash, size, mime } = metaUploadInfo
+            let metaUploadInfo = await uploads.createUpload(metaFileStream)
+        
+            var { hash, size, mime } = metaUploadInfo
 
-        await attachments.addAttachmentToTopLevel(graphUri, baseUri, activity_uri,
-        files['metadata_file'][0]['originalFilename'], hash, size, mime,
-        temp)
-    }
+            await attachments.addAttachmentToTopLevel(graphUri, baseUri, activity_uri,
+            files['metadata_file'][0]['originalFilename'], hash, size, mime,
+            temp)
+        }
 
-    await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
+        await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
 
-    res.redirect(col_uri)
+        res.redirect(col_uri)
 
 
     }
@@ -293,6 +293,7 @@ async function createSBOLTest(form_vals){
     var dataurl = form_vals['dataurl']
     var description = form_vals['description']
     var organism = form_vals['organism']
+    var taxId = form_vals['taxId']
   
     var doc= new SBOLDocument();
     var document = doc
@@ -358,7 +359,8 @@ async function createSBOLTest(form_vals){
     col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
     col.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', col.uri)
     col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#Test', 'true') //HACK TO MAKE IT A DIFFERENT KIND OF COLLECTION
-    col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', organism)
+    col.addUriAnnotation('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
+    col.addStringAnnotation('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
 
     var dataAttachment = doc.attachment(dataurl)
     dataAttachment.source = dataurl
