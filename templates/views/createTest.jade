@@ -47,7 +47,14 @@ block content
                                     label(for="description") Purpose
                                     input.form-control(name='description',id="description"
                                             placeholder='Brief description about the purpose of this live design.',value=submission.description)
-                      
+
+                        div.row
+                            div.col-md-12
+                                div.form-group-100.required
+                                    label(for="organism") Organism
+                                    input.form-control.organism-autocomplete(name='organism', id="organism"
+                                            placeholder='Organism', value='')
+
                         div.row
                             div.col-md-12
                                 div.form-group-100.required

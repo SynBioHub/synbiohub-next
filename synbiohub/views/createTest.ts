@@ -124,6 +124,12 @@ async function submitPost(req, res){
 
     }
 
+    if (fields['organism'][0] === ''){
+
+        errors.push('Please mention the organism used in this experiment.')
+    
+    }
+
     if ('plan_submission_type[]' in fields){
 
     if (fields['plan2'][0] === ''){
@@ -199,6 +205,7 @@ async function submitPost(req, res){
         agent_uri: JSON.parse(fields['agent'])[0],
         description: fields['description'][0],
         dataurl: fields['dataurl'][0],
+        organism: fields['organism'][0],
         chosen_plan: chosen_plan,
         chosen_plan_uri: chosen_plan_uri,
         graphUri: graphUri,
@@ -269,6 +276,7 @@ async function createSBOLTest(form_vals){
   
     var dataurl = form_vals['dataurl']
     var description = form_vals['description']
+    var organism = form_vals['organism']
   
     var doc= new SBOLDocument();
     var document = doc
@@ -334,7 +342,8 @@ async function createSBOLTest(form_vals){
     col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
     col.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', col.uri)
     col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#Test', 'true') //HACK TO MAKE IT A DIFFERENT KIND OF COLLECTION
-  
+    col.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', organism)
+
     var dataAttachment = doc.attachment(dataurl)
     dataAttachment.source = dataurl
     col.addAttachment(dataAttachment)
