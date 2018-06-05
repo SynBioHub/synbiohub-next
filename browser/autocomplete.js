@@ -22,7 +22,7 @@ $('.sbh-autocomplete').typeahead({
 $('.organism-autocomplete').typeahead({
     hint: false,
     highlight: true,
-    minLength: 7,
+    minLength: 1,
     limit: 2,
   },
   {

@@ -129,6 +129,12 @@ async function submitPost(req, res){
 
     }
 
+    if (fields['organism'][0] === ''){
+
+        errors.push('Please mention which organism this construct was built in.')
+
+    }
+
     if ('plan_submission_type[]' in fields){
 
       if (fields['plan2'][0] === ''){
@@ -270,6 +276,7 @@ async function submitPost(req, res){
         impl.wasDerivedFrom = uri
         impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
         impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
+        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', fields['organism'][0])
 
         var col = doc.collection(collection_url)
         col.addMember(impl)

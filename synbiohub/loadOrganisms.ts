@@ -1,6 +1,6 @@
 let TrieSearch = require('trie-search')
 
-let organisms = require('/home/chris/Desktop/Dev/synbiohub-v2/taxonomy-all.json')
+let organisms = require('/home/chris/Desktop/Dev/synbiohub-v2/faketax.json')
 
 let ts = new TrieSearch()
     

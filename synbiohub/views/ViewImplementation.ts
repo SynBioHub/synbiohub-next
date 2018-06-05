@@ -18,6 +18,7 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
     agent:string
     plan:string
     location:string
+    organism:string
 
     async prepare(req:Request) {
 
@@ -39,10 +40,12 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
         this.location = this.annotations[2]['value']
         this.agent = activity_sbol.object.associations[0].agent.name
         this.plan = activity_sbol.object.associations[0].plan.name
+        this.organism = this.annotations[3]['value']
 
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
 
 
+        console.log(this.organism)
         
 
     }
