@@ -4,7 +4,7 @@ export default async function(req, res){
     
     let query = req.params.query
 
-    let matches = await FMAPrefix.search('./alls.txt', query)
+    let matches = await FMAPrefix.search('./data/ncbi_taxonomy.txt', query)
 
     matches = matches.map((r) =>r.split('|')[0])
 

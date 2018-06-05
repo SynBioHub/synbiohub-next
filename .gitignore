@@ -16,7 +16,7 @@ unzipped/*
 jsbml.log
 dist/
 bin/fmaprefix
-
+data/
 
 
 
