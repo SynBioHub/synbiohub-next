@@ -206,89 +206,30 @@ async function submitPost(req, res){
 
     else{
 
-        var doc= new SBOLDocument();
-        var document = doc
+        var form_vals = {
 
-        var asc = doc.provAssociation(prefix + '/' + displayId + '_association/' + version)
-        asc.displayId = displayId + '_association'
-        asc.persistentIdentity = prefix + '/' + asc.displayId
-        asc.version = version
-        asc.addRole('http://sbols.org/v2#build')
-
-
-        var agent_str = JSON.parse(fields['agent'])[1]
-        var agent_uri = JSON.parse(fields['agent'])[0]
-        var plan_str = chosen_plan
-
-        if (chosen_plan_uri === ''){
-
-          var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
+            prefix: prefix,
+            displayId: displayId,
+            version: version,
+            agent_str: JSON.parse(fields['agent'])[1],
+            agent_uri: JSON.parse(fields['agent'])[0],
+            description: fields['description'][0],
+            location: fields['location'][0],
+            organism: fields['organism'][0],
+            chosen_plan: chosen_plan,
+            chosen_plan_uri: chosen_plan_uri,
+            graphUri: graphUri,
+            uri: uri,
+            collection_url: collection_url
+    
         }
 
-        else{
-          var plan_uri = chosen_plan_uri
-        }
-
-
-        var agent = doc.provAgent(JSON.parse(fields['agent'])[0])
-        agent.displayId = agent_str
-        agent.name = agent_str
-        agent.persistentIdentity = JSON.parse(fields['agent'])[0]
-
-        var plan = doc.provPlan(plan_uri)
-        plan.displayId = plan_str.replace(/\s+/g, '')
-        plan.name = plan_str
-        plan.persistentIdentity = plan_uri
-
-        agent.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', agent.uri)
-        plan.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', plan.uri)
-
-        asc.agent = agent_uri
-        asc.plan = plan_uri
-
-        var act = doc.provActivity(prefix + '/' + displayId + '_activity/' + version)
-        act.displayId = displayId + '_activity'
-        act.persistentIdentity = prefix + '/' + act.displayId
-        act.version = version
-
-        act.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', act.uri)
-        act.addAssociation(asc)
-
-        var usg = doc.provUsage(prefix + '/' + displayId + '_usage/' + version)
-        usg.displayId = displayId + '_usage'
-        usg.persistentIdentity = prefix + '/' + usg.displayId
-        usg.version = version
-        usg.entity = uri
-
-        usg.addRole('http://sbols.org/v2#design')
-        act.addUsage(usg)
-
-        var impl = doc.implementation(prefix + '/' + displayId + '/' + version)
-        impl.displayId = displayId
-        impl.name = displayId
-        impl.persistentIdentity = prefix + '/' + impl.displayId
-        impl.version = version
-        impl.description = fields['description'][0]
-        impl.built = prefix + '/' + displayId + '/' + version
-
-        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', fields['location'][0])
-        impl.addWasGeneratedBy(act.uri)
-        impl.wasDerivedFrom = uri
-        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
-        impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
-        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', fields['organism'][0])
-
-        var col = doc.collection(collection_url)
-        col.addMember(impl)
-
-        console.log(doc.serializeXML())
-
-        await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
+        var sbol_results = await createSBOLImplementation(form_vals)
+        var doc = sbol_results[0]
+        var impl_uri = sbol_results[1]
 
         let fileStream = await fs.createReadStream(files['file'][0]['path']);
-
         var uploadInfo = await uploads.createUpload(fileStream)
-
         const { hash, size, mime } = uploadInfo
 
         if (files['file'][0]['size'] != 0){
@@ -298,9 +239,108 @@ async function submitPost(req, res){
           graphUri.split('/').pop)
         }
         
-        res.redirect(impl.uri)
+
+        await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
+
+        res.redirect(impl_uri)
 
 
     }
+
+}
+
+async function createSBOLImplementation(form_vals){
+
+    var prefix = form_vals['prefix']
+    var displayId = form_vals['displayId']
+    var version = form_vals['version']
+    var collection_url = form_vals['collection_url']
+  
+    var graphUri = form_vals['graphUri']
+    var uri = form_vals['uri']
+  
+    var agent_str = form_vals['agent_str']
+    var agent_uri = form_vals['agent_uri']
+    var plan_str = form_vals['chosen_plan']
+    var chosen_plan_uri = form_vals['chosen_plan_uri']
+  
+    var location = form_vals['location']
+    var description = form_vals['description']
+    var organism = form_vals['organism']
+
+    var doc= new SBOLDocument();
+    var document = doc
+
+    var asc = doc.provAssociation(prefix + '/' + displayId + '_association/' + version)
+    asc.displayId = displayId + '_association'
+    asc.persistentIdentity = prefix + '/' + asc.displayId
+    asc.version = version
+    asc.addRole('http://sbols.org/v2#build')
+
+
+    if (chosen_plan_uri === ''){
+
+      var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
+    }
+
+    else{
+      plan_uri = chosen_plan_uri
+    }
+
+
+    var agent = doc.provAgent(agent_uri)
+    agent.displayId = agent_str
+    agent.name = agent_str
+    agent.persistentIdentity = agent_uri
+
+    var plan = doc.provPlan(plan_uri)
+    plan.displayId = plan_str.replace(/\s+/g, '')
+    plan.name = plan_str
+    plan.persistentIdentity = plan_uri
+
+    agent.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', agent.uri)
+    plan.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', plan.uri)
+
+    asc.agent = agent_uri
+    asc.plan = plan_uri
+
+    var act = doc.provActivity(prefix + '/' + displayId + '_activity/' + version)
+    act.displayId = displayId + '_activity'
+    act.persistentIdentity = prefix + '/' + act.displayId
+    act.version = version
+
+    act.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', act.uri)
+    act.addAssociation(asc)
+
+    var usg = doc.provUsage(prefix + '/' + displayId + '_usage/' + version)
+    usg.displayId = displayId + '_usage'
+    usg.persistentIdentity = prefix + '/' + usg.displayId
+    usg.version = version
+    usg.entity = uri
+
+    usg.addRole('http://sbols.org/v2#design')
+    act.addUsage(usg)
+
+    var impl = doc.implementation(prefix + '/' + displayId + '/' + version)
+    impl.displayId = displayId
+    impl.name = displayId
+    impl.persistentIdentity = prefix + '/' + impl.displayId
+    impl.version = version
+    impl.description = description
+    impl.built = prefix + '/' + displayId + '/' + version
+
+    impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
+    impl.addWasGeneratedBy(act.uri)
+    impl.wasDerivedFrom = uri
+    impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
+    impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
+    impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#organism', organism)
+
+    var col = doc.collection(collection_url)
+    col.addMember(impl)
+
+    console.log(doc.serializeXML())
+
+    return [doc, impl.uri]
 
 }
