@@ -30,12 +30,16 @@ block content
                             div.col-md-12
                                 div.form-group-100.required
                                     label(for="construct_name") Construct Name
+                                        a(title='Every entry on SynBioHub has a name, including Constructs. Make sure to give a memorable and descriptive name for easier recognition.')
+                                                    span.fa.fa-info-circle
                                     input.form-control(name='construct_name',id="construct_name",placeholder='The name of the built design.', value=submission.construct_name)
 
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
                                     label(for="agent") Researcher
+                                        a(title='SynBioHub records information about provenance: who, what, where. Here, you need to fill out which user performed this specific Experiment.')
+                                                span.fa.fa-info-circle
                                     select.form-control(name='agent', id="agent")
                                             option(value='', selected='selected') The name of the researcher who built the design.
                                             - for(var i=0;i< agent_names.length;i++) {
@@ -45,12 +49,16 @@ block content
                             div.col-md-12
                                 div.form-group-100.required
                                     label(for="description") Purpose
+                                        a(title='Writing the purpose of a built Construct is important for properly describing it.')
+                                                span.fa.fa-info-circle
                                     input.form-control(name='description',id="description"
                                             placeholder='Brief description about the purpose of this live design.',value=submission.description)
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
                                     label(for="location") Physical Location
+                                        a(title='Noting the physical location of the built construct is useful information that SynBioHub stores.')
+                                                span.fa.fa-info-circle
                                     input.form-control(name='location', id="location"
                                             placeholder='Physical location of the live design e.g. Fridge A, Tray 2', value=submission.location)
 
@@ -58,6 +66,8 @@ block content
                             div.col-md-12
                                 div.form-group-100.required
                                     label(for="organism") Organism
+                                        a(title='SynBioHub will give suggestions as you write the organism name. It will also link the chosen organism with its NCBI taxonomy ID automatically.')
+                                                span.fa.fa-info-circle
                                     input.form-control.organism-autocomplete(name='organism', id="organism"
                                             placeholder='Organism', value='')
 
@@ -66,6 +76,8 @@ block content
                               div.form-group-100.required
                                     div
                                       label(for="agent") Lab Protocol Used
+                                        a(title='SynBioHub necessitates the uploading of lab protocol documents, which contain a description of the steps performed in an experiment. Using this checkbox, you can either create a new Lab Protocol, which will require you to upload a file e.g. a word document. You can also leave the checkbox blank, and use any of the already existing protocols.')
+                                                span.fa.fa-info-circle
                                       input(type="checkbox", style='margin-left:50px', data-toggle='collapse', data-target='.collapseForm', id="ast1", name="plan_submission_type[]")
                                       | Create a new Lab Protocol
               
@@ -85,12 +97,11 @@ block content
                         div.row
                                 .collapseForm.panel-collapse.collapse
                                     .panel-body
-                                    div.row
-                                    div.col-md-12
+                                        h4.panel-title
+                                            a.accordion-toggle(data-toggle='collapse', href='#collapse')
                                         div.card.w-100
                                             div.card-header
-                                                h4.panel-title
-                                                    a.accordion-toggle(data-toggle='collapse', href='#collapse')
+                                                div.col-md-12
                                                         | <b>Please upload a file describing the lab protocol</b>
                                           
                                             div.form-group-100.required

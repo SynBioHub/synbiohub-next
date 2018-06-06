@@ -101,8 +101,6 @@ async function submitPost(req, res){
 
     }
 
-    console.log(fields)
-
     var chosen_plan = ''
     var chosen_plan_uri = ''
 

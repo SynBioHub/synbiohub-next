@@ -52,7 +52,6 @@ export default class ViewTest extends ViewTopLevelWithObject{
         this.organism = this.annotations[4]['value']
         this.taxId = this.annotations[0]['uri']
 
-        console.log(this.annotations)
         const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
         var templateParams = {
