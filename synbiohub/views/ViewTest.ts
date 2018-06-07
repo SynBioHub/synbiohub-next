@@ -18,10 +18,13 @@ export default class ViewTest extends ViewTopLevelWithObject{
     meta:any
 
     agent:string
-    plan:string
     dataurl:string
     organism:string
     taxId:string
+    plan:string
+    plan_url:string
+    metadata:any[]
+
 
 
 
@@ -46,8 +49,9 @@ export default class ViewTest extends ViewTopLevelWithObject{
         this.plan = activity_sbol.object.associations[0].plan.name
 
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
+        this.plan_url = this.meta.attachments[0]['url'] + '/download'
 
-        this.meta.metadataattachments = getAttachmentsFromTopLevel(activity_sbol, activity_sbol.object, req.url.toString().endsWith('/share'))
+        this.metadata = getAttachmentsFromTopLevel(activity_sbol, activity_sbol.object, req.url.toString().endsWith('/share'))[0]
 
         this.organism = this.annotations[4]['value']
         this.taxId = this.annotations[0]['uri']
@@ -70,9 +74,8 @@ export default class ViewTest extends ViewTopLevelWithObject{
             if (attachment['size'] === 0){
                 this.meta.dataurl = attachment['url']
             }
-        }
 
-        console.log(dataurlAttachment)
+        }
 
     }
 

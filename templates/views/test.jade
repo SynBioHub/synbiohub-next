@@ -5,51 +5,30 @@ extends ../layouts/topLevel.jade
 block topLevelIcon
     span.topLevelIcon.fa.fa-flask
 
+block OtherProperties
+block Attachments
+block Collections
+block Mutables
+
 block topLevelBelowPropertyTable
     a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Built Design
     br
     a(style='font-size:20px', href=meta.dataurl) Experimental Data URL
-    h4 Purpose
-    | #{meta.description}
-    br
-    h4 Researcher:
-    | #{agent}
-    br
-    h4 Protocol:
-    | #{plan}
-    br
-    h4 Organism:
-        a(href=taxId) #{organism}
-    br  
-    br                           
-    div.card.w-100
-        div.card-header
-            h6.panel-title
-                a.accordion-toggle(data-toggle='collapse', href='#collapseSeven')
-                    | <b>Metadata</b>
-        #collapseSeven.panel-collapse.collapse.show
-            .panel-body
-                div.row
-                    div.col-md-12
-                        if typeof(meta.metadataattachments) !== 'undefined' && (canEdit || meta.metadataattachments.length > 0)
-                            table.attachments-table.table.table-striped
-                                thead
-                                    th Name
-                                    th Size
-                                    th
-                                tbody
-                                for attachment in meta.metadataattachments
 
-                                    if attachment.size != 0
-                                        tr
-                                            td
-                                                a(href=attachment.url) #{attachment.name}
-                                            td
-                                                if attachment.sizeString
-                                                    | #{attachment.sizeString}
-                                            td
-                                                a(href=attachment.url + '/download')
-                                                    button.btn.btn-primary
-                                                        span.fa.fa-download
-                                                        |  Download
-
+    div.card-body
+        table.table.table-striped.entry-detail-table
+            tr
+                td Researcher
+                td #{agent}
+            tr
+                td Protocol
+                td 
+                    a(href=plan_url) #{plan}
+            tr
+                td Organism
+                td 
+                    a(href=taxId) #{organism}
+            tr
+                td Metadata
+                td 
+                    a(href=metadata.url + '/download') #{metadata.name}

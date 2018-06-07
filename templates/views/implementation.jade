@@ -6,17 +6,10 @@ include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
 
-
-block jsState
-    script meta =
-        != JSON.stringify(meta)
-
-    script.
-        function popup() {
-            popupS.modal({
-                content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
-            });
-        }
+block OtherProperties
+block Attachments
+block Collections
+block Mutables
 
 block topLevelIcon
     span.topLevelIcon.fa.fa-flask
@@ -29,7 +22,8 @@ block topLevelBelowPropertyTable
                                 td #{agent}
                             tr
                                 td Protocol
-                                td #{plan}
+                                td 
+                                    a(href=plan_url) #{plan}
                             tr
                                 td Physical Location
                                 td #{location}

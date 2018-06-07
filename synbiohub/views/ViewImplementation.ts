@@ -16,10 +16,11 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
     meta:any
 
     agent:string
-    plan:string
     location:string
     organism:string
     taxId:string
+    plan:string
+    plan_url:string
 
     async prepare(req:Request) {
 
@@ -46,6 +47,7 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
 
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
         
+        this.plan_url = this.meta.attachments[0]['url'] + '/download'
 
     }
 

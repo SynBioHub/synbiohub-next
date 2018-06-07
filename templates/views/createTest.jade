@@ -28,7 +28,7 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="experiment_name") Experiment Name
+                                    label(for="experiment_name") Experiment Name 
                                         a(title='Every entry on SynBioHub has a name, including Experiments. Make sure to give a memorable and descriptive name for easier recognition.')
                                                 span.fa.fa-info-circle
                                     input.form-control(name='experiment_name',id="experiment_name",placeholder='The name of the experiment.', value=submission.experiment_name)
@@ -36,7 +36,7 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="agent") Researcher
+                                    label(for="agent") Researcher 
                                         a(title='SynBioHub records information about provenance: who, what, where. Here, you need to fill out which user performed this specific Experiment.')
                                                 span.fa.fa-info-circle
                                     select.form-control(name='agent', id="agent")
@@ -48,7 +48,7 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="description") Purpose
+                                    label(for="description") Purpose 
                                         a(title='Writing the purpose of a performed Experiment is important for properly describing it.')
                                                 span.fa.fa-info-circle
                                     input.form-control(name='description',id="description"
@@ -57,7 +57,7 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="organism") Organism
+                                    label(for="organism") Organism 
                                         a(title='SynBioHub will give suggestions as you write the organism name. It will also link the chosen organism with its NCBI taxonomy ID automatically.')
                                                 span.fa.fa-info-circle
                                     input.form-control.organism-autocomplete(name='organism', id="organism"
@@ -66,7 +66,7 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="dataurl") URL to the Experimental Data files
+                                    label(for="dataurl") URL to the Experimental Data files 
                                         a(href='https://public-edd.jbei.org/accounts/login/?next=/' title='SynBioHub does not store raw or processed experimental data. Please upload the data to a repository like the Experimental Data Depot (which you can go to by clicking on this information button). Then, give a URL linking to the data.')
                                                 span.fa.fa-info-circle
                                     input.form-control(name='dataurl',id="dataurl",placeholder='URL that stores the experimental data', value=submission.dataurl)
@@ -75,8 +75,8 @@ block content
                         div.card.w-100
                             div.card-header
                                 div.col-md-12
-                                        <b>Experiment parameters for the experiment performed</b>
-                                            a(title='Upload a document e.g. spreadshet that contains the parameters used in the experiment.')
+                                        <b>Experiment parameters for the experiment performed </b>
+                                            a(title='Upload a document e.g. spreadsheet that contains the parameters used in the experiment.')
                                                     span.fa.fa-info-circle
                             #collapseSix.panel-collapse
                                 .panel-body
@@ -97,11 +97,11 @@ block content
                             div.col-md-12
                               div.form-group-100.required
                                     div
-                                      label(for="agent") Lab Protocol Used
-                                        a(title='SynBioHub necessitates the uploading of lab protocol documents, which contain a description of the steps performed in an experiment. Using this checkbox, you can either create a new Lab Protocol, which will require you to upload a file e.g. a word document. You can also leave the checkbox blank, and use any of the already existing protocols.')
+                                      label(for="agent") Lab Protocol Used 
+                                        a(title='Lab Protocols are documents that contain a description of the steps performed in the lab. Using this checkbox, you can either create a new Lab Protocol, which will require you to give the protocol a name, and to upload a file e.g. a word document that describes it. You can also leave the checkbox blank, and use any of the already existing protocols.')
                                                 span.fa.fa-info-circle
                                       input(type="checkbox", style='margin-left:50px', data-toggle='collapse', data-target='.collapseForm', id="ast1", name="plan_submission_type[]")
-                                      | Create a new Lab Protocol
+                                      |  Create a new Lab Protocol
               
 
                         div.row
@@ -110,7 +110,7 @@ block content
                                     .collapseForm.panel-collapse.collapse.show
                                         .panel-body
                                         select.form-control(name='plan1', id="plan1")
-                                                option(value='', selected='selected') The name of the Lab Protocol used to build the design.
+                                                option(value='', selected='selected') Choose an existing Lab Protocol
                                                 - for(var i=0;i< plan_names.length;i++) {
                                                   option(value = [plan_uris[i],plan_names[i]]) #{plan_names[i]}
                                                 - }
