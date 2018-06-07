@@ -202,7 +202,7 @@ async function submitPost(req, res){
 
     else{
 
-        var org_search = await FMAPrefix.search('./alls.txt', fields['organism'][0])
+        var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
         var taxId = org_search[0].split('|')[1]
 
         var form_vals = {

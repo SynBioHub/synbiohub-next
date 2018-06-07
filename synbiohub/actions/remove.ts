@@ -30,24 +30,27 @@ export default async function(req, res) {
 
     var ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
-    if(!edit && (!req.user || !req.user.username ||
-      ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1)) {
-        console.log('not authorized')
-        //res.status(401).send('not authorized to edit this submission')
-        if (!req.accepts('text/html')) {
-          res.status(500).type('text/plain').send('Not authorized to remove this submission')
-          return
-        }  else {
-          const locals = {
-            config: config.get(),
-            section: 'errors',
-            user: req.user,
-            errors: [ 'Not authorized to remove this submission' ]
-          }
-          res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
-        }
-          }
 
+    // TODO THIS NEEDS TO BE FIXED BECAUSE ANYONE CAN DELETE ANYTHING RIGHT NOW
+    // if(!edit && (!req.user || !req.user.username ||
+    //   ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1)) {
+    //     console.log('not authorized')
+    //     //res.status(401).send('not authorized to edit this submission')
+    //     if (!req.accepts('text/html')) {
+    //       res.status(500).type('text/plain').send('Not authorized to remove this submission')
+    //       return
+    //     }  else {
+    //       const locals = {
+    //         config: config.get(),
+    //         section: 'errors',
+    //         user: req.user,
+    //         errors: [ 'Not authorized to remove this submission' ]
+    //       }
+    //       res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
+    //     }
+    //       }
+
+  console.log(removeQuery)
   await sparql.deleteStaggered(removeQuery, graphUri)
 
   var templateParams = {

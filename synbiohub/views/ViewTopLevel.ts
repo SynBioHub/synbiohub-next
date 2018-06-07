@@ -97,7 +97,7 @@ export default abstract class ViewTopLevel extends View {
         this.topLevelOtherMenu = new Menu()
         this.topLevelOtherMenu.addItem(new MenuItem('Find Uses', this.uriInfo + '/' + id + '/uses', 'fa-search'))
         this.topLevelOtherMenu.addItem(new MenuItem('Find Matching Parts', this.uriInfo + '/' + id + '/twins', 'fa-search'))
-        this.topLevelOtherMenu.addItem(new MenuItem('Delete Part', '/sbol', 'fa-trash-alt'))
+        this.topLevelOtherMenu.addItem(new MenuItem('Delete Part', this.uriInfo.uri + '/remove', 'fa-trash-alt'))
 
     }
 
