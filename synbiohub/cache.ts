@@ -7,7 +7,7 @@ var autocompleteTitle = new TrieSearch('name', {
     splitOnRegEx: /\s|_/g
 })
 
-function updateCache() {
+async function updateCache() {
 
     const query = [
         'SELECT ?subject ?title WHERE {',
@@ -25,19 +25,17 @@ function updateCache() {
 
     const queryTimer = ExecutionTimer('Retrieve list of subjects from triplestore')
 
-    sparql.queryJson(query, null).then((results) => {
+    let results = await sparql.queryJson(query, null)
 
-        queryTimer()
+    queryTimer()
 
-        const populateTitleToUriTimer = ExecutionTimer('Populate title to URI list')
+    const populateTitleToUriTimer = ExecutionTimer('Populate title to URI list')
 
-        results.forEach((result) => {
-            autocompleteTitle.add({ name: result.title, uri: result.subject })
-        })
-
-        populateTitleToUriTimer()
-
+    results.forEach((result) => {
+        autocompleteTitle.add({ name: result.title, uri: result.subject })
     })
+
+    populateTitleToUriTimer()
 
 }
 
