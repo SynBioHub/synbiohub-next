@@ -14,6 +14,9 @@ module.exports = {
             users.forEach(user => graphs.push(user.graphUri));
 
             return Promise.all(graphs.map(graph => sparql.updateQueryJson(query, graph)));
+        }).catch((e) => {
+            console.log('Error migrating attachments')
+            console.log(e)
         })
     },
 
