@@ -22,6 +22,13 @@ export function escapeIRI(uri) {
 
 }
 
+export function escapeString(str) {
+
+    return JSON.stringify(str)
+
+}
+
+
 export async function updateQuery(sparql, graphUri, accept?) {
 
     var headers:any = {}

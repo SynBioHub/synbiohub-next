@@ -8,8 +8,11 @@ import ViewTopLevelWithObject from "synbiohub/views/ViewTopLevelWithObject";
 
 import sbolmeta = require('sbolmeta')
 import { SBHRequest } from 'synbiohub/SBHRequest';
+import Breadcrumbs, { Breadcrumb } from 'synbiohub/Breadcrumbs';
 
 export default class ViewCollection extends ViewTopLevelWithObject {
+
+    breadcrumbs:Breadcrumbs
 
     constructor() {
 
@@ -26,6 +29,11 @@ export default class ViewCollection extends ViewTopLevelWithObject {
         }
 
         let meta:any = sbolmeta.summarizeGenericTopLevel(this.object)
+
+        this.breadcrumbs = new Breadcrumbs([
+            new Breadcrumb('/projects', 'Projects'),
+            new Breadcrumb(this.uriInfo.url, meta.name)
+        ])
 
         meta.members = []
 

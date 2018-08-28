@@ -10,6 +10,7 @@ import loadTemplate from 'synbiohub/loadTemplate';
 import * as sparql from 'synbiohub/sparql/sparql';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import sha1 = require('sha1')
+import uriToUrl from 'synbiohub/uriToUrl';
 
 export default class ViewProjects extends View {
 
@@ -52,6 +53,7 @@ export default class ViewProjects extends View {
                 this.publicProjects = results.map((result) => {
 
                     result.triplestore = 'public'
+                    result.url = uriToUrl(result.uri, req)
 
                     foundURIs[result.uri] = true
 
@@ -72,6 +74,7 @@ export default class ViewProjects extends View {
                 }).map((result) => {
 
                     result.triplestore = 'private'
+                    result.url = uriToUrl(result.uri, req)
 
                     return result
 

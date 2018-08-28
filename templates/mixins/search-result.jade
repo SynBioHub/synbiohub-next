@@ -43,11 +43,12 @@ mixin search-result-collection(submission,removePublicEnabled)
                 div.ribbon-private Private
 
         if submission.name
-            a(href=submission.url) #{submission.displayId} (#{submission.name})
+            a(href=submission.url,title=submission.displayId) #{submission.name}
         else
             a(href=submission.url) #{submission.displayId}
 
-        p version #{submission.version}
+        if submission.version !== '1'
+            p version #{submission.version}
 
         div.keywords
             if submission.description != ''

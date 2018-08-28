@@ -150,6 +150,7 @@ import { SBHRequest } from 'synbiohub/SBHRequest';
 import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 import ViewLogin from 'synbiohub/views/ViewLogin';
 import ViewProjects from 'synbiohub/views/ViewProjects';
+import ViewNewProject from 'synbiohub/views/ViewNewProject';
 import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
 
 var actions = {
@@ -368,6 +369,8 @@ function App() {
     app.get('/createCollection', dispatchToView(ViewAdvancedSearch));
     app.post('/createCollection', dispatchToView(ViewAdvancedSearch));
     app.get('/createCollection/:query?', dispatchToView(ViewSearch));
+
+    app.all('/newProject', dispatchToView(ViewNewProject))
 
     app.get('/:type/count', api.count)
     app.get('/rootCollections', api.rootCollections)

@@ -79,12 +79,13 @@ block body
                 div.col-md-6
                     if user
                         div.sbh-index-projectlinks
-                            h3 Recent Projects
-                            ul
-                                each project in recentProjects
-                                    li
-                                        a(href=project.url) #{project.name}
-                            br
+                            if recentProjects.length > 0
+                                h3 Recent Projects
+                                ul
+                                    each project in recentProjects
+                                        li
+                                            a(href=project.url) #{project.name}
+                                br
                             a(href='/newproject')
                                 span.fa.fa-plus
                                 |  Create Project

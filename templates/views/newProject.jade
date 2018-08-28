@@ -1,0 +1,48 @@
+
+
+extends ../layouts/default.jade
+
+block content
+
+    div.submission-container(align='center')
+        div.submission-header
+            span(style='font-size: 3.3em').fa.fa-folder
+            p(style='font-size: 1.7em; font-weight: bolder')
+                | Tell us about your project
+        form.form.submission-form(action='/newProject',method='post')
+            if errors.length > 0
+                each error in errors
+                    div.alert.alert-danger
+                        p #{error}
+                    br
+
+            div.row
+                div.col-md-12
+                    div.row
+                        div.col-md-12
+                            div.form-group-100.required
+                                label(for="name") Project Name 
+                                input.form-control(name='name',id="name",placeholder='A name to describe your project',value=projectInfo.name)
+                    div.row
+                        div.col-md-12
+                            div.form-group-100.required
+                                label(for="description") Project Description
+                                textarea.form-control(name='description', id="description"
+                                        placeholder='The more you say, the easier it will be for others to find your project if you make it public')
+                                        | #{projectInfo.desc}
+                    div.row
+                        div.col-md-6
+                            div.form-group-100.required
+                                label(for="id") Identifier 
+                                    a(href="http://wiki.synbiohub.org/wiki/Terms/SynBioHub#Id",title='Like the name but for computers. If you fill in the name above, we\'ll generate this for you automatically. This is the place you would put e.g. your BBa_ ID for iGEM.')
+                                        span.fa.fa-info-circle
+                                input.form-control(type='text', id="id", name='id',placeholder='Just letters and numbers, no spaces',value=projectInfo.id)
+                        div.col-md-6
+                            div.form-group-100.required
+                                label(for='version') Version 
+                                    a(href="http://wiki.synbiohub.org/wiki/Terms/SynBioHub#Version",title='Just leave this as 1 if you\'re not sure.')
+                                        span.fa.fa-info-circle
+                                input.form-control(type='text', id='version', name='version',placeholder='Version',value=projectInfo.version)
+                    div.row
+                        div.col-md-12
+                            button(type='submit').btn.btn-primary.btn-lg Create
