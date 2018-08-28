@@ -1,5 +1,5 @@
 
-extends ../layouts/default.jade
+extends ../layouts/base.jade
 
 block head
     style.
@@ -49,47 +49,48 @@ block head
             margin-bottom: 10px;
         }
 
-block content
-
-    div.container.container-fluid
-
-        div.row
-            div.col-md-12.text-center
-                if config.instanceLogo
-                    img.instance-logo-home(src=config.instanceLogo)
-                    br
-                else
-                    div
+block body
+    div#container
+        nav.navbar.navbar-expand-lg
+            div.sbh-navbar-top.sbh-navbar-index
+                a(href='/').navbar-brand
+                    if config.instanceLogo
+                        img.instance-logo(src=config.instanceLogo)
+                    else
                         h1(style='margin-left: 15px;') #{config.instanceName}
-        div.row
-            div.col-md-2
-            div.col-md-8.sbh-frontpage-blurb
-                p !{config.frontPageText}
-        div.row.sbh-main-page-row
-            div.col-md-12(style='text-align: center;')
-                div.sbh-frontpage-container
-                    table.sbh-frontpage-pictures(style='text-align: left;')
-                        tr
-                            td
-                                span.fa.fa-search
-                            td
-                                h3 #[b Search] for useful parts and designs
-                                form(action='/search').main-search-form
-                                    input.sbh-autocomplete(type='text',name='q',placeholder='Part name', value=(searchQuery || ''))
-                                    button(type='submit', style="padding-top: 10px; padding-bottom: 14px").submit Search
-                                br
-                                a.button.btn.btn-primary(href='/browse') Browse Design Collections
-                        tr
-                            td
-                                span.fa.fa-upload
-                            td
-                                h3 #[b Upload] your design for safekeeping
-                                a.button.btn.btn-primary(href='/submit') Submit a Design
-                        tr
-                            td
-                                span.fa.fa-share-alt
-                            td
-                                h3 #[b Share] designs for publication or collaboration
-                                a.button.btn.btn-primary(href='/manage') Manage Submissions
-
+                div.navbar-collapse#navbarSupportedContent
+                    form(action='search').form-inline.flex-grow-1
+                        input.form-control.sbh-autocomplete(type='text',name='q',placeholder=('Search ' + config.instanceName) value=(searchQuery || ''))
+                    if user
+                        ul.navbar-nav.mr-0
+                            if typeof(menu) !== 'undefined'
+                                each item in menu.items
+                                    li.nav-item
+                                        a(href=item.url).nav-link
+                                            span.fa(class=item.faIconClass)
+                                            span #{item.title}
+                div#navbarNotSupportedContent
+                    button.btn.menu-btn
+                        span.fa.fa-bars
+        div.container.container-fluid
+            div.row
+                div.col-md-6
+                    img(src='/images/sbh_lifecycle.svg').sbh-index-lifecycle
+                div.col-md-6
+                    if user
+                        div.sbh-index-projectlinks
+                            h3 Recent Projects
+                            ul
+                                each project in recentProjects
+                                    li
+                                        a(href=project.url) #{project.name}
+                            br
+                            a(href='/newproject')
+                                span.fa.fa-plus
+                                |  Create Project
+                    else
+                        div.sbh-index-blurb
+                            p !{config.frontPageText}
+                            a(href='/login') Login or Register →
+                    
 
