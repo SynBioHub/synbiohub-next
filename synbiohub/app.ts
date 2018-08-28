@@ -30,7 +30,6 @@ import topLevel from './views/topLevel';
 import persistentIdentityView from './views/persistentIdentity';
 import setup from './views/setup';
 import addOwner from './views/addOwner';
-import shared from './views/shared';
 import visualization from './views/visualization';
 import editProfile from './views/editProfile';
 import general from './views/admin/general';
@@ -59,7 +58,6 @@ var views = {
     persistentIdentity: persistentIdentityView,
     setup,
     addOwner,
-    shared,
     visualization,
     createImplementation,
     createTest,
@@ -151,7 +149,7 @@ import ViewSearch from 'synbiohub/views/ViewSearch';
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import ViewAdvancedSearch from './views/ViewAdvancedSearch';
 import ViewLogin from 'synbiohub/views/ViewLogin';
-import ViewManage from 'synbiohub/views/ViewManage';
+import ViewProjects from 'synbiohub/views/ViewProjects';
 import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
 
 var actions = {
@@ -323,9 +321,7 @@ function App() {
 
     app.get('/autocomplete/:query', api.autocomplete)
     app.get('/organisms/:query', api.organisms)
-    app.get('/manage', requireUser, dispatchToView(ViewManage))
-
-    app.get('/shared', requireUser, views.shared);
+    app.get('/projects', requireUser, dispatchToView(ViewProjects))
 
     app.get('/api/datatables', bodyParser.urlencoded({ extended: true }), api.datatables)
 

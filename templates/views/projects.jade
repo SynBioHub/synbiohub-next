@@ -1,0 +1,38 @@
+
+extends ../layouts/default.jade
+
+include ../mixins/search-result.jade
+
+block content
+
+    div.clearfix
+
+    div.container
+        div.row
+            div.col-md-4.submission-list
+                h4 Private
+
+                p You currently have #{privateProjects.length} private project(s)
+
+                each project in privateProjects
+                    +search-result-collection(project,removePublicEnabled)
+
+            div.col-md-4.submission-list
+                h4 Public
+
+                p You currently have #{publicProjects.length} public project(s)
+
+                each project in publicProjects
+                    +search-result-collection(project,removePublicEnabled)
+
+            div.col-md-4.submission-list
+                h4 Shared with me
+
+                p There are currently #{sharedProjects.length} project(s) shared with you
+
+                each project in sharedProjects
+                    +search-result-collection(project,removePublicEnabled)
+
+
+
+
