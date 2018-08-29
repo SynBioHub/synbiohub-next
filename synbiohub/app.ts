@@ -151,6 +151,7 @@ import ViewLogin from 'synbiohub/views/ViewLogin';
 import ViewProjects from 'synbiohub/views/ViewProjects';
 import ViewNewProject from 'synbiohub/views/ViewNewProject';
 import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
+import SBHURI from 'synbiohub/SBHURI';
 
 var actions = {
     logout,
@@ -369,144 +370,8 @@ function App() {
     app.get('/:type/count', api.count)
     app.get('/rootCollections', api.rootCollections)
 
-    // Implementation endpoints
-
-    app.all('/user/:userId/:collectionId/:displayId/:version/createImplementation', requireUser, views.createImplementation);
-
-    // Test endpoints
-
-    app.all('/user/:userId/:collectionId/:displayId/:version/createTest', requireUser, views.createTest);
-
-
-    // PersistentIdentity endpoints
-    app.get('/public/:collectionId/:displayId', views.persistentIdentity);
-    app.get('/public/:collectionId/:displayId/sbol', api.persistentIdentity);
-    app.get('/public/:collectionId/:displayId/search/:query?', dispatchToView(ViewSearch));
-
-    app.get('/user/:userId/:collectionId/:displayId', views.persistentIdentity);
-    app.get('/user/:userId/:collectionId/:displayId/sbol', api.sbol);
-    app.get('/user/:userId/:collectionId/:displayId/search/:query?', dispatchToView(ViewSearch));
-
-    // TODO: missing share endpoints, perhaps okay
-
-    // Public only endpoints
-    app.get('/public/:collectionId/:displayId/:version/copyFromRemote', requireUser, actions.copyFromRemote);
-    app.post('/public/:collectionId/:displayId/:version/copyFromRemote', requireUser, uploadToMemory.single('file'), actions.copyFromRemote);
-    app.get('/public/:collectionId/:displayId/:version/createSnapshot', actions.createSnapshot);
-
-    // TODO: need to decide if createSnapshot is functional and should be kept or not
-
-    // User only endpoints
-    app.get('/user/:userId/:collectionId/:displayId/:version/cloneSubmission/', requireUser, actions.cloneSubmission);
-    app.post('/user/:userId/:collectionId/:displayId/:version/cloneSubmission/', requireUser, uploadToMemory.single('file'), actions.cloneSubmission);
-    app.get('/user/:userId/:collectionId/:displayId/:version/makePublic', requireUser, actions.makePublic);
-    app.post('/user/:userId/:collectionId/:displayId/:version/makePublic', requireUser, uploadToMemory.single('file'), actions.makePublic);
-
-    // TODO: these should NOT be GET!
-    app.get('/user/:userId/:collectionId/:displayId/:version/remove', requireUser, actions.remove);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/remove', actions.remove);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', actions.makePublic);
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', uploadToMemory.single('file'), actions.makePublic);
-
-    // Remote ICE/Benchling endpoints
-    app.get('/public/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart);
-    app.post('/public/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart);
-    app.post('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', actions.createICEPart);
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', uploadToMemory.single('file'), actions.createICEPart);
-
-    // Endpoints for attachments
-    app.post('/public/:collectionId/:displayId/:version/attach', requireUser, actions.upload);
-    app.get('/public/:collectionId/:displayId/:version/download', api.download);
-
-    app.post('/user/:userId/:collectionId/:displayId/:version/attach', requireUser, actions.upload);
-    app.get('/user/:userId/:collectionId/:displayId/:version/download', requireUser, api.download);
-
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/attach', actions.upload);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/download', api.download);
-
-    // Download data endpoints
-    app.get('/public/:collectionId/:displayId/:version/:filename.xml', api.sbol);
-    app.get('/public/:collectionId/:displayId/:version/:filename.omex', api.omex);
-    app.get('/public/:collectionId/:displayId/:version/:filename.json', api.summary);
-    app.get('/public/:collectionId/:displayId/:version/:filename.fasta', api.fasta);
-    app.get('/public/:collectionId/:displayId/:version/:filename.gb', api.genBank);
-    app.get('/public/:collectionId/:displayId/:version/sbol', api.sbol);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:filename.xml', api.sbol);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:filename.omex', api.omex);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:filename.json', api.summary);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:filename.fasta', api.fasta);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:filename.gb', api.genBank);
-    app.get('/user/:userId/:collectionId/:displayId/:version/sbol', api.sbol);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/:filename.xml', api.sbol);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/:filename.omex', api.omex);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/:filename.json', api.summary);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/:filename.fasta', api.fasta);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/:filename.gb', api.genBank);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/sbol', api.sbol);
-
-    // Update submission endpoints
-    app.post('/public/:collectionId/:displayId/:version/icon', requireUser, uploadToMemory.single('collectionIcon'), actions.updateCollectionIcon);
-    app.get('/public/:collectionId/:displayId/:version/removeCollection', requireAdmin, actions.removeCollection);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/removeCollection', requireUser, actions.removeCollection);
-
-    // TODO: should perhaps be able to add icon to private collection, but it will be tricky to update on makePublic
-
-    // Search endpoints
-    app.get('/public/:collectionId/:displayId/:version/search/:query?', dispatchToView(ViewSearch));
-    app.get('/public/:collectionId/:displayId/:version/subCollections', api.subCollections);
-    app.get('/public/:collectionId/:displayId/:version/twins', dispatchToView(ViewSearch));
-    app.get('/public/:collectionId/:displayId/:version/uses', dispatchToView(ViewSearch));
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/search/:query?', dispatchToView(ViewSearch));
-    app.get('/user/:userId/:collectionId/:displayId/:version/subCollections', api.subCollections);
-    app.get('/user/:userId/:collectionId/:displayId/:version/twins', dispatchToView(ViewSearch));
-    app.get('/user/:userId/:collectionId/:displayId/:version/uses', dispatchToView(ViewSearch));
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/search/:query?', dispatchToView(ViewSearch));
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/subCollections', api.subCollections);
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/twins', dispatchToView(ViewSearch));
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/uses', dispatchToView(ViewSearch));
-
-    // Update owner endpoints
-    app.get('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner);
-    app.post('/public/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner);
-    app.post('/public/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner);
-    app.post('/user/:userId/:collectionId/:displayId/:version/addOwner', requireUser, views.addOwner);
-    app.post('/user/:userId/:collectionId/:displayId/:version/removeOwner/:username', requireUser, actions.removeOwner);
-
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/addOwner', views.addOwner);
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/addOwner', views.addOwner);
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/removeOwner/:username', actions.removeOwner);
-
-    // Visualization Endpoints
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/visualization', views.visualization);
-    app.get('/user/:userId/:collectionId/:displayId/:version([^\\.]+)/visualization', views.visualization);
-
-    app.get('/public/:collectionId/:displayId/:version([^\\.]+)/visualization', views.visualization);
-
-    // View endpoints
-    app.get('/user/:userId/:collectionId/:displayId(*)/:version/:hash/share', views.topLevel);
-
-//    app.get('/public/:collectionId/:displayId/:version/:query?', views.topLevel);
-    app.get('/public/:collectionId/:displayId(*)/:version', views.topLevel);
-
-//    app.get('/user/:userId/:collectionId/:displayId/:version/:query?', views.topLevel);
-    app.get('/user/:userId/:collectionId/:displayId(*)/:version', views.topLevel);
-
     app.get('/sparql', dispatchToView(ViewSPARQL))
     app.post('/sparql', bodyParser.urlencoded({ extended: true }), sparql)
-
-    app.all('/addDesignToProject', dispatchToView(ViewAddDesignToProject))
 
     function sparql(req, res) {
         // jena sends accept: */* and then complains when we send HTML
@@ -520,6 +385,113 @@ function App() {
             api.sparql(req, res)
         }
     }
+
+
+    app.use(function(req, res, next) {
+
+        if(!req.url.startsWith('/user/') && !req.url.startsWith('/public/')) {
+            return next()
+        }
+
+        let uri:SBHURI = SBHURI.fromURIOrURL(req.url)
+
+        let extraPart:string|null = uri.getExtraPart()
+
+        if(!extraPart) {
+
+            // Just accessing a toplevel
+
+            return topLevel(req, res)
+        }
+
+        let version:string|null = uri.getVersion()
+
+        if(!version) {
+            if(extraPart === 'sbol') {
+                return api.persistentIdentity(req, res)
+            } else {
+                return views.persistentIdentity(req, res)
+            }
+        }
+
+        if(extraPart.startsWith('search/')) {
+            return dispatchToView(ViewSearch)(req, res)
+        }
+
+        if(extraPart.indexOf('.') !== -1) {
+            if(extraPart.endsWith('.xml'))
+                return api.sbol(req, res)
+            if(extraPart.endsWith('.omex'))
+                return api.omex(req, res)
+            if(extraPart.endsWith('.summary'))
+                return api.summary(req, res)
+            if(extraPart.endsWith('.fasta'))
+                return api.fasta(req, res)
+            if(extraPart.endsWith('.gb'))
+                return api.genBank(req, res)
+        }
+
+        if(uri.isPublic()) {
+
+            // Public only endpoints
+            // TODO: need to decide if createSnapshot is functional and should be kept or not
+
+            switch(extraPart) {
+            case 'copyFromRemote':
+                return chain(req, res, requireUser, actions.copyFromRemote)
+            case 'createSnapshot':
+                return requireUser(req, res, actions.createSnapshot)
+            }
+
+        } else {
+
+            // Private only endpoints
+
+            switch(extraPart) {
+            case 'makePublic':
+                return chain(req, res, requireUser, actions.makePublic)
+            }
+        }
+
+        // Both public and private endpoints
+
+        switch(extraPart) {
+        case 'createImplementation':
+            return requireUser(req, res, views.createImplementation)
+        case 'createTest':
+            return requireUser(req, res, views.createTest)
+        case 'cloneSubmission':
+            return chain(req, res, requireUser, actions.cloneSubmission)
+        case 'remove':
+            return chain(req, res, requireUser, actions.remove)
+        case 'createICEPart':
+            return chain(req, res, requireUser, actions.createICEPart)
+        case 'attach':
+            return chain(req, res, requireUser, actions.upload)
+        case 'download':
+            return chain(req, res, requireUser, api.download)
+        case 'icon':
+            return chain(req, res, requireUser, uploadToMemory.single('collectionIcon'), api.download)
+        case 'removeCollection':
+            return chain(req, res, requireAdmin, actions.removeCollection)
+        case 'subCollections':
+            return chain(req, res, api.subCollections)
+        case 'twins':
+            return chain(req, res, dispatchToView(ViewSearch))
+        case 'uses':
+            return chain(req, res, dispatchToView(ViewSearch))
+        case 'addOwner':
+            return chain(req, res, requireUser, views.addOwner)
+        case 'removeOwner':
+            return chain(req, res, requireUser, actions.removeOwner)
+        case 'visualization':
+            return chain(req, res, requireUser, views.visualization)
+        case 'addDesign':
+            return chain(req, res, requireUser, dispatchToView(ViewAddDesignToProject))
+        }
+
+        next()
+    })
 
     function requireUser(req, res, next) {
 
@@ -543,6 +515,18 @@ function App() {
             }
         else
             next()
+    }
+
+    function chain(req, res, ...fns:any[]) {
+        let n = 0
+        next()
+        function next() {
+            fns[n](req, res, () => {
+                if(++ n === fns.length)
+                    return
+                next()
+            })
+        }
     }
 
     cache.update()

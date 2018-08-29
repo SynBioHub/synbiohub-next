@@ -9,12 +9,14 @@ export default class SBHURI {
     projectPart:string
     idPart:string
     versionPart:string|null
+    extraPart:string|null
 
-    constructor(userPart:string|null, projectPart:string, idPart:string, versionPart:string|null) {
+    constructor(userPart:string|null, projectPart:string, idPart:string, versionPart:string|null, extraPart?:string) {
         this.userPart = userPart
         this.projectPart = projectPart
         this.idPart = idPart
         this.versionPart = versionPart
+        this.extraPart = extraPart || null
     }
 
     static fromURIOrURL(url:string):SBHURI {
@@ -37,24 +39,24 @@ export default class SBHURI {
         
         if(pathParts[0] === 'public') {
 
-            if(pathParts.length === 4) {
+            if(pathParts.length >= 4) {
                 // public/igem/bba_foo/1
-                return new SBHURI(null, pathParts[1], pathParts[2], pathParts[3])
-            } else if(pathParts.length === 3) {
+                return new SBHURI(null, pathParts[1], pathParts[2], pathParts[3], pathParts.slice(4).join('/'))
+            } else if(pathParts.length >= 3) {
                 // public/igem/bba_foo
-                return new SBHURI(null, pathParts[1], pathParts[2], null)
+                return new SBHURI(null, pathParts[1], pathParts[2], null, pathParts.slice(3).join('/'))
             } else {
                 throw new Error('bad number of path parts')
             }
 
         } else if(pathParts[0] === 'user') {
 
-            if(pathParts.length === 5) {
+            if(pathParts.length >= 5) {
                 // user/foo/igem/bba_foo/1
-                return new SBHURI(pathParts[1], pathParts[2], pathParts[3], pathParts[4])
-            } else if(pathParts.length === 4) {
+                return new SBHURI(pathParts[1], pathParts[2], pathParts[3], pathParts[4], pathParts.slice(5).join('/'))
+            } else if(pathParts.length >= 4) {
                 // user/foo/igem/bba_foo
-                return new SBHURI(pathParts[1], pathParts[2], pathParts[3], null)
+                return new SBHURI(pathParts[1], pathParts[2], pathParts[3], null, pathParts.slice(4).join('/'))
             } else {
                 throw new Error('bad number of path parts')
             }
@@ -141,5 +143,9 @@ export default class SBHURI {
 
     getPersistentIdentity():string {
         return dbPrefix + this.createPersistentIdentityPath()
+    }
+
+    getExtraPart():string|null {
+        return this.extraPart
     }
 }
