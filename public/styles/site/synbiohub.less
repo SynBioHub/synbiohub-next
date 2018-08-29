@@ -645,7 +645,7 @@ input:-webkit-autofill, .sbol-login-text, .change_password input {
     flex: 1;
     width: 100%;
 
-    background-color: rgb(237, 237, 237);
+    background-color: lighten(@baseColor, 40%); 
 
     padding: 4px;
     padding-left: 16px;
@@ -780,4 +780,32 @@ input:-webkit-autofill, .sbol-login-text, .change_password input {
 .paginate_button.disabled {
     display: none;
 }
+
+.sbh-project-add {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.sbh-project-add > a {
+    flex: 1;
+}
+
+.sbh-design-button {
+    border-radius: initial;
+    background-color:#f7931e;
+    color: white;
+}
+.sbh-construct-button {
+    border-radius: initial;
+    background-color: #22b573;
+    color: white;
+}
+
+.sbh-experiment-button {
+    border-radius: initial;
+    background-color: #0071bc;
+    color: white;
+}
+
 

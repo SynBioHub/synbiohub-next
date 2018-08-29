@@ -5,8 +5,29 @@ export default function dispatchToView(View) {
 
         let view = new View()
 
-        await view.prepare(req)
-        await view.render(res)
+        try {
+            await view.prepare(req)
+        } catch(e) {
+            let message = [
+                'Error preparing view',
+                e
+            ].join('\n')
+            res.header('content-type', 'text/plain')
+            res.send(message)
+            return
+        }
+
+        try {
+            await view.render(res)
+        } catch(e) {
+            let message = [
+                'Error rendering view',
+                e
+            ].join('\n')
+            res.header('content-type', 'text/plain')
+            res.send(message)
+            return
+        }
 
     }
     

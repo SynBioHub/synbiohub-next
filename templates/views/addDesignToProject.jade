@@ -1,0 +1,43 @@
+
+extends ../layouts/default.jade
+
+block content
+    div.submission-container(align='center')
+        div.submission-header
+            p(style='font-size: 1.7em; font-weight: bolder')
+                span(style='font-size: 1em').fa.fa-plus
+                |  Add design to #{project.name}
+            p
+                | Designs can be uploaded as GenBank, FASTA, or SBOL files.
+            form(action='/addDesignToProject',method='post',enctype='multipart/form-data')
+                if errors.length > 0
+                    each error in errors
+                        div.alert.alert-danger
+                            p #{error}
+                        br
+                br
+                input(type="hidden", name="project", value=project.uri)
+                div.row
+                    div.col-md-12
+                        div.form-group.required
+                            input(type='file',name='file')
+    
+                div.row
+                    div.col-sm-12
+                        div.checkbox(style="margin-left:20px")
+                            label
+                                input#overwrite_objects(type="checkbox", name="overwrite_objects", value=false, checked=false)
+                                |    Overwrite Existing Objects 
+                                a(href="http://wiki.synbiohub.org/wiki/Terms/SynBioHub#Overwrite",title='If you are submitting the same thing twice because you have changed things, tick the box below to overwrite previous versions with what you are uploading now.  If this is the first time you have made this submission, you can ignore this.')
+                                        span.fa.fa-info-circle
+                div.row
+                    div.col-md-12
+                        button(type='submit').btn.btn-primary.btn-lg Upload
+
+
+
+
+
+
+
+        

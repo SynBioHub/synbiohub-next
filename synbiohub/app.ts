@@ -25,7 +25,6 @@ import logout from './actions/logout';
 import register from './views/register';
 import viewResetPassword from './views/resetPassword';
 import viewEditProfile from './views/editProfile';
-import viewSubmit from './views/submit';
 import topLevel from './views/topLevel';
 import persistentIdentityView from './views/persistentIdentity';
 import setup from './views/setup';
@@ -49,11 +48,12 @@ import createImplementation from './views/createImplementation';
 import createTest from './views/createTest';
 import organisms from './loadOrganisms';
 
+import ViewAddDesignToProject from './views/ViewAddDesignToProject'
+
 
 var views = {
     register,
     resetPassword: viewResetPassword,
-    submit: viewSubmit,
     topLevel,
     persistentIdentity: persistentIdentityView,
     setup,
@@ -316,10 +316,6 @@ function App() {
     app.post('/updateMutableSource', requireUser, actions.updateMutableSource);
     app.post('/updateCitations', requireUser, actions.updateCitations);
 
-    app.get('/submit/', requireUser, views.submit);
-    app.post('/submit/', requireUser, views.submit);
-    app.post('/remoteSubmit/', forceNoHTML, /*requireUser,*/ views.submit); // Deprecated
-
     app.get('/autocomplete/:query', api.autocomplete)
     app.get('/organisms/:query', api.organisms)
     app.get('/projects', requireUser, dispatchToView(ViewProjects))
@@ -517,6 +513,8 @@ function App() {
 
     app.get('/sparql', dispatchToView(ViewSPARQL))
     app.post('/sparql', bodyParser.urlencoded({ extended: true }), sparql)
+
+    app.all('/addDesignToProject', dispatchToView(ViewAddDesignToProject))
 
     function sparql(req, res) {
         // jena sends accept: */* and then complains when we send HTML

@@ -211,7 +211,7 @@ export default class MDFetcherLocal extends MDFetcher {
 
         } else {
 
-            return null /* not found */
+            throw new Error('not found')
 
         }
     }
