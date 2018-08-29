@@ -40,7 +40,7 @@ export default class ViewAddDesignToProject extends View {
 
         await super.prepare(req)
 
-        let projectUri = SBHURI.fromURIOrURL(req.query.project)
+        let projectUri = SBHURI.fromURIOrURL(req.url)
 
         this.project = await DefaultMDFetcher.get(req).getCollectionMetadata(projectUri)
 

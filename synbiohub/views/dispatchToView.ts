@@ -10,7 +10,7 @@ export default function dispatchToView(View) {
         } catch(e) {
             let message = [
                 'Error preparing view',
-                e
+                (e.stack || e)
             ].join('\n')
             res.header('content-type', 'text/plain')
             res.send(message)
@@ -22,7 +22,7 @@ export default function dispatchToView(View) {
         } catch(e) {
             let message = [
                 'Error rendering view',
-                e
+                (e.stack || e)
             ].join('\n')
             res.header('content-type', 'text/plain')
             res.send(message)

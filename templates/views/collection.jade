@@ -56,7 +56,7 @@ block topLevelPreview
                                 span.fa.fa-info-circle
                         td #{member.description}
     div.sbh-project-add
-        a(href='/addDesignToProject?project=' + encodeURIComponent(collection.uri))
+        a(href=uri.toURL() + '/addDesign')
             button.btn.sbh-design-button
                 span.fa.fa-plus
                 |  Add design
