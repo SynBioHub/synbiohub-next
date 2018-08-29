@@ -1,32 +1,29 @@
 var pug = require('pug')
 
-var sbolmeta = require('sbolmeta')
-
 import config from 'synbiohub/config'
 
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import DefaultSBOLFetcher from '../fetch/DefaultSBOLFetcher';
+import { S2ComponentDefinition, S2Sequence } from 'sbolgraph';
+import { Specifiers } from 'bioterms';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
+    const uri = SBHURI.fromURIOrURL(req.url)
 
     let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol
-    const componentDefinition = result.object
-
-    var meta = sbolmeta.summarizeComponentDefinition(componentDefinition)
+    const componentDefinition = result.object as S2ComponentDefinition
 
     var lines = []
     var charsPerLine = 70
 
-    meta.sequences.forEach((sequence, i) => {
+    componentDefinition.sequences.forEach((sequence:S2Sequence, i) => {
 
-        lines.push('>' + meta.name + ' sequence ' + (i + 1)
-            + ' (' + sequence.length + ' ' + sequence.lengthUnits + ')')
+        lines.push('>' + componentDefinition.name + ' sequence ' + (i + 1)
+            + ' (' + sequence.elements.length + ' ' + (sequence.encoding === Specifiers.SBOL2.SequenceEncoding.AminoAcid ? 'aa' : 'bp') + ')')
 
-        for(let i = 0; i < sequence.length; ) {
+        for(let i = 0; i < sequence.elements.length; ) {
 
             lines.push(sequence.elements.substr(i, charsPerLine))
             i += charsPerLine

@@ -6,8 +6,10 @@ import Breadcrumbs, { Breadcrumb } from "../Breadcrumbs";
 import loadTemplate from "synbiohub/loadTemplate";
 import * as sparql from 'synbiohub/sparql/sparql'
 import config from "synbiohub/config";
-import uriToUrl from "synbiohub/uriToUrl";
-import splitUri from "synbiohub/splitUri";
+import SBHURI from "../SBHURI";
+import { S2Collection, SBOL2Graph } from "sbolgraph";
+import SBOLUploader from "../SBOLUploader";
+import OverwriteMerge, { OverwriteMergeOption } from "../OverwriteMerge";
 
 export default class ViewNewProject extends View {
 
@@ -69,28 +71,22 @@ export default class ViewNewProject extends View {
 
         this.errors = []
 
-        // TODO factor out URI generation
-        let persistentIdentity = config.get('databasePrefix') +
-            'user/' + req.user.username + '/' + this.projectInfo.id + '/' + this.projectInfo.id
+        let uri = new SBHURI(req.user.username, this.projectInfo.id, this.projectInfo.id + '_collection', this.projectInfo.version)
 
-        let uri = persistentIdentity + '/' + this.projectInfo.version
+        let graph:SBOL2Graph = new SBOL2Graph()
+        let collection:S2Collection = graph.createCollection(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
 
-        let query = loadTemplate('sparql/CreateProject.sparql', {
-            uri: sparql.escapeIRI(uri),
-            name: sparql.escapeString(this.projectInfo.name),
-            desc: sparql.escapeString(this.projectInfo.desc),
-            id: sparql.escapeString(this.projectInfo.id),
-            version: sparql.escapeString(this.projectInfo.version),
-            ownedBy: sparql.escapeIRI(config.get('databasePrefix') + 'user/' + req.user.username),
-            persistentIdentity: sparql.escapeIRI(persistentIdentity)
-        })
+        collection.name = this.projectInfo.name
+        collection.description = this.projectInfo.desc
+        collection.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', uri.getUserURI())
 
-        try {
-            let result = await sparql.updateQueryJson(query, req.user.graphUri)
-            this.redirect = uriToUrl(uri, req)
-        } catch(e) {
-            this.errors.push(e)
-        }
+        let uploader = new SBOLUploader()
+        uploader.setGraph(graph)
+        uploader.setDestinationGraphUri(req.user.graphUri)
+        uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+        await uploader.upload()
+
+        this.redirect = uri.toURL()
     }
 
 }

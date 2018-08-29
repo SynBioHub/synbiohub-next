@@ -1,5 +1,4 @@
 
-import SBOLDocument = require('sboljs');
 import request = require('request');
 import config from './config';
 import extend = require('xtend');

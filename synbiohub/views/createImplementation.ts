@@ -4,9 +4,7 @@
 var loadTemplate = require('../loadTemplate')
 import config from 'synbiohub/config'
 var pug = require('pug')
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 var sparql = require('../sparql/sparql')
-var SBOLDocument = require('sboljs')
 var extend = require('xtend')
 import parseForm from 'synbiohub/parseForm'
 
@@ -18,6 +16,7 @@ import uploads from '../uploads'
 const fs = require('mz/fs')
 import db from 'synbiohub/db'
 import FMAPrefix from '../FMAPrefix'
+import SBHURI from 'synbiohub/SBHURI';
 
 export default function(req, res) {
 
@@ -37,7 +36,7 @@ export default function(req, res) {
 
 async function submitForm(req, res, submissionData, locals){
 
-    const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     req.setTimeout(0) // no timeout
     
@@ -59,7 +58,7 @@ async function submitForm(req, res, submissionData, locals){
     var plan_query = "PREFIX prov: <http://www.w3.org/ns/prov#> SELECT ?s WHERE { ?s a prov:Plan .}"
 
 
-    let plans = await sparql.queryJson(plan_query, graphUri)
+    let plans = await sparql.queryJson(plan_query, uri.getGraph())
 
 
     for (var plan of plans){
@@ -83,7 +82,7 @@ async function submitForm(req, res, submissionData, locals){
 
 async function submitPost(req, res){
 
-    const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     req.setTimeout(0) // no timeout
 
@@ -171,17 +170,18 @@ async function submitPost(req, res){
 
     }
 
-    var prefix = baseUri
-    var displayId = fields['construct_name'][0].replace(/\s+/g, '')
+    var projectId = fields['construct_name'][0].replace(/\s+/g, '')
+    var displayId = projectId + '_collection'
     var version = '1'
-    var collection_url = baseUri + '/' + baseUri.split('/').pop() + '_collection/' + version 
+
+    var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
 
     var templateParams = {
-        uri: prefix + '/' + displayId + '/' + version
+        uri: newURI.toURI()
     }
 
     var countQuery = "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> SELECT * WHERE { <" + templateParams['uri'] + "> sbh:topLevel  <" + templateParams['uri'] + ">}"
-    var count = await sparql.queryJson(countQuery, graphUri)
+    var count = await sparql.queryJson(countQuery, uri.getGraph())
     count = JSON.parse(JSON.stringify(count))
 
     if (count!=0){
@@ -207,7 +207,7 @@ async function submitPost(req, res){
 
         var form_vals = {
 
-            prefix: prefix,
+            prefix: uri.getURIPrefix(),
             displayId: displayId,
             version: version,
             agent_str: JSON.parse(fields['agent'])[1],
@@ -218,9 +218,9 @@ async function submitPost(req, res){
             taxId: taxId,
             chosen_plan: chosen_plan,
             chosen_plan_uri: chosen_plan_uri,
-            graphUri: graphUri,
+            graphUri: uri.getGraph(),
             uri: uri,
-            collection_url: collection_url
+            collection_url: newURI
     
         }
         
@@ -235,13 +235,16 @@ async function submitPost(req, res){
 
         if (files['file'][0]['size'] != 0){
 
-          await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+            throw new Error('TODO reimplement')
+            /*
+          await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
           files['file'][0]['originalFilename'], hash, size, mime,
           graphUri.split('/').pop)
+          */
         }
         
 
-        await sparql.upload(graphUri, doc.serializeXML(), 'application/rdf+xml')
+        await sparql.upload(req.getGraph(), doc.serializeXML(), 'application/rdf+xml')
 
         res.redirect(impl_uri)
 
@@ -270,7 +273,9 @@ async function createSBOLImplementation(form_vals){
     var organism = form_vals['organism']
     var taxId = form_vals['taxId']
 
+    throw new Error('needs porting to sbolgraph')
 
+    /*
 
     var doc= new SBOLDocument();
     var document = doc
@@ -346,5 +351,6 @@ async function createSBOLImplementation(form_vals){
     console.log(doc.serializeXML())
 
     return [doc, impl.uri]
+    */
 
 }

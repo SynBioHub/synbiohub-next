@@ -5,7 +5,6 @@ import SBOLFetcherFederated from "./SBOLFetcherFederated";
 import config from 'synbiohub/config'
 import SBOLFetcherLocal from "./SBOLFetcherLocal";
 import SBOLFetcherICE from "./SBOLFetcherICE";
-import SBOLFetcherBenchling from "./SBOLFetcherBenchling";
 
 export default class DefaultSBOLFetcher {
 
@@ -29,9 +28,11 @@ export default class DefaultSBOLFetcher {
                     fetchers.push(new SBOLFetcherICE(remote))
                     break
 
+                    /*
                 case 'benchling':
                     fetchers.push(new SBOLFetcherBenchling(remote))
                     break
+                    */
             }
         }
 

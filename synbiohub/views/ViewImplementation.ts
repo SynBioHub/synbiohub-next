@@ -1,10 +1,12 @@
 
-import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
+
+import { S2ProvActivity } from 'sbolgraph'
 
 export default class ViewImplementation extends ViewTopLevelWithObject {
 
@@ -22,7 +24,7 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
     plan:string
     plan_url:string
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
@@ -30,18 +32,17 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
             name: 'Implementation'
         }
 
-        this.setTopLevelMetadata(req, sbolmeta.summarizeGenericTopLevel(this.object))
-        
         let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
+        let activity_sbol_object = activity_sbol.object as S2ProvActivity
         
-        let plan_uri = activity_sbol.object.associations[0].plan.uri.toString()
+        let plan_uri = activity_sbol_object.plan.uri.toString()
         
         let plan_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(plan_uri)
         
         this.meta.description = this.meta.description.split('<br/>').join('')
         this.location = this.annotations[2]['value']
-        this.agent = activity_sbol.object.associations[0].agent.name
-        this.plan = activity_sbol.object.associations[0].plan.name
+        this.agent = activity_sbol_object.associations[0].agent.name
+        this.plan = activity_sbol_object.associations[0].plan.name
         this.taxId = this.annotations[3]['uri']
         this.organism = this.annotations[4]['value']
 

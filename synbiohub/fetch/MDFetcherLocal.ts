@@ -19,7 +19,7 @@ export default class MDFetcherLocal extends MDFetcher {
 
     }
 
-    async getOwnedBy(uri: string): Promise<string> {
+    async getOwnedBy(uri: SBHURI): Promise<string> {
 
         let query = loadTemplate('./sparql/GetOwnedBy.sparql', {
             topLevel: uri
@@ -30,7 +30,7 @@ export default class MDFetcherLocal extends MDFetcher {
         return results.map((result) => result.ownedBy)
     }
 
-    async getCollectionMemberCount(uri:string, search?:string):Promise<number> {
+    async getCollectionMemberCount(uri:SBHURI, search?:string):Promise<number> {
 
         const isSearch = (search !== '')
 

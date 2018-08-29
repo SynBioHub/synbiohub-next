@@ -1,5 +1,4 @@
 
-import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import {getAttachmentsFromTopLevel, getAttachmentsFromList} from 'synbiohub/attachments';
@@ -7,7 +6,10 @@ import loadTemplate from '../loadTemplate';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
 import { Request, Response } from 'express'
+import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
+
+import { S2ProvActivity } from 'sbolgraph'
 
 export default class ViewTest extends ViewTopLevelWithObject{
 
@@ -28,7 +30,7 @@ export default class ViewTest extends ViewTopLevelWithObject{
 
 
 
-    async prepare(req:Request) {
+    async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
@@ -36,17 +38,16 @@ export default class ViewTest extends ViewTopLevelWithObject{
             name: 'Collection'
         }
 
-        this.setTopLevelMetadata(req, sbolmeta.summarizeGenericTopLevel(this.object))
-
         let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
+        let activity_sbol_object = activity_sbol.object as S2ProvActivity
 
-        let plan_uri = activity_sbol.object.associations[0].plan.uri.toString()
+        let plan_uri = activity_sbol_object.associations[0].plan.uri.toString()
         
         let plan_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(plan_uri)
         
         this.meta.description = this.meta.description.split('<br/>').join('')
-        this.agent = activity_sbol.object.associations[0].agent.name
-        this.plan = activity_sbol.object.associations[0].plan.name
+        this.agent = activity_sbol_object.associations[0].agent.name
+        this.plan = activity_sbol_object.associations[0].plan.name
 
         this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
         this.plan_url = this.meta.attachments[0]['url'] + '/download'

@@ -1,19 +1,15 @@
 
 import SBOLFetcher from "./SBOLFetcher";
 
-import SBOLDocument = require('sboljs')
-import Range = require('sboljs/lib/Range')
-import GenericLocation = require('sboljs/lib/GenericLocation')
-import Cut = require('sboljs/lib/Cut')
-
 import request = require('request')
 
 import * as ice from 'synbiohub/ice'
-import splitUri from 'synbiohub/splitUri'
 import config from 'synbiohub/config'
 
 import doiRegex = require('doi-regex')
 
+import { Specifiers } from 'bioterms'
+import { S2Range, S2Cut, S2GenericLocation } from "sbolgraph";
 
 export default class SBOLFetcherICE extends SBOLFetcher {
 
@@ -301,7 +297,7 @@ export default class SBOLFetcherICE extends SBOLFetcher {
                 switch(part.type) {
                     case 'PART':
                     case 'PLASMID':
-                        componentDefinition.addType(SBOLDocument.terms.dnaRegion)
+                        componentDefinition.addType(Specifiers.SBOL2)
                         break
 
                     case 'STRAIN':
@@ -376,7 +372,7 @@ export default class SBOLFetcherICE extends SBOLFetcher {
 
                         iceSA.locations.forEach((iceLocation) => {
 
-                            if(iceLocation instanceof Range) {
+                            if(iceLocation instanceof S2Range) {
 
                                 const range = sbol.range()
                                 range.displayId = iceLocation.displayId
@@ -389,7 +385,7 @@ export default class SBOLFetcherICE extends SBOLFetcher {
 
                                 sa.addLocation(range)
 
-                            } else if(iceLocation instanceof GenericLocation) {
+                            } else if(iceLocation instanceof S2GenericLocation) {
 
                                 const genericLocation = sbol.genericLocation()
                                 genericLocation.displayId = iceLocation.displayId
@@ -400,7 +396,7 @@ export default class SBOLFetcherICE extends SBOLFetcher {
 
                                 sa.addLocation(genericLocation)
 
-                            }  else if(iceLocation instanceof Cut) {
+                            }  else if(iceLocation instanceof S2Cut) {
 
                                 const cut = sbol.cut()
                                 cut.displayId = iceLocation.displayId

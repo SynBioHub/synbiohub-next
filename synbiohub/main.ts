@@ -1,6 +1,5 @@
 import config from "synbiohub/config";
 import * as theme from "synbiohub/theme";
-import * as java from "synbiohub/java";
 import App from "synbiohub/app";
 import db from "synbiohub/db";
 import { fs } from "mz";
@@ -24,7 +23,6 @@ if(!fs.existsSync('synbiohub.sqlite')) {
 function startServer() {
 
     return initSliver()
-                .then(() => java.init())
                 .then(() => theme.setCurrentThemeFromConfig())
                 .then(() => {
 
@@ -46,10 +44,5 @@ function initSliver() {
     })
 }
 
-process.on('SIGINT', function() {
-
-    java.shutdown().then(() => process.exit())
-    
-})
 
 

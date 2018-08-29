@@ -69,19 +69,21 @@ export default async function(req, res) {
 
 	const remoteConfig = config.get('remotes')[iceRemote]
 
-	result = await ice.createSequence(remoteConfig, sbol, componentDefinition.name, componentDefinition.description)
+	let iceResult = await ice.createSequence(remoteConfig, sbol, componentDefinition.name, componentDefinition.description)
 
 	console.log(JSON.stringify(result))
 
 	if (remoteConfig.partNumberPrefix) {
-		var partId = '' + result.typeId
-		while (partId.length < 6) {
+
+		throw new Error('need to update ice integration')
+		//var partId = '' + iceResult.typeId
+		/*while (partId.length < 6) {
 			console.log('partId:' + partId)
 			partId = '0' + partId
 		}
 		partId = remoteConfig.partNumberPrefix + '_' + partId
 		console.log('PARTID:' + partId)
-		res.redirect('/public/' + remoteConfig.id + '/' + partId + '/current')
+		res.redirect('/public/' + remoteConfig.id + '/' + partId + '/current')*/
 	}
 
 	res.redirect('/public/' + remoteConfig.id + '/available/current')

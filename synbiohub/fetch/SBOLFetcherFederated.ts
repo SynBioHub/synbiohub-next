@@ -1,7 +1,6 @@
 
-import SBOLFetcher from "./SBOLFetcher";
-
-import SBOLDocument = require('sboljs')
+import SBOLFetcher, { FetchResult } from "./SBOLFetcher";
+import { SBOL2Graph } from "sbolgraph";
 
 export default class SBOLFetcherFederated extends SBOLFetcher {
 
@@ -31,8 +30,7 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
         }
     }
 
-    async fetchSBOLObjectRecursive(uri: string, type?:string, sbol?:SBOLDocument):Promise<any> {
-
+    async fetchSBOLObjectRecursive(uri: string, type?:string, intoGraph?:SBOL2Graph):Promise<FetchResult> {
 
         let errors = []
 
@@ -40,7 +38,7 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
 
             try {
 
-                let res = await fetcher.fetchSBOLObjectRecursive(uri, type, sbol)
+                let res = await fetcher.fetchSBOLObjectRecursive(uri, type, intoGraph)
 
                 return res
 

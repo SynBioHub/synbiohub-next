@@ -1,13 +1,9 @@
 
 import config from 'synbiohub/config';
 import request = require('request-promise')
-import SBOLDocument = require('sboljs');
 import serializeSBOL from 'synbiohub/serializeSBOL';
 
-async function convertAndValidateSbol(xmlOrSbolDoc, uriPrefix, version) {
-
-    if(xmlOrSbolDoc instanceof SBOLDocument)
-        xmlOrSbolDoc = serializeSBOL(xmlOrSbolDoc)
+async function convertAndValidateSbol(xml:string, uriPrefix, version):Promise<string> {
 
     let body = await request({
         method: 'POST',
@@ -29,7 +25,7 @@ async function convertAndValidateSbol(xmlOrSbolDoc, uriPrefix, version) {
             'diff_file_name': 'comparison file',
         },
             'return_file': true,
-            'main_file': xmlOrSbolDoc
+            'main_file': xml
         }
     })
 
@@ -41,17 +37,7 @@ async function convertAndValidateSbol(xmlOrSbolDoc, uriPrefix, version) {
 
     const convertedSBOL = body.result
 
-    return await new Promise((resolve, reject) => {
-
-        SBOLDocument.loadRDF(convertedSBOL, (err, sbol) => {
-
-            if(err)
-                reject(err)
-            else
-                resolve(sbol)
-
-        })
-    })
+    return convertedSBOL
 }
 
 export default convertAndValidateSbol;

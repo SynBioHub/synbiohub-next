@@ -1,7 +1,6 @@
 
 var pug = require('pug')
 
-var sboljs = require('sboljs')
 var async = require('async')
 
 import * as search from 'synbiohub/search'
@@ -236,6 +235,9 @@ export default class ViewAdvancedSearch extends View {
 
         if (req.originalUrl.endsWith('/createCollection')) {
 
+            throw new Error('create collection needs reimplementing')
+
+            /*
             var sbol = new sboljs()
             var collection = sbol.collection()
             collection.displayId = req.body.metaId + '_collection'
@@ -252,8 +254,7 @@ export default class ViewAdvancedSearch extends View {
             }
 
             await sparql.upload(req.user.graphUri, serializeSBOL(sbol), 'application/rdf+xml')
-
-            return
+            */
         }
 
         this.numResultsTotal = count
@@ -398,9 +399,10 @@ async function getUriList(graphUri) {
                 result.uri = result.object
                 delete result.object
                 var soTerm = result.uri.toString().replace(soNS,'')
-                var sbolmeta = require('sbolmeta')
-                var sequenceOntology = sbolmeta.sequenceOntology
-                result.name = sequenceOntology[soTerm].name
+                //var sbolmeta = require('sbolmeta')
+                //var sequenceOntology = sbolmeta.sequenceOntology
+                //result.name = sequenceOntology[soTerm].name
+                result.name = 'todo'
             })
 
             roleList.sort(sortByNames)

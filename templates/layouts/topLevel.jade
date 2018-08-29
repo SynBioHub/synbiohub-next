@@ -7,9 +7,6 @@ include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
 block jsState
-    script meta =
-        != JSON.stringify(meta)
-
     script.
         function popup() {
             popupS.modal({
@@ -26,11 +23,11 @@ block content
                     div
                         h1
                             block topLevelIcon
-                            |  #{meta.name?meta.name:meta.id}
-                            if meta.sbhBookmark && meta.sbhBookmark.description == 'true'
+                            |  #{object.displayName}
+                            if object.getBoolProperty('http://wiki.synbiohub.org/Terms/synbiohub#bookmark')
                                 a(href='http://wiki.synbiohub.org/Terms/synbiohub#bookmark',title='Bookmarked Parts')
                                     span.fa.fa-bookmark
-                            if meta.sbhStar && meta.sbhStar.description == 'true'
+                            if object.getBoolProperty('http://wiki.synbiohub.org/Terms/synbiohub#star')
                                 a(href='http://wiki.synbiohub.org/Terms/synbiohub#star',title='Starred Parts')
                                     span.fa.fa-star
                     div.sbh-toplevel-buttons.ml-auto
@@ -50,18 +47,18 @@ block content
                                 div.dropdown-menu
                                     for item in topLevelOtherMenu.items
                                         a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
-        if meta.description && meta.description != ''
+        if object.description && object.description != ''
             div.row
                 div.col-md-12
                     h4
-                        != meta.description
+                        != object.description
 
 
-        if meta.wasDerivedFrom && meta.wasDerivedFrom != ''
+        if object.wasDerivedFrom && object.wasDerivedFrom != ''
             div.row
                 div.col-md-12
                     i Derived from 
-                        a(href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) #{meta.wasDerivedFrom}
+                        a(href=object.wasDerivedFrom) #{object.wasDerivedFrom}
 
         div.row
             div.col-md-12.sbh-toplevel-preview
@@ -72,35 +69,28 @@ block content
                 if locals.remote
                     h4 #{'Mirrored from '}
                         a(href=locals.remote.url,title='Edit in ' + locals.remote.name) #{locals.remote.name}
-                if meta.igemDiscontinued && meta.igemDiscontinued.description == 'true'
-                    h4(style=" color: #FF0000") This part has been discontinued by iGEM.
-                if meta.isReplacedBy && meta.isReplacedBy.uri != ''
-                    h4(style=" color: #FF0000") Please consider using
-                        a(href=meta.isReplacedBy.uri) #{meta.isReplacedBy.id}
-                        | as a replacement.
-
                 if (collectionIcon)
                     div.col-sm-6.sbh-collection-icon
                         img(src=collectionIcon)
 
         div.row
             div.col-md-11
-                if meta.creator.description && meta.creator.description != ''
+                if objectCreator
                     h5 Created by:
-                        != meta.creator.description
-                        a(href='/search/dc:creator=\''+meta.creator.description+'\'&',title='Find all records created by this person')
+                        != objectCreator
+                        a(href='/search/dc:creator=\''+objectCreator+'\'&',title='Find all records created by this person')
                             span.fa.fa-search
 
-                    if meta.created.description && meta.created.description != ''
+                    if objectCreated
                         h5 Date created:
-                            != meta.created.description
-                            a(href='/search/createdBefore='+meta.created.description.split(' ')[0]+'&createdAfter='+meta.created.description.split(' ')[0]+'&',title='Find all records created on this date')
+                            != objectCreated
+                            a(href='/search/createdBefore='+objectCreated.split(' ')[0]+'&createdAfter='+objectCreated.split(' ')[0]+'&',title='Find all records created on this date')
                                 span.fa.fa-search
 
-                    if meta.modified.description && meta.modified.description != ''
+                    if objectModified
                         h5 Date modified:
                             != meta.modified.description
-                            a(href='/search/modifiedBefore='+meta.modified.description.split(' ')[0]+'&modifiedAfter='+meta.modified.description.split(' ')[0]+'&',title='Find all records modified on this date')
+                            a(href='/search/modifiedBefore='+objectModified.split(' ')[0]+'&modifiedAfter='+objectModified.split(' ')[0]+'&',title='Find all records modified on this date')
                                 span.fa.fa-search
 
                     block topLevelBelowTitle
@@ -112,16 +102,11 @@ block content
             div.card-body
                 table.table.table-striped.entry-detail-table
 
-                    if meta.labels && meta.labels.length > 0
-                        tr
-                            td Labels
-                            td #{meta.labels.join(', ')}
-
-                    if meta.types && meta.types.length > 0
+                    if object.types && object.types.length > 0
                         tr
                             td Types
                             td
-                                for type in meta.types
+                                for type in object.types
                                     if type.description
                                         != type.description.name
                                         a(href=type.term,title='Learn more about this type')
@@ -136,11 +121,11 @@ block content
                                             span.fa.fa-search
                                     br
 
-                    if meta.roles && meta.roles.length > 0
+                    if object.roles && object.roles.length > 0
                         tr
                             td Roles
                             td
-                                for role in meta.roles
+                                for role in object.roles
                                     if role.description
                                         != role.description.name
                                         a(href=role.term,title='Learn more about this role')
@@ -227,41 +212,13 @@ block content
                     a.accordion-toggle(data-toggle='collapse', href='#collapseSeven')
                         | <b>Attachments</b>
                 div.card-body
-                    +attachments(meta.url, meta.attachments, canEdit)
-
-        if meta.iGemMainPage
-            .panel.panel-default
-                .panel-heading
-                    h4.panel-title
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseOne')
-                            | <b>iGEM Wiki Main Page</b>
-                #collapseOne.panel-collapse.collapse
-                    .panel-body
-                        | !{meta.iGemMainPage}
-        if meta.iGemDesign
-            .panel.panel-default
-                .panel-heading
-                    h4.panel-title
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseTwo')
-                            | <b>iGEM Wiki Design Page</b>
-                #collapseTwo.panel-collapse.collapse
-                    .panel-body
-                        | !{meta.iGemDesign}
-        if meta.iGemExperience
-            .panel.panel-default
-                .panel-heading
-                    h4.panel-title
-                        a.accordion-toggle(data-toggle='collapse', href='#collapseThree')
-                            | <b>iGEM Wiki Experience Page</b>
-                #collapseThree.panel-collapse.collapse
-                    .panel-body
-                        | !{meta.iGemExperience}
+                    +attachments(objectURL, object.attachments, canEdit)
 
         block Mutables
             div.row
                 div.col-md-12
-                    +mutable-description(meta.mutableDescriptionSource, meta.mutableDescription, canEdit)
-                    +mutable-notes(meta.mutableNotesSource, meta.mutableNotes, canEdit)
-                    +mutable-source(meta.sourceSource, meta.source, canEdit)
-                    +citations(citationsSource, submissionCitations, canEdit)
+                    +mutable-description(mutables.description.source, mutables.description.rendered, canEdit)
+                    +mutable-notes(mutables.notes.source, mutables.notes.rendered, canEdit)
+                    +mutable-source(mutables.source.source, mutables.source.rendered, canEdit)
+                    +citations(mutables.citations.source, mutables.citations.rendered, canEdit)
 

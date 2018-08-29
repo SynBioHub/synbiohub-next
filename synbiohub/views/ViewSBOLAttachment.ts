@@ -1,5 +1,4 @@
 
-import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
@@ -7,6 +6,7 @@ import config from 'synbiohub/config';
 
 import sha1 = require('sha1')
 import { SBHRequest } from 'synbiohub/SBHRequest';
+import { S2Attachment } from 'sbolgraph';
 
 export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
 
@@ -27,10 +27,8 @@ export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
 
         await super.prepare(req)
 
-        this.setTopLevelMetadata(req, sbolmeta.summarizeGenericTopLevel(this.object))
 
-
-        let attachment = this.object
+        let attachment = this.object as S2Attachment
 
         this.attachmentType = attachment.format.toString().replace('http://identifiers.org/combine.specifications/', '').replace('http://identifiers.org/edam/', '')
 
@@ -46,7 +44,7 @@ export default class ViewSBOLAttachment extends ViewTopLevelWithObject {
             this.attachmentDownloadURL = attachment.source
         }
 
-        this.size = attachment.size
+        this.size = attachment.size.toString()
 
 
         this.attachmentIsImage = attachment.format.toString().indexOf("png") >= 0

@@ -1,27 +1,27 @@
 import MDFetcher from "./MDFetcher";
 
 import * as ice from 'synbiohub/ice'
-import splitUri from "synbiohub/splitUri";
 import config from "synbiohub/config";
+import SBHURI from "synbiohub/SBHURI";
 
 export default class MDFetcherICE extends MDFetcher {
 
-    getName(uri: string): Promise<string> {
+    getName(uri: SBHURI): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    getOwnedBy(uri: string): Promise<string> {
+    getOwnedBy(uri: SBHURI): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    getComponentDefinitionMetadata(uri: string): Promise<any> {
+    getComponentDefinitionMetadata(uri: SBHURI): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    getModuleDefinitionMetadata(uri: string): Promise<any> {
+    getModuleDefinitionMetadata(uri: SBHURI): Promise<any> {
         throw new Error("Method not implemented.");
     }
     getCount(type: string): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    getVersion(uri: string): Promise<string> {
+    getVersion(uri: SBHURI): Promise<string> {
         throw new Error("Method not implemented.");
     }
 
@@ -37,7 +37,7 @@ export default class MDFetcherICE extends MDFetcher {
 
     async getCollectionMemberCount(uri) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 
@@ -97,15 +97,15 @@ export default class MDFetcherICE extends MDFetcher {
 
     }
 
-    async getContainingCollections(uri:string) {
+    async getContainingCollections(uri:SBHURI) {
 
         var rootUri = config.get('databasePrefix') + 'public/' + this.remoteConfig.id + '/' + this.remoteConfig.id + '_collection/current'
         
-        if (uri != rootUri) {
-        return Promise.resolve([{
-            uri: rootUri,
-            name: this.remoteConfig.rootCollection.name
-        }])
+        if (uri.toURI() != rootUri) {
+            return Promise.resolve([{
+                uri: rootUri,
+                name: this.remoteConfig.rootCollection.name
+            }])
         } else {
         return Promise.resolve([])
         }
@@ -115,7 +115,7 @@ export default class MDFetcherICE extends MDFetcher {
 
     async getCollectionMembers(uri, limit?, offset?) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 

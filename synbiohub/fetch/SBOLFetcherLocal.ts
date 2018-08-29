@@ -1,18 +1,18 @@
 
 import request = require('request-promise')
 import SBOLFetcher, { FetchResult } from 'synbiohub/fetch/SBOLFetcher';
-import n3ToSBOL from 'synbiohub/conversion/n3-to-sbol';
 import saveN3ToRdfXml from 'synbiohub/conversion/save-n3-to-rdfxml';
 
 import fs = require('mz/fs')
 
-import SBOLDocument = require('sboljs')
+import { SBOL2Graph } from 'sbolgraph'
 
 import tmp = require('tmp-promise')
 
 import * as sparql from 'synbiohub/sparql/sparql'
 import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
+import SBHURI from 'synbiohub/SBHURI';
 
 
 var resolveBatch = config.get('resolveBatch')
@@ -61,12 +61,12 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
     * file can be sent as the response?
     *
     */
-    async fetchSBOLSource(uri:string, type:string) {
+    async fetchSBOLSource(uri:SBHURI, type:string) {
 
-        const sbol = new SBOLDocument()
+        const sbol = new SBOL2Graph()
 
-        sbol._resolving = {};
-        sbol._rootUri = uri
+        //sbol._resolving = {};
+        //sbol._rootUri = uri
 
         /* First check if this object is a collection.  If so, we can use the
         * specialized collection query to retrieve it without a recursive crawl.
@@ -74,12 +74,10 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
         let results = await sparql.queryJson([
             'SELECT ?coll WHERE {',
             '?coll a <http://sbols.org/v2#Collection> .',
-            'FILTER(?coll = <' + sbol._rootUri + '>)',
+            'FILTER(?coll = <' + uri + '>)',
             '}'
         ].join('\n'), this.graphUri)
 
-        // TODO: temporarily removed, need to add recursive crawl after this 
-        // to ensure non-local objects are fetched.
         if (results.length > 0) {
 
             /* It's a collection.  Hooray, we can use the more efficient
@@ -130,33 +128,22 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
     * TODO: make the recursive crawl fail for things that are obviously too big
     * to resolve everything.
     */
-    async fetchSBOLObjectRecursive(uri:string, type?:string, sbol?:SBOLDocument):Promise<FetchResult> {
+    async fetchSBOLObjectRecursive(uri:SBHURI, type?:string, sbol?:SBOL2Graph):Promise<FetchResult> {
 
-        sbol = sbol || new SBOLDocument()
-
-        sbol._resolving = {};
-        sbol._rootUri = uri
-
-        sbol.lookupURI(sbol._rootUri)
-
-        // console.log(sbol)
-        // console.log(type)
-        // console.log(uri)
+        sbol = sbol || new SBOL2Graph()
 
         let results = await sparql.queryJson([
             'SELECT ?coll ?type WHERE {',
             '?coll a ?type .',
-            'FILTER(?coll = <' + sbol._rootUri + '>)',
+            'FILTER(?coll = <' + uri + '>)',
             '}'
         ].join('\n'), this.graphUri)
 
         if (results.length > 0) {
 
-            // TODO: temporarily removed, need to add recursive crawl after this
-            // to ensure non-local objects are fetched.
             if (results[0].type === 'http://sbols.org/v2#Collection') {
 
-                return await this.getCollectionSBOL(sbol, type)
+                return await this.getCollectionSBOL(uri, sbol, type)
 
             } else {
 
@@ -166,7 +153,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
         } else {
 
-            let e = new Error(sbol._rootUri + ' not found')
+            let e = new Error(uri + ' not found')
             e.name = 'NotFound'
             throw e
 
@@ -174,7 +161,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
     }
 
-    private async fetchCollectionSBOLSource(uri:string, type?:string, sbol?:SBOLDocument) {
+    private async fetchCollectionSBOLSource(uri:SBHURI, type?:string, sbol?:SBOL2Graph) {
 
         var graphs = ''
         //if (graphUri) {
@@ -184,14 +171,14 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
         const subquery = [
             '{',
                 '?s ?p ?o .',
-                'FILTER(?s = <' + sbol._rootUri + '>)',
+                'FILTER(?s = <' + uri + '>)',
             '}',
             'UNION',
             '{',
                 '?coll <http://sbols.org/v2#member> ?topLevel .',
                 '?s <http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel> ?topLevel .',
                 '?s ?p ?o .',
-                'FILTER(?coll = <' + sbol._rootUri + '>)',
+                'FILTER(?coll = <' + uri + '>)',
             '}' /*,
             'UNION',
             '{',
@@ -252,13 +239,14 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
             } else {
 
-                return await n3ToSBOL(n3)
+                //return await n3ToSBOL(n3)
+                throw new Error('needs reimplementing')
 
             }
         }
     }
 
-    private async getCollectionSBOL(sbol, type) {
+    private async getCollectionSBOL(uri:SBHURI, sbol:SBOL2Graph, type:string) {
 
         var graphs = ''
         //if (graphUri) {
@@ -268,7 +256,7 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
         const subquery = [
             '{',
                 '?s ?p ?o .',
-                'FILTER(?s = <' + sbol._rootUri + '>)',
+                'FILTER(?s = <' + uri + '>)',
             '}',
 
 
@@ -326,50 +314,38 @@ export default class SBOLFetcherLocal extends SBOLFetcher {
 
             console.log(countLeft + ' left of ' + results[0].count)
 
+            let res = await sparql.query([
+                'CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
+                subquery,
+                '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit
+            ].join('\n'), graphUri, 'text/plain')
+
+            rdf.push(res.body)
+
+            countLeft -= limit
+            offset += limit
+
             if(countLeft > 0) {
-
-                let res = await sparql.query([
-                    'CONSTRUCT { ?s ?p ?o } ' + graphs + ' WHERE { { SELECT ?s ?p ?o WHERE {',
-                    subquery,
-                    '} ORDER BY ASC(?s) ASC(?p) ASC(?o)} } OFFSET ' + offset + ' LIMIT ' + limit
-                ].join('\n'), graphUri, 'text/plain')
-
-                rdf.push(res.body)
-
-                countLeft -= limit
-                offset += limit
 
                 return await doNextQuery()
 
             } else {
 
-                let tempFilename = await saveN3ToRdfXml(rdf)
+                for(let n3 of rdf) {
+                    await sbol.loadString(n3, 'text/n3')
+                }
 
-                let contents = await fs.readFile(tempFilename)
+                let object = sbol.uriToFacade(uri.toURI())
 
-                fs.unlink(tempFilename)
+                if(!object) {
+                    throw new Error('???')
+                }
 
-                return await new Promise((resolve, reject) => {
-                    sbol.loadRDF(contents.toString(), (err) => {
-
-                        if(err) {
-                            reject(err)
-                            return
-                        }
-
-                        const object = sbol.lookupURI(sbol._rootUri)
-
-                        sbol.graphUri = graphUri
-                        object.graphUri = graphUri
-
-                        resolve({
-                            graphUri: graphUri,
-                            sbol: sbol,
-                            object: object
-                        })
-                    })
-
-                })
+                return {
+                    sbol: sbol,
+                    object: object,
+                    remote: null
+                }
             }
 
         }

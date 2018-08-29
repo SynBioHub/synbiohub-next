@@ -1,5 +1,6 @@
 
 import MDFetcher from "synbiohub/fetch/MDFetcher";
+import SBHURI from "synbiohub/SBHURI";
 
 export default class MDFetcherFederated extends MDFetcher {
 
@@ -13,7 +14,7 @@ export default class MDFetcherFederated extends MDFetcher {
 
     }
 
-    async getType(uri: string): Promise<string> {
+    async getType(uri: SBHURI): Promise<string> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getType(uri)
@@ -23,7 +24,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getOwnedBy(uri: string): Promise<string> {
+    async getOwnedBy(uri: SBHURI): Promise<string> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getOwnedBy(uri)
@@ -33,7 +34,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getComponentDefinitionMetadata(uri: string): Promise<any> {
+    async getComponentDefinitionMetadata(uri: SBHURI): Promise<any> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getComponentDefinitionMetadata(uri)
@@ -43,7 +44,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getModuleDefinitionMetadata(uri: string): Promise<any> {
+    async getModuleDefinitionMetadata(uri: SBHURI): Promise<any> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getModuleDefinitionMetadata(uri)
@@ -53,7 +54,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getCollectionMetadata(uri: string): Promise<any> {
+    async getCollectionMetadata(uri: SBHURI): Promise<any> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getCollectionMetadata(uri)
@@ -63,7 +64,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getCollectionMemberCount(uri: string, search?: string): Promise<number> {
+    async getCollectionMemberCount(uri: SBHURI, search?: string): Promise<number> {
 
         let count = 0
 
@@ -93,7 +94,7 @@ export default class MDFetcherFederated extends MDFetcher {
         return collections
     }
 
-    async getContainingCollections(uri: string): Promise<any[]> {
+    async getContainingCollections(uri: SBHURI): Promise<any[]> {
 
         let collections = []
 
@@ -108,7 +109,7 @@ export default class MDFetcherFederated extends MDFetcher {
         return collections
     }
 
-    async getCollectionMembers(uri: string, limit?: number, offset?: number, sortColumn?: string, search?: any): Promise<any[]> {
+    async getCollectionMembers(uri: SBHURI, limit?: number, offset?: number, sortColumn?: string, search?: any): Promise<any[]> {
 
         let members = []
 
@@ -123,7 +124,7 @@ export default class MDFetcherFederated extends MDFetcher {
         return members
     }
 
-    async getSubCollections(uri: string): Promise<string[]> {
+    async getSubCollections(uri: SBHURI): Promise<string[]> {
 
         let collections = []
 
@@ -153,7 +154,7 @@ export default class MDFetcherFederated extends MDFetcher {
         return count
     }
 
-    async getVersion(uri: string): Promise<string> {
+    async getVersion(uri: SBHURI): Promise<string> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getVersion(uri)
@@ -163,7 +164,7 @@ export default class MDFetcherFederated extends MDFetcher {
         }
     }
 
-    async getName(uri: string): Promise<string> {
+    async getName(uri: SBHURI): Promise<string> {
         for(let fetcher of this.fetchers) {
             try {
                 return await fetcher.getName(uri)

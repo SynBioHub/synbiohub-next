@@ -5,9 +5,9 @@ import config from './config';
 import * as sparql from './sparql/sparql';
 import filesize = require('filesize');
 import assert = require('assert')
-import { URI } from 'sboljs'
 import sha1 = require('sha1');
 import SBOLFetcherLocal from 'synbiohub/fetch/SBOLFetcherLocal';
+import { S2Attachment } from 'sbolgraph';
 
 export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {
 
@@ -77,7 +77,7 @@ export function getAttachmentsFromTopLevel(sbol, topLevel, share) {
 
         const attachment = sbol.lookupURI(attachmentURI)
 
-        if (attachment && !(attachment instanceof URI)) {
+        if (attachment) {
 
             const size = parseInt(attachment.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize') || '-1')
 
@@ -99,7 +99,7 @@ export function getAttachmentsFromTopLevel(sbol, topLevel, share) {
     })
 
     topLevel.attachments.map(attachment  => {
-        if(attachment && !(attachment instanceof URI)) {
+        if(attachment) {
             var url = '/' + attachment.uri.toString().replace(config.get('databasePrefix'), '')
             if (attachment.uri.toString().startsWith(config.get('databasePrefix') + 'user/') && share) {
                 url += '/' + sha1('synbiohub_' + sha1(attachment.uri.toString()) + config.get('shareLinkSalt')) + '/share'
@@ -129,11 +129,11 @@ export function getAttachmentsFromList(graphUri, attachmentList, share) {
             return new SBOLFetcherLocal(graphUri).fetchSBOLObjectRecursive(uri).then((result) => {
 
                 let sbol = result.sbol
-                let attachment = result.object
+                let attachment = result.object as S2Attachment
 
                 if (attachment) {
-                    let format = attachment.format || attachment.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
-                    let size = attachment.size|| attachment.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize')
+                    let format = attachment.format || attachment.getUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
+                    let size = attachment.size|| attachment.getUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize')
 
                     format = format.toString()
                     size = size.toString()

@@ -118,7 +118,6 @@ var api = {
 
 import makePublic from './actions/makePublic';
 import copyFromRemote from './actions/copyFromRemote';
-import createBenchlingSequence from './actions/createBenchlingSequence';
 import createICEPart from './actions/createICEPart';
 import removeCollection from './actions/removeCollection';
 import cloneSubmission from './actions/cloneSubmission';
@@ -157,7 +156,6 @@ var actions = {
     logout,
     makePublic,
     copyFromRemote,
-    createBenchlingSequence,
     createICEPart,
     removeCollection,
     cloneSubmission,
@@ -412,18 +410,12 @@ function App() {
     app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/makePublic', uploadToMemory.single('file'), actions.makePublic);
 
     // Remote ICE/Benchling endpoints
-    app.get('/public/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, actions.createBenchlingSequence);
-    app.post('/public/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, uploadToMemory.single('file'), actions.createBenchlingSequence);
     app.get('/public/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart);
     app.post('/public/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart);
 
-    app.get('/user/:userId/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, actions.createBenchlingSequence);
-    app.post('/user/:userId/:collectionId/:displayId/:version/createBenchlingSequence', requireUser, uploadToMemory.single('file'), actions.createBenchlingSequence);
     app.get('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, actions.createICEPart);
     app.post('/user/:userId/:collectionId/:displayId/:version/createICEPart', requireUser, uploadToMemory.single('file'), actions.createICEPart);
 
-    app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/createBenchlingSequence', actions.createBenchlingSequence);
-    app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/createBenchlingSequence', uploadToMemory.single('file'), actions.createBenchlingSequence);
     app.get('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', actions.createICEPart);
     app.post('/user/:userId/:collectionId/:displayId/:version/:hash/share/createICEPart', uploadToMemory.single('file'), actions.createICEPart);
 

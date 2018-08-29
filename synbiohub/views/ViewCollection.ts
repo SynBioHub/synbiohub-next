@@ -6,13 +6,15 @@ import DefaultMDFetcher from "synbiohub/fetch/DefaultMDFetcher";
 import extend = require('xtend')
 import ViewTopLevelWithObject from "synbiohub/views/ViewTopLevelWithObject";
 
-import sbolmeta = require('sbolmeta')
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import Breadcrumbs, { Breadcrumb } from 'synbiohub/Breadcrumbs';
+import { S2Collection } from 'sbolgraph';
 
 export default class ViewCollection extends ViewTopLevelWithObject {
 
     breadcrumbs:Breadcrumbs
+
+    collection:S2Collection
 
     constructor() {
 
@@ -28,16 +30,15 @@ export default class ViewCollection extends ViewTopLevelWithObject {
             name: 'Collection',
         }
 
-        let meta:any = sbolmeta.summarizeGenericTopLevel(this.object)
+        this.collection = this.object as S2Collection
 
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
-            new Breadcrumb(this.uriInfo.url, meta.name)
+            new Breadcrumb(this.uri.toURL(), this.object.displayName)
         ])
 
-        meta.members = []
+        console.log('OBJECT IS ' + this.object)
 
-        this.setTopLevelMetadata(req, meta)
     }
 
     async render(res:Response) {

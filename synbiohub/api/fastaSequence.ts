@@ -1,8 +1,9 @@
 import pug = require('pug');
-import sbolmeta = require('sbolmeta');
 import config from 'synbiohub/config';
 import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import { S2Sequence } from 'sbolgraph';
+import { Specifiers } from 'bioterms';
 
 export default async function(req, res) {
 
@@ -11,19 +12,19 @@ export default async function(req, res) {
     let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol
-    const sequence = result.object
-
-    var meta = sbolmeta.summarizeSequence(sequence)
+    const sequence = result.object as S2Sequence
 
     var lines = []
     var charsPerLine = 70
 
-    lines.push('>' + meta.name 
-        + ' (' + meta.length + ' ' + meta.lengthUnits + ')')
+    let lengthUnits = sequence.encoding === Specifiers.SBOL2.SequenceEncoding.AminoAcid ? 'aa' : 'bp'
 
-    for(var i = 0; i < meta.length; ) {
+    lines.push('>' + sequence.displayName
+        + ' (' + sequence.elements.length + ' ' + lengthUnits + ')')
 
-        lines.push(meta.elements.substr(i, charsPerLine))
+    for(var i = 0; i < sequence.elements.length; ) {
+
+        lines.push(sequence.elements.substr(i, charsPerLine))
         i += charsPerLine
     }
 
@@ -31,5 +32,6 @@ export default async function(req, res) {
 
     res.header('content-type', 'text/plain').send(fasta)
 };
+
 
 

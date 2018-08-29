@@ -6,13 +6,11 @@ import Breadcrumbs, { Breadcrumb } from "../Breadcrumbs";
 import loadTemplate from "synbiohub/loadTemplate";
 import * as sparql from 'synbiohub/sparql/sparql'
 import config from "synbiohub/config";
-import uriToUrl from "synbiohub/uriToUrl";
-import splitUri from "synbiohub/splitUri";
 import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 import parseForm from "../parseForm";
 import fs = require('mz/fs')
-import prepareSubmission from 'synbiohub/prepare-submission'
 import tmp = require('tmp-promise')
+import SBHURI from "synbiohub/SBHURI";
 
 export default class ViewAddDesignToProject extends View {
 
@@ -42,11 +40,7 @@ export default class ViewAddDesignToProject extends View {
 
         await super.prepare(req)
 
-        let projectUri = req.query.project
-
-        if(!projectUri) {
-            throw new Error('???')
-        }
+        let projectUri = SBHURI.fromURIOrURL(req.query.project)
 
         this.project = await DefaultMDFetcher.get(req).getCollectionMetadata(projectUri)
 
@@ -56,7 +50,7 @@ export default class ViewAddDesignToProject extends View {
 
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
-            new Breadcrumb(uriToUrl(this.project.uri, req), this.project.name),
+            new Breadcrumb(projectUri.toURL(), this.project.name),
             new Breadcrumb('/addDesignToProject', 'Add Design')
         ])
 
@@ -84,7 +78,6 @@ export default class ViewAddDesignToProject extends View {
         let { fields, files } = await parseForm(req)
 
         let tmpFilename = await saveTempFile()
-
 
         async function saveTempFile() {
 

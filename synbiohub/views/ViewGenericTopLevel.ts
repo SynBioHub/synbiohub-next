@@ -1,5 +1,4 @@
 
-import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
@@ -16,8 +15,6 @@ export default class ViewGenericTopLevel extends ViewTopLevelWithObject {
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
-
-        this.setTopLevelMetadata(req, sbolmeta.summarizeGenericTopLevel(this.object))
     }
 
     async render(res:Response) {

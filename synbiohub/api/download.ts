@@ -15,6 +15,9 @@ export default async function(req, res) {
     const sbol = result.sbol
     const object = result.object
 
+    throw new Error('attachments need updating to sbolgraph')
+
+    /*
     var attachmentType = object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
     var attachmentHash = object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentHash')
 
@@ -31,7 +34,7 @@ export default async function(req, res) {
     res.header('Content-Encoding', 'gzip')
     res.header('Content-Disposition', 'attachment; filename="' + object.name + '"')
     res.type(mimeType)
-    readStream.pipe(res)
+    readStream.pipe(res)*/
 };
 
 

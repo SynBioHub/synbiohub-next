@@ -8,7 +8,6 @@ import multiparty = require('multiparty');
 import uploads from 'synbiohub/uploads';
 import * as attachments from 'synbiohub/attachments';
 import streamToString = require('stream-to-string');
-import SBOLDocument = require('sboljs');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';

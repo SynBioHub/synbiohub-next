@@ -1,12 +1,10 @@
 
 import ViewTopLevel from "synbiohub/views/ViewTopLevel";
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
-import SBOLDocument = require('sboljs')
 import wiky from "synbiohub/wiky/wiky";
 import shareImages from "synbiohub/shareImages";
 import * as attachments from 'synbiohub/attachments'
 import config from "synbiohub/config";
-import uriToUrl from "synbiohub/uriToUrl";
 import sha1 = require('sha1')
 import loadTemplate from 'synbiohub/loadTemplate';
 import {queryJson} from '../sparql/sparql';
@@ -17,6 +15,8 @@ import getCitationsForSubject from "./getCitationsForSubject";
 import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 import Breadcrumbs from "../Breadcrumbs";
 import { SBHRequest } from "synbiohub/SBHRequest";
+import { S2Identified, SBOL2Graph } from "sbolgraph";
+import Mutables from "synbiohub/views/Mutables";
 
 export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
@@ -24,8 +24,8 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
         super()
     }
 
-    sbol:SBOLDocument
-    object:any
+    sbol:SBOL2Graph
+    object:S2Identified
 
     breadcrumbs:Breadcrumbs
 
@@ -37,26 +37,26 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
     submissionCitations:Array<any>
     collections:Array<any>
     builds:Array<any>
+    mutables:Mutables
 
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
-        let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.uriInfo.uri)
+        let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.uri)
 
         this.sbol = result.sbol
         this.object = result.object
         this.remote = result.remote
 
+        this.buildTopLevelMenus(this.object.displayId)
+
+        this.mutables = new Mutables(this.object)
+
         this.breadcrumbs = await Breadcrumbs.fromTopLevelObject(req, this.object)
 
-        this.sbolUrl = this.uriInfo.url + '/' + this.object.displayId + '.xml'
-
-        if(req.params.userId) {
-            this.searchUsesUrl = '/user/' + encodeURIComponent(req.params.userId) + '/' + this.uriInfo.designId + '/uses'
-        } else {
-            this.searchUsesUrl = '/public/' + this.uriInfo.designId + '/uses'
-        }
+        this.sbolUrl = this.uri.toURL() + '/' + this.object.displayId + '.xml'
+        this.searchUsesUrl = this.uri.toURL() + '/uses'
 
         this.remote = null
 
@@ -64,7 +64,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
         if(!this.remote && req.user) {
 
-            const ownedBy = this.object.getAnnotations('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy')
+            const ownedBy = this.object.getUriProperties('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy')
             const userUri = config.get('databasePrefix') + 'user/' + req.user.username
 
             if(ownedBy && ownedBy.indexOf(userUri) > -1) {
@@ -73,6 +73,7 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
 
         }
 
+        /*
         this.annotations = filterAnnotations(req, this.object.annotations)
 
         this.annotations.forEach((annotation) => {
@@ -85,20 +86,17 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
                     url: annotation.url
                 }
             }
+        })*/
+
+        this.submissionCitations = await getCitationsForSubject(this.uri, this.uri.getGraph())
+
+        this.collections = await DefaultMDFetcher.get(req).getContainingCollections(this.uri)
+
+        let query = loadTemplate('sparql/getImplementations.sparql', {
+            uri: this.uri.toURI()
         })
 
-        let templateParams = {
-            uri: this.uriInfo.uri
-        }
-
-
-        this.submissionCitations = await getCitationsForSubject(this.uriInfo.uri, this.uriInfo.graphUri)
-
-        this.collections = await DefaultMDFetcher.get(req).getContainingCollections(this.uriInfo.uri)
-
-        let query = loadTemplate('sparql/getImplementations.sparql', templateParams)
-
-        let query_results:any = await queryJson(query, this.uriInfo.graphUri)
+        let query_results:any = await queryJson(query, this.uri.getGraph())
         
         query_results = JSON.parse(JSON.stringify(query_results))
 
@@ -117,25 +115,6 @@ export default abstract class ViewTopLevelWithObject extends ViewTopLevel {
         throw new Error("Method not implemented.");
     }
 
-
-
-    // TODO get rid of this
-    meta:any
-     
-    protected setTopLevelMetadata(req:SBHRequest, meta:any) {
-
-        meta.attachments = attachments.getAttachmentsFromTopLevel(this.sbol, this.object,
-            req.url.toString().endsWith('/share'))
-
-        if (this.object.wasGeneratedBy) {
-            meta.wasGeneratedBy = {
-                uri: this.object.wasGeneratedBy.uri ? this.object.wasGeneratedBy.uri : this.object.wasGeneratedBy,
-                url: uriToUrl(this.object.wasGeneratedBy, req)
-            }
-        }
-        
-        super.setTopLevelMetadata(req, meta)
-    }
 
 
 

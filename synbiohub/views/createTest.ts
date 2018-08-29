@@ -4,7 +4,6 @@ import config from 'synbiohub/config'
 var pug = require('pug')
 import getUrisFromReq from 'synbiohub/getUrisFromReq'
 var sparql = require('../sparql/sparql')
-var SBOLDocument = require('sboljs')
 var extend = require('xtend')
 import parseForm from 'synbiohub/parseForm'
 
@@ -295,6 +294,9 @@ async function createSBOLTest(form_vals){
     var organism = form_vals['organism']
     var taxId = form_vals['taxId']
   
+    throw new Error('needs porting to sbolgraph')
+
+    /*
     var doc= new SBOLDocument();
     var document = doc
     var plan_uri
@@ -369,7 +371,7 @@ async function createSBOLTest(form_vals){
     console.log(doc.serializeXML())
   
     return [doc, col.uri]
-  
+  */
   }
   
 

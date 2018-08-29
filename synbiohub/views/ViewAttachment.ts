@@ -1,5 +1,4 @@
 
-import sbolmeta = require('sbolmeta');
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'
@@ -16,19 +15,17 @@ export default class ViewAttachment extends ViewTopLevelWithObject {
     attachmentType:string
     attachmentHash:string
     attachmentDownloadURL:string
-    size:string
+    size:number
     attachmentIsImage:boolean
 
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
-        this.setTopLevelMetadata(req, sbolmeta.summarizeGenericTopLevel(this.object))
-
-        this.attachmentType = this.object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
-        this.attachmentHash = this.object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentHash')
+        this.attachmentType = this.object.getUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
+        this.attachmentHash = this.object.getStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentHash')
         this.attachmentDownloadURL = this.uriInfo.url + '/download'
-        this.size = this.object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize')
+        this.size = this.object.getIntProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize')
 
         this.attachmentIsImage = this.attachmentType === 'http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment'
     }

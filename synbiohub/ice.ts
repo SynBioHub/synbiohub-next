@@ -1,10 +1,10 @@
 
-import SBOLDocument = require('sboljs')
-import request = require('request-promise')
 import config from './config';
 import extend = require('xtend')
 import serializeSBOL from './serializeSBOL';
 import delay = require('timeout-as-promise')
+import request = require('request-promise')
+import { SBOL2Graph } from 'sbolgraph';
 
 export async function getIceJson(remoteConfig, path, qs?) {
 
@@ -161,21 +161,12 @@ export async function getSequence(remoteConfig, partNum) {
         url: remoteConfig.url + '/rest/file/' + partNum + '/sequence/sbol2'
     })
 
-    return await new Promise((resolve, reject) => {
 
-        SBOLDocument.loadRDF(body, (err, sbol) => {
+    let sbol = await SBOL2Graph.loadString(body, 'application/rdf+xml')
 
-            if (err) {
-                console.log('getIceSequence: ERROR ' + err + ' : ' + remoteConfig.url + '/rest/file/' + partNum + '/sequence/sbol2')
-                reject(err)
-            } else {
-                console.log('getIceSequence: success' + ' : ' + remoteConfig.url + '/rest/file/' + partNum + '/sequence/sbol2')
-                resolve(sbol)
-            }
-        })
+    console.log('getIceSequence: success' + ' : ' + remoteConfig.url + '/rest/file/' + partNum + '/sequence/sbol2')
 
-    })
-
+    return sbol
 }
 
 export async function getRootFolderCount(remoteConfig) {
