@@ -5,6 +5,7 @@ import config from 'synbiohub/config'
 import DefaultSBOLFetcher from '../fetch/DefaultSBOLFetcher';
 import { S2ComponentDefinition, S2Sequence } from 'sbolgraph';
 import { Specifiers } from 'bioterms';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default async function(req, res) {
 

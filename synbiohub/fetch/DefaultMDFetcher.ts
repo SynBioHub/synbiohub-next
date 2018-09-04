@@ -3,7 +3,6 @@ import config from 'synbiohub/config'
 import MDFetcherLocal from 'synbiohub/fetch/MDFetcherLocal';
 import MDFetcher from 'synbiohub/fetch/MDFetcher';
 import MDFetcherICE from './MDFetcherICE';
-import MDFetcherBenchling from './MDFetcherBenchling';
 import MDFetcherFederated from './MDFetcherFederated';
 
 export default class DefaultMDFetcher {
@@ -26,10 +25,6 @@ export default class DefaultMDFetcher {
 
                 case 'ice':
                     fetchers.push(new MDFetcherICE(remote))
-                    break
-
-                case 'benchling':
-                    fetchers.push(new MDFetcherBenchling(remote))
                     break
             }
         }

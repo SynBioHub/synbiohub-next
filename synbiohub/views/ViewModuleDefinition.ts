@@ -12,7 +12,6 @@ import getDisplayList from 'visbol/lib/getDisplayList';
 import wiky from 'synbiohub/wiky/wiky.js';
 import config from 'synbiohub/config';
 import sha1 = require('sha1');
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 
 import { Request, Response } from 'express'

@@ -7,6 +7,7 @@ import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 
 import { S2ProvActivity } from 'sbolgraph'
+import SBHURI from 'synbiohub/SBHURI';
 
 export default class ViewImplementation extends ViewTopLevelWithObject {
 
@@ -35,7 +36,7 @@ export default class ViewImplementation extends ViewTopLevelWithObject {
         let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
         let activity_sbol_object = activity_sbol.object as S2ProvActivity
         
-        let plan_uri = activity_sbol_object.plan.uri.toString()
+        let plan_uri = SBHURI.fromURIOrURL(activity_sbol_object.plan.uri)
         
         let plan_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(plan_uri)
         

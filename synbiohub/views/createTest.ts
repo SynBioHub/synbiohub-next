@@ -2,7 +2,6 @@
 var loadTemplate = require('../loadTemplate')
 import config from 'synbiohub/config'
 var pug = require('pug')
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 var sparql = require('../sparql/sparql')
 var extend = require('xtend')
 import parseForm from 'synbiohub/parseForm'
@@ -34,6 +33,7 @@ export default function(req, res) {
 
 async function submitForm(req, res, submissionData, locals){
 
+    /*
     const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
     req.setTimeout(0) // no timeout
@@ -75,12 +75,16 @@ async function submitForm(req, res, submissionData, locals){
     }, locals)
 
     res.send(pug.renderFile('templates/views/createTest.jade', locals))
+    */
+
+    throw new Error('TODO reimplement')
 
 }
 
 
 async function submitPost(req, res){
 
+    /*
     const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
 
     req.setTimeout(0) // no timeout
@@ -268,7 +272,8 @@ async function submitPost(req, res){
 
 
     }
-
+*/
+    throw new Error('TODO reimplement')
 
   
 

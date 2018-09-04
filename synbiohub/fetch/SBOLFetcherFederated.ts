@@ -1,6 +1,7 @@
 
 import SBOLFetcher, { FetchResult } from "./SBOLFetcher";
 import { SBOL2Graph } from "sbolgraph";
+import SBHURI from "synbiohub/SBHURI";
 
 export default class SBOLFetcherFederated extends SBOLFetcher {
 
@@ -14,7 +15,7 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
 
     }
 
-    async fetchSBOLSource(uri:string, type?:string):Promise<string> {
+    async fetchSBOLSource(uri:SBHURI, type?:string):Promise<string> {
 
         for(let fetcher of this.fetchers) {
 
@@ -30,7 +31,7 @@ export default class SBOLFetcherFederated extends SBOLFetcher {
         }
     }
 
-    async fetchSBOLObjectRecursive(uri: string, type?:string, intoGraph?:SBOL2Graph):Promise<FetchResult> {
+    async fetchSBOLObjectRecursive(uri: SBHURI, type?:string, intoGraph?:SBOL2Graph):Promise<FetchResult> {
 
         let errors = []
 

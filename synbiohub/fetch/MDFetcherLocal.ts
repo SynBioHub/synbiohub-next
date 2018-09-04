@@ -6,6 +6,7 @@ import loadTemplate from "synbiohub/loadTemplate";
 import * as sparql from 'synbiohub/sparql/sparql'
 import config from "synbiohub/config";
 import compareMavenVersions from "synbiohub/compareMavenVersions";
+import SBHURI from "synbiohub/SBHURI";
 
 export default class MDFetcherLocal extends MDFetcher {
 

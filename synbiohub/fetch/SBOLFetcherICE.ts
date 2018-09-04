@@ -24,7 +24,7 @@ export default class SBOLFetcherICE extends SBOLFetcher {
 
     async fetchSBOLObjectRecursive(sbol, type, uri) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         const version = '1' //new Date().getTime() + '_retrieved'
 

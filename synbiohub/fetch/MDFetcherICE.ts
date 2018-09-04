@@ -216,7 +216,7 @@ export default class MDFetcherICE extends MDFetcher {
 
     async getCollectionMetadata(uri) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 
@@ -253,7 +253,7 @@ export default class MDFetcherICE extends MDFetcher {
 
     async getSubCollections(uri) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 
@@ -269,7 +269,7 @@ export default class MDFetcherICE extends MDFetcher {
 
     async getType(uri) {
 
-        const { displayId } = splitUri(uri)
+        const displayId = uri.getDisplayId()
 
         if(displayId === this.remoteConfig.rootCollection.displayId) {
 

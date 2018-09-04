@@ -1,7 +1,6 @@
 
 import pug = require('pug');
 import loadTemplate from 'synbiohub/loadTemplate';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import config from 'synbiohub/config';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import multiparty = require('multiparty');
@@ -11,6 +10,7 @@ import streamToString = require('stream-to-string');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default async function (req, res) {
 
@@ -18,7 +18,7 @@ export default async function (req, res) {
 
 	const form = new multiparty.Form()
 
-	const { graphUri, uri, designId, share, url, baseUri } = getUrisFromReq(req)
+	let uri:SBHURI = SBHURI.fromURIOrURL(req.url)
 
 	let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
@@ -45,19 +45,19 @@ export default async function (req, res) {
 		console.log(JSON.stringify(uploadInfo))
 
 		await attachments.addAttachmentToTopLevel(
-			graphUri, baseUri, uri, partStream.filename, hash, size,
+			uri.getGraph(), uri.getURIPrefix(), uri, partStream.filename, hash, size,
 			mime, req.user.username)
 
 			var templateParams = {
 				uri: uri
 			}
 
-		let attachmentObjects = await getAttachmentsForSubject(uri, graphUri)
+		let attachmentObjects = await getAttachmentsForSubject(uri, uri.getGraph())
 
 		const locals = {
 			config: config.get(),
 			canEdit: true,
-			url: url,
+			url: req.url,
 			attachments: attachmentObjects
 		}
 
