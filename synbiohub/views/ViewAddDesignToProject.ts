@@ -11,8 +11,9 @@ import parseForm from "../parseForm";
 import fs = require('mz/fs')
 import tmp = require('tmp-promise')
 import SBHURI from "synbiohub/SBHURI";
+import ViewConcerningTopLevel from "./ViewConcerningTopLevel";
 
-export default class ViewAddDesignToProject extends View {
+export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
     errors:any[]
 

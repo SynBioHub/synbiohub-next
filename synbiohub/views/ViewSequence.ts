@@ -1,12 +1,12 @@
 
-import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
+import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 import formatSequence = require('sequence-formatter')
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { S2Sequence } from 'sbolgraph';
 
-export default class ViewSequence extends ViewTopLevelWithObject {
+export default class ViewSequence extends ViewDescribingTopLevel {
 
     constructor() {
         super()

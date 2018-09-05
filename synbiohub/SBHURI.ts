@@ -27,9 +27,9 @@ export default class SBHURI {
             path = url.slice(1)
         } else {
             if(url.indexOf(dbPrefix) === 0) {
-                path = url.slice(dbPrefix)
+                path = url.slice(dbPrefix.length)
             } else if(url.indexOf(instanceURL) === 0) {
-                path = url.slice(instanceURL)
+                path = url.slice(instanceURL.length)
             } else {
                 throw new Error('URI/URL does not start with either prefix: ' + url)
             }
@@ -61,7 +61,7 @@ export default class SBHURI {
                 throw new Error('bad number of path parts')
             }
         } else {
-            throw new Error('path does not start with public or user')
+            throw new Error('path ' + path + ' does not start with public or user')
         }
     }
 

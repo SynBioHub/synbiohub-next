@@ -12,13 +12,13 @@ import getDisplayList from 'visbol/lib/getDisplayList';
 import wiky from 'synbiohub/wiky/wiky.js';
 import config from 'synbiohub/config';
 import sha1 = require('sha1');
-import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
+import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { S2ModuleDefinition } from 'sbolgraph';
 
-export default class ViewModuleDefinition extends ViewTopLevelWithObject {
+export default class ViewModuleDefinition extends ViewDescribingTopLevel {
 
     constructor() {
         super()

@@ -4,13 +4,13 @@ import { getAttachmentsForSubject } from "synbiohub/attachments";
 import DefaultMDFetcher from "synbiohub/fetch/DefaultMDFetcher";
 
 import extend = require('xtend')
-import ViewTopLevelWithObject from "synbiohub/views/ViewTopLevelWithObject";
+import ViewDescribingTopLevel from "./ViewDescribingTopLevel";
 
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import Breadcrumbs, { Breadcrumb } from 'synbiohub/Breadcrumbs';
 import { S2Collection } from 'sbolgraph';
 
-export default class ViewCollection extends ViewTopLevelWithObject {
+export default class ViewCollection extends ViewDescribingTopLevel {
 
     breadcrumbs:Breadcrumbs
 

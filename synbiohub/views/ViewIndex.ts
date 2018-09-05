@@ -3,7 +3,7 @@ import { SBHRequest } from "synbiohub/SBHRequest";
 import View from "synbiohub/views/View";
 import { Response } from 'express'
 import MDFetcherLocal from "../fetch/MDFetcherLocal";
-import uriToUrl from "synbiohub/uriToUrl";
+import SBHURI from "../SBHURI";
 
 interface Project {
     url:string
@@ -32,7 +32,7 @@ export default class ViewIndex extends View {
             for(let collection of collections) {
 
                 this.recentProjects.push({
-                    url: uriToUrl(collection.uri, req),
+                    url: SBHURI.fromURIOrURL(collection.uri).toURL(),
                     name: collection.name
                 })
             }

@@ -1,10 +1,10 @@
 
-import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
+import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 
-export default class ViewGenericTopLevel extends ViewTopLevelWithObject {
+export default class ViewGenericTopLevel extends ViewDescribingTopLevel {
 
     constructor() {
         super()

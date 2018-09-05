@@ -1,5 +1,5 @@
 
-import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
+import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 
@@ -9,7 +9,7 @@ import { SBHRequest } from 'synbiohub/SBHRequest';
 import { S2ProvActivity } from 'sbolgraph'
 import SBHURI from 'synbiohub/SBHURI';
 
-export default class ViewImplementation extends ViewTopLevelWithObject {
+export default class ViewImplementation extends ViewDescribingTopLevel {
 
     constructor() {
         super()

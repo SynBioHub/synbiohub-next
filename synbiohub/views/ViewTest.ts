@@ -1,5 +1,5 @@
 
-import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
+import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import {getAttachmentsFromTopLevel, getAttachmentsFromList} from 'synbiohub/attachments';
 import loadTemplate from '../loadTemplate';
@@ -10,7 +10,7 @@ var sparql = require('../sparql/sparql')
 
 import { S2ProvActivity } from 'sbolgraph'
 
-export default class ViewTest extends ViewTopLevelWithObject{
+export default class ViewTest extends ViewDescribingTopLevel{
 
     constructor(){
         super()

@@ -44,7 +44,7 @@ export default async function (req, res) {
             uris: uris
         });
 
-        await sparql.updateQuery(updateQuery, graphUri)
+        await sparql.updateQuery(updateQuery, uri.getGraph())
 
         res.redirect(share);
     }))
