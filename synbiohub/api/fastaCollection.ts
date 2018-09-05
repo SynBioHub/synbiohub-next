@@ -3,13 +3,12 @@ var pug = require('pug')
 
 import config from 'synbiohub/config'
 
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
-
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     throw new Error('todo')
 

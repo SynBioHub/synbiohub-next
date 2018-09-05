@@ -2,21 +2,19 @@ import async = require('async');
 import request = require('request');
 import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import * as sparql from 'synbiohub/sparql/sparql';
 import pug = require('pug');
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId, edit } = getUrisFromReq(req)
-
-    var uriPrefix = uri.substring(0,uri.lastIndexOf('/')+1)
+    const uri = SBHURI.fromURIOrURL(req.url)
 
     var templateParams = {
-	uri: uri
+      uri: uri
     }
 
     var removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
@@ -51,7 +49,7 @@ export default async function(req, res) {
     //       }
 
   console.log(removeQuery)
-  await sparql.deleteStaggered(removeQuery, graphUri)
+  await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
   var templateParams = {
     uri: uri,
@@ -59,7 +57,7 @@ export default async function(req, res) {
 
   removeQuery = loadTemplate('sparql/removeReferences.sparql', templateParams)
 
-  await sparql.deleteStaggered(removeQuery, graphUri)
+  await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
   res.redirect('/manage');
 

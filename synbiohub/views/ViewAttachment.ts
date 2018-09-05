@@ -24,7 +24,7 @@ export default class ViewAttachment extends ViewTopLevelWithObject {
 
         this.attachmentType = this.object.getUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
         this.attachmentHash = this.object.getStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentHash')
-        this.attachmentDownloadURL = this.uriInfo.url + '/download'
+        this.attachmentDownloadURL = this.uri.toURL() + '/download'
         this.size = this.object.getIntProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentSize')
 
         this.attachmentIsImage = this.attachmentType === 'http://wiki.synbiohub.org/wiki/Terms/synbiohub#imageAttachment'

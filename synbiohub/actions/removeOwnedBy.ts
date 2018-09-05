@@ -2,13 +2,13 @@
 import retrieveUris from 'synbiohub/retrieveUris';
 import config from 'synbiohub/config';
 import * as sparql from 'synbiohub/sparql/sparql';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import loadTemplate from 'synbiohub/loadTemplate';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function (req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req);
+    const uri = SBHURI.fromURIOrURL(req.url)
 
     let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
@@ -16,7 +16,7 @@ export default async function (req, res) {
         res.status(401).send('not authorized to remove an owner')
     }
 
-    let uris = await retrieveUris(uri, graphUri)
+    let uris = await retrieveUris(uri, uri.getGraph())
 
     let chunks = [];
     let offset = config.get('resolveBatch');

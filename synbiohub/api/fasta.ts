@@ -12,12 +12,12 @@ import fastaCollection from './fastaCollection';
 import fastaSequence from './fastaSequence';
 
 import pug = require('pug');
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
+    const uri = SBHURI.fromURIOrURL(req.url)
 
     let result = await DefaultMDFetcher.get(req).getType(uri)
 

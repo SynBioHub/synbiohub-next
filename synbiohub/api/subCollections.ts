@@ -1,11 +1,11 @@
 
 
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 async function subCollections(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     let collections = await DefaultMDFetcher.get(req).getSubCollections(uri)
 

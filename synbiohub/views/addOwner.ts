@@ -1,8 +1,8 @@
 const pug = require('pug');
 import db from 'synbiohub/db'
 import config from 'synbiohub/config'
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import addOwnedBy from 'synbiohub/actions/addOwnedBy'
+import SBHURI from 'synbiohub/SBHURI';
 
 export default function (req, res) {
 
@@ -14,11 +14,8 @@ export default function (req, res) {
 }
 
 async function view(req, res) {
-    const {
-        graphUri,
-        uri,
-        designId
-    } = getUrisFromReq(req);
+
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     let users = await db.model.User.findAll()
 

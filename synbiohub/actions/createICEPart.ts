@@ -7,8 +7,8 @@ import * as ice from 'synbiohub/ice'
 
 import config from 'synbiohub/config'
 
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 	
@@ -59,8 +59,9 @@ export default async function(req, res) {
 	} else {
 	    iceRemote = req.body.iceRemote
 	}
-    }
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
+	}
+
+    const uri = SBHURI.fromURIOrURL(req.url)
     
     let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 

@@ -2,30 +2,27 @@ import async = require('async');
 import request = require('request');
 import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import * as sparql from 'synbiohub/sparql/sparql';
 import pug = require('pug');
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const { graphUri, uri, designId } = getUrisFromReq(req)
+    const uri = SBHURI.fromURIOrURL(req.url)
 
-    if (!graphUri && !config.get('removePublicEnabled')) {
+    if (uri.isPublic() && !config.get('removePublicEnabled')) {
 
         res.status(500).send('Removing public submissions is not allowed')
 
     }
 
-    var uriPrefix = uri.substring(0,uri.lastIndexOf('/'))
-    uriPrefix = uriPrefix.substring(0,uriPrefix.lastIndexOf('/')+1)
-
     var templateParams = {
-	collection: uri,
-        uriPrefix: uriPrefix,
-	version: req.params.version
+        collection: uri,
+        uriPrefix: uri.getURIPrefix(),
+        version: req.params.version
     }
 
     var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
@@ -43,14 +40,14 @@ export default async function(req, res) {
         res.send(pug.renderFile('templates/views/errors/errors.jade', locals))        
     }
 
-    await sparql.deleteStaggered(removeQuery, graphUri)
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
     let templateParams2 = {
         uri: uri
     }
     removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
 
-    await sparql.deleteStaggered(removeQuery, graphUri)
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
     
     res.redirect('/manage');
 

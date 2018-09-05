@@ -1,13 +1,13 @@
 
 import pug = require('pug');
 import config from 'synbiohub/config';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default async function(req, res) {
 
-    const { graphUri, uri, designId, share } = getUrisFromReq(req)
-    
+    let uri = SBHURI.fromURIOrURL(req.url)
+
     let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
 
     const sbol = result.sbol

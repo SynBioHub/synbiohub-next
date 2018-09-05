@@ -2,17 +2,17 @@
 import async = require('async');
 import config from 'synbiohub/config';
 import pug = require('pug');
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import topLevel from './topLevel';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default function(req, res) {
 
-    const { graphUri, uri, designId, url } = getUrisFromReq(req)
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     DefaultMDFetcher.get(req).getVersion(uri).then((result) => {
 	
-	res.redirect(url + '/' + result)
+	res.redirect(uri.toURL() + '/' + result)
 
     }).catch((err) => {
 

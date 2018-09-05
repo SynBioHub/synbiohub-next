@@ -1,6 +1,7 @@
 
 import { Request } from 'express'
 import DefaultMDFetcher from './fetch/DefaultMDFetcher';
+import SBHURI from 'synbiohub/SBHURI';
 
 export default class Breadcrumbs {
 
@@ -36,11 +37,11 @@ export default class Breadcrumbs {
     }
 
 
-    static async fromTopLevelURI(req:Request, uri:string):Promise<Breadcrumbs> {
+    static async fromTopLevelURI(req:Request, uri:SBHURI):Promise<Breadcrumbs> {
 
         let name = await DefaultMDFetcher.get(req).getName(uri)
 
-        let crumb = new Breadcrumb(uri, name)
+        let crumb = new Breadcrumb(uri.toURL(), name)
 
         let collections:any = await DefaultMDFetcher.get(req).getContainingCollections(uri)
 

@@ -7,8 +7,8 @@ import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
 import config from 'synbiohub/config';
 import striptags = require('striptags');
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+import SBHURI from '../SBHURI';
 
 export default async function (req, res) {
 
@@ -18,20 +18,14 @@ export default async function (req, res) {
         user: req.user
     }
 
-    const {
-        graphUri,
-        uri,
-        designId,
-        share,
-        url
-    } = getUrisFromReq(req)
+    let uri = SBHURI.fromURIOrURL(req.url)
 
     var templateParams = {
         uri: uri
     }
 
     // TODO ignores graphUri
-    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive('ComponentDefinition', uri)
+    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri, 'ComponentDefinition')
 
     let sbol = result.sbol
     let componentDefinition = result.object

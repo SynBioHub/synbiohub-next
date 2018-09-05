@@ -1,8 +1,8 @@
 import sha1 = require('sha1');
 import config from 'synbiohub/config';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
-import uriToUrl from 'synbiohub/uriToUrl';
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
+import SBHURI from '../SBHURI';
 
 function datatables(req, res) {
 
@@ -60,12 +60,14 @@ function collectionMembersDatatable(req, res) {
             recordsFiltered: filterCount,
             data: members.map((member) => {
 
-                var memberUrl = uriToUrl(member.uri)
+                var memberUri = SBHURI.fromURIOrURL(member.uri)
+
+                /* TODO
                 if (member.uri.toString().startsWith(config.get('databasePrefix'))) {
                     if (req.headers.referer.toString().endsWith('/share')) {
                         memberUrl += '/' + sha1('synbiohub_' + sha1(member.uri) + config.get('shareLinkSalt')) + '/share'
                     }
-                }
+                }*/
 
                 const typeLocalPart = member.type.slice(member.type.lastIndexOf('#') + 1)
 
@@ -99,8 +101,8 @@ function collectionMembersDatatable(req, res) {
                 }
 
                 return [
-                    '<a href="' + memberUrl + '">' + memberName + '</a>',
-                    '<a href="' + memberUrl + '">' + member.displayId + '</a>',
+                    '<a href="' + memberUri.toURL() + '">' + memberName + '</a>',
+                    '<a href="' + memberUri.toURL() + '">' + member.displayId + '</a>',
                     memberType + '&nbsp<a href="' + memberTypeUrl + '",title="Learn more about this type of record"><span class="fa fa-info-circle"></span> </a>',
                     member.description
                 ]

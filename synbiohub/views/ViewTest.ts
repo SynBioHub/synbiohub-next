@@ -3,7 +3,6 @@ import ViewTopLevelWithObject from 'synbiohub/views/ViewTopLevelWithObject';
 import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import {getAttachmentsFromTopLevel, getAttachmentsFromList} from 'synbiohub/attachments';
 import loadTemplate from '../loadTemplate';
-import getUrisFromReq from 'synbiohub/getUrisFromReq';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
@@ -38,6 +37,9 @@ export default class ViewTest extends ViewTopLevelWithObject{
             name: 'Collection'
         }
 
+        // TODO reimplement
+
+        /*
         let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
         let activity_sbol_object = activity_sbol.object as S2ProvActivity
 
@@ -76,7 +78,7 @@ export default class ViewTest extends ViewTopLevelWithObject{
                 this.meta.dataurl = attachment['url']
             }
 
-        }
+        }*/
 
     }
 

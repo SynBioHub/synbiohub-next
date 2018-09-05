@@ -4,8 +4,8 @@ import View from "synbiohub/views/View";
 import { Response } from 'express'
 import config from 'synbiohub/config'
 import DefaultMDFetcher from "synbiohub/fetch/DefaultMDFetcher";
-import uriToUrl from "synbiohub/uriToUrl";
 import sha1 = require('sha1')
+import SBHURI from "../SBHURI";
 
 export default class ViewBrowse extends View {
 
@@ -28,7 +28,7 @@ export default class ViewBrowse extends View {
 
             console.log(config.get('databasePrefix') + collection.uri);
 
-            collection.url = uriToUrl(collection.uri);
+            collection.url = SBHURI.fromURIOrURL(collection.uri).toURL()
 
             if (req.url.endsWith('/share')) {
                 collection.url += '/' + sha1('synbiohub_' + sha1(collection.uri) + config.get('shareLinkSalt')) + '/share';

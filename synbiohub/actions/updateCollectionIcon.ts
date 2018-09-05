@@ -3,14 +3,14 @@ const fs = require('fs')
 import config from 'synbiohub/config'
 const extend = require('xtend')
 
-import getUrisFromReq from 'synbiohub/getUrisFromReq'
 import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 import pug = require('pug')
+import SBHURI from 'synbiohub/SBHURI';
 
 export default async function (req, res) {
 
-    const { graphUri, uri, designId } = getUrisFromReq(req)
+    const uri = SBHURI.fromURIOrURL(req.url)
 
     let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
