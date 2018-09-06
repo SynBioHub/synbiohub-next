@@ -1,8 +1,5 @@
 import config from "synbiohub/config";
 
-let dbPrefix = config.get('databasePrefix')
-let instanceURL = config.get('instanceUrl')
-
 export default class SBHURI {
 
     userPart:string|null
@@ -20,6 +17,9 @@ export default class SBHURI {
     }
 
     static fromURIOrURL(url:string):SBHURI {
+
+        let dbPrefix = config.get('databasePrefix')
+        let instanceURL = config.get('instanceUrl')
 
         let path:string|null = null
 
@@ -77,10 +77,12 @@ export default class SBHURI {
     }
 
     toURL():string {
+        let instanceURL = config.get('instanceUrl')
         return instanceURL + this.createPath()
     }
 
     toURI():string {
+        let dbPrefix = config.get('databasePrefix')
         return dbPrefix + this.createPath()
     }
 
@@ -98,6 +100,8 @@ export default class SBHURI {
 
     getUserURI():string|null {
 
+        let dbPrefix = config.get('databasePrefix')
+
         if(!this.userPart)
             return null
 
@@ -105,6 +109,8 @@ export default class SBHURI {
     }
 
     getUserURL():string|null {
+
+        let instanceURL = config.get('instanceUrl')
 
         if(!this.userPart)
             return null
@@ -125,14 +131,18 @@ export default class SBHURI {
     }
 
     getURIPrefix():string {
+        let dbPrefix = config.get('databasePrefix')
         return dbPrefix + (this.userPart ? 'user/' + encodeURIComponent(this.userPart) : 'public') + '/' + this.projectPart + '/'
     }
 
     getURLPrefix():string {
+        let instanceURL = config.get('instanceUrl')
         return instanceURL + (this.userPart ? 'user/' + encodeURIComponent(this.userPart) : 'public') + '/' + this.projectPart + '/'
     }
 
     getGraph():string {
+
+        let dbPrefix = config.get('databasePrefix')
 
         if(!this.userPart) {
             return config.get('triplestore').defaultGraph
@@ -142,6 +152,7 @@ export default class SBHURI {
     }
 
     getPersistentIdentity():string {
+        let dbPrefix = config.get('databasePrefix')
         return dbPrefix + this.createPersistentIdentityPath()
     }
 
