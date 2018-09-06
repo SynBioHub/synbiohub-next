@@ -8,7 +8,6 @@ import parseForm from 'synbiohub/parseForm'
 
 const request = require('request')
 const multiparty = require('multiparty')
-const uriToUrl = require('../uriToUrl')
 const attachments = require('../attachments')
 import uploads from '../uploads'
 const fs = require('mz/fs')
