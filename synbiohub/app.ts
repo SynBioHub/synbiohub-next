@@ -94,7 +94,6 @@ import count from './api/count';
 import rootCollections from './api/rootCollections';
 import subCollections from './api/subCollections';
 import download from './api/download';
-import datatables from './api/datatables';
 import sparqlApi from './api/sparql';
 import updateWebOfRegistries from './api/updateWebOfRegistries';
 
@@ -110,7 +109,6 @@ var api = {
     rootCollections,
     subCollections,
     download,
-    datatables,
     sparql: sparqlApi,
     updateWebOfRegistries,
     organisms
@@ -152,6 +150,7 @@ import ViewProjects from 'synbiohub/views/ViewProjects';
 import ViewNewProject from 'synbiohub/views/ViewNewProject';
 import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
 import SBHURI from 'synbiohub/SBHURI';
+import ViewCollectionMembersDatatable from './views/ViewCollectionMembersDatatable';
 
 var actions = {
     logout,
@@ -318,8 +317,6 @@ function App() {
     app.get('/autocomplete/:query', api.autocomplete)
     app.get('/organisms/:query', api.organisms)
     app.get('/projects', requireUser, dispatchToView(ViewProjects))
-
-    app.get('/api/datatables', bodyParser.urlencoded({ extended: true }), api.datatables)
 
     app.get('/admin', requireAdmin, views.admin.status);
 
@@ -488,6 +485,8 @@ function App() {
             return chain(req, res, requireUser, views.visualization)
         case 'addDesign':
             return chain(req, res, requireUser, dispatchToView(ViewAddDesignToProject))
+        case 'datatableCollectionMembers':
+            return chain(req, res, dispatchToView(ViewCollectionMembersDatatable))
         }
 
         next()

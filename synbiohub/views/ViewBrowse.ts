@@ -3,7 +3,6 @@ import { SBHRequest } from "synbiohub/SBHRequest";
 import View from "synbiohub/views/View";
 import { Response } from 'express'
 import config from 'synbiohub/config'
-import DefaultMDFetcher from "synbiohub/fetch/DefaultMDFetcher";
 import sha1 = require('sha1')
 import SBHURI from "../SBHURI";
 

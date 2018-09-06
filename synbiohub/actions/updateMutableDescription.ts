@@ -7,13 +7,13 @@ import loadTemplate from 'synbiohub/loadTemplate'
 
 import config from 'synbiohub/config'
 
-import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
-
 import wiky from 'synbiohub/wiky/wiky'
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
 
+    // TODO reimplement
+
+    /*
     const uri = req.body.uri
 
     const graphUri = getGraphUriFromTopLevelUri(uri,req.user)
@@ -51,7 +51,7 @@ export default async function(req, res) {
         canEdit: true
     }
 
-    res.send(pug.renderFile('templates/partials/mutable-description.jade', locals))
+    res.send(pug.renderFile('templates/partials/mutable-description.jade', locals))*/
 }
 
 

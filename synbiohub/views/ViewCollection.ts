@@ -1,7 +1,6 @@
 
 import { Request, Response } from 'express'
 import { getAttachmentsForSubject } from "synbiohub/attachments";
-import DefaultMDFetcher from "synbiohub/fetch/DefaultMDFetcher";
 
 import extend = require('xtend')
 import ViewDescribingTopLevel from "./ViewDescribingTopLevel";

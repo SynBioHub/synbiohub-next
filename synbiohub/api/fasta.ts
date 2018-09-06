@@ -12,7 +12,6 @@ import fastaCollection from './fastaCollection';
 import fastaSequence from './fastaSequence';
 
 import pug = require('pug');
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from '../SBHURI';
 
 export default async function(req, res) {

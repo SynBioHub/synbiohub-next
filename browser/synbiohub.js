@@ -145,13 +145,8 @@ if (typeof meta !== 'undefined') {
 	order: [[2, "asc"]],
         
 	ajax: {
-            url: '/api/datatables',
-            type: 'GET',
-            data: function (d) {
-                d.type = 'collectionMembers'
-                d.collectionUri = meta.uri
-                d.graphUri = meta.graphUri
-            }
+            url: window.location.href + '/datatableCollectionMembers',
+            type: 'GET'
         }
 
     })

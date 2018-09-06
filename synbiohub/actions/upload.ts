@@ -2,17 +2,19 @@
 import pug = require('pug');
 import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
-import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import multiparty = require('multiparty');
 import uploads from 'synbiohub/uploads';
 import * as attachments from 'synbiohub/attachments';
 import streamToString = require('stream-to-string');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import { getAttachmentsForSubject } from 'synbiohub/attachments'
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from 'synbiohub/SBHURI';
 
 export default async function (req, res) {
+
+	// TODO reimplement
+
+	/*
 
 	var attachmentObjects = []
 
@@ -69,6 +71,7 @@ export default async function (req, res) {
 	})
 
 	form.parse(req)
+	*/
 };
 
 

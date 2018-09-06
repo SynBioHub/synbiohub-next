@@ -82,7 +82,7 @@ export default class ViewNewProject extends View {
 
         let uploader = new SBOLUploader()
         uploader.setGraph(graph)
-        uploader.setDestinationGraphUri(req.user.graphUri)
+        uploader.setDestinationGraphUri(uri.getGraph())
         uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
         await uploader.upload()
 

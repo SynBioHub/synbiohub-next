@@ -6,7 +6,6 @@ import Breadcrumbs, { Breadcrumb } from "../Breadcrumbs";
 import loadTemplate from "synbiohub/loadTemplate";
 import * as sparql from 'synbiohub/sparql/sparql'
 import config from "synbiohub/config";
-import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 import parseForm from "../parseForm";
 import fs = require('mz/fs')
 import tmp = require('tmp-promise')
