@@ -9,7 +9,7 @@ block content
                 |  Add design to #{project.name}
             p
                 | Designs can be uploaded as GenBank, FASTA, or SBOL files.
-            form(action=uri.toURL(),method='post',enctype='multipart/form-data')
+            form(action=uri.toURL() + '/addDesign',method='post',enctype='multipart/form-data')
                 if errors.length > 0
                     each error in errors
                         div.alert.alert-danger

@@ -12,6 +12,10 @@ import fs = require('mz/fs')
 import tmp = require('tmp-promise')
 import SBHURI from "synbiohub/SBHURI";
 import ViewConcerningTopLevel from "./ViewConcerningTopLevel";
+import { SBOL2Graph, S2Collection, node } from 'sbolgraph'
+import SBOLUploader from "../SBOLUploader";
+import OverwriteMerge, { OverwriteMergeOption } from "../OverwriteMerge";
+import { Predicates, Types } from 'bioterms'
 
 export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
@@ -78,24 +82,29 @@ export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
         let { fields, files } = await parseForm(req)
 
-        let tmpFilename = await saveTempFile()
+        let filePath = files.file[0].path
+        let contents = (await fs.readFile(filePath)).toString()
 
-        async function saveTempFile() {
 
-            if (files.file) {
+        console.log('uploading ' + contents)
 
-                return Promise.resolve(files.file[0].path)
+        let g:SBOL2Graph = await SBOL2Graph.loadString(contents)
 
-            } else {
+        g.changeURIPrefix(this.uri.getURIPrefix())
 
-                let tmpFilename = await tmp.tmpName()
-
-                await fs.writeFile(tmpFilename, fields.file[0])
-
-                return tmpFilename
-
-            }
+        for(let topLevel of g.topLevels) {
+            g.add(this.uri.toURI(), Predicates.a, node.createUriNode(Types.SBOL2.Collection)) // needed for sbolgraph to serialize to xml
+            g.add(this.uri.toURI(), Predicates.SBOL2.member, node.createUriNode(topLevel.uri))
         }
+
+        let uploader = new SBOLUploader()
+        uploader.setGraph(g)
+        uploader.setDestinationGraphUri(req.user.graphUri)
+        uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+
+        await uploader.upload()
+
+        this.redirect = this.uri.toURL()
     }
 
 }
