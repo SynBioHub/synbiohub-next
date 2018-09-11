@@ -1,19 +1,14 @@
 
-import View from "synbiohub/views/View";
 import { SBHRequest } from "synbiohub/SBHRequest";
 import { Response } from 'express'
 import Breadcrumbs, { Breadcrumb } from "../Breadcrumbs";
-import loadTemplate from "synbiohub/loadTemplate";
-import * as sparql from 'synbiohub/sparql/sparql'
-import config from "synbiohub/config";
 import parseForm from "../parseForm";
 import fs = require('mz/fs')
-import tmp = require('tmp-promise')
 import SBHURI from "synbiohub/SBHURI";
 import ViewConcerningTopLevel from "./ViewConcerningTopLevel";
 import { SBOL2Graph, S2Collection, node } from 'sbolgraph'
 import SBOLUploader from "../SBOLUploader";
-import OverwriteMerge, { OverwriteMergeOption } from "../OverwriteMerge";
+import { OverwriteMergeOption } from "../OverwriteMerge";
 import { Predicates, Types } from 'bioterms'
 
 export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
@@ -44,17 +39,9 @@ export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
         await super.prepare(req)
 
-        let projectUri = SBHURI.fromURIOrURL(req.url)
-
-        this.project = await DefaultMDFetcher.get(req).getCollectionMetadata(projectUri)
-
-        if(!this.project) {
-            throw new Error('getCollectionMetadata returned nothing for ' + projectUri)
-        }
-
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
-            new Breadcrumb(projectUri.toURL(), this.project.name),
+            new Breadcrumb(this.uri.toURL(), this.object.name),
             new Breadcrumb('/addDesignToProject', 'Add Design')
         ])
 

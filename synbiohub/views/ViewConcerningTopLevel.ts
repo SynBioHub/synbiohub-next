@@ -16,6 +16,7 @@ export default class ViewConcerningTopLevel extends View {
     uri:SBHURI
     datastore:Datastore
     graph:SBOL2Graph
+    object:S2Identified
 
     async prepare(req:SBHRequest) {
 
@@ -24,6 +25,8 @@ export default class ViewConcerningTopLevel extends View {
         this.graph = new SBOL2Graph()
 
         await this.datastore.fetchMetadata(this.graph, new S2Identified(this.graph, this.uri.toURI()))
+
+        this.object = this.graph.uriToFacade(this.uri.toURI())
 
     }
 
