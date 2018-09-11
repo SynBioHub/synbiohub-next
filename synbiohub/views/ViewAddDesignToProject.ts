@@ -85,7 +85,7 @@ export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
         let uploader = new SBOLUploader()
         uploader.setGraph(g)
-        uploader.setDestinationGraphUri(req.user.graphUri)
+        uploader.setDestinationGraphUri(this.uri.getGraph())
         uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
 
         await uploader.upload()

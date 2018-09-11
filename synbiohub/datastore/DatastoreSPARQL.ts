@@ -129,6 +129,7 @@ export default class DatastoreSPARQL extends Datastore {
             PREFIX dcterms: <http://purl.org/dc/terms/>
             PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
             CONSTRUCT {
+                <${collection.uri}> sbol:member ?s .
                 ?s a ?type .
                 ?s sbol:displayId ?displayId .
                 ?s dcterms:title ?title .
