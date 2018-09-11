@@ -39,17 +39,17 @@ block modal
 block topLevelPreview
     table.table.table-striped.entry-detail-table.sbh-collection-members-datatable
         thead
-            th Name
             th Identifier
+            th Name
             th Type
             th Description
         tbody
             for member in collection.members
                 tr
                     td
-                        a(href=member.url) #{member.name}
-                    td
                         a(href=member.url) #{member.displayId}
+                    td
+                        a(href=member.url) #{member.name}
                     td
                         a(href=member.url) #{member.facadeType}
                     td #{member.description}
