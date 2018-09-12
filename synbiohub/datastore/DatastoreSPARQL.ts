@@ -135,6 +135,8 @@ export default class DatastoreSPARQL extends Datastore {
                 ?s dcterms:title ?title .
                 ?s dcterms:description ?description .
                 ?s sbh:ownedBy ?ownedBy .
+                ?s sbol:role ?role .
+                ?s sbol:encoding ?encoding .
             } WHERE {
                 <${collection.uri}> sbol:member ?s .
                 ?s a ?type .
@@ -142,6 +144,8 @@ export default class DatastoreSPARQL extends Datastore {
                 OPTIONAL { ?s dcterms:title ?title . }
                 OPTIONAL { ?s dcterms:description ?description . }
                 OPTIONAL { ?s sbh:ownedBy ?ownedBy . }
+                OPTIONAL { ?s sbol:role ?role . }
+                OPTIONAL { ?s sbol:encoding ?encoding . }
                 ${searchQuery ? this.sparqlFilterFromSearchQuery('?s', searchQuery) : ''}
                 ${searchQuery ? this.sparqlBindOrderPredicateFromSearchQuery('?s', searchQuery) : ''}
             } LIMIT 100
@@ -190,6 +194,7 @@ export default class DatastoreSPARQL extends Datastore {
             PREFIX dcterms: <http://purl.org/dc/terms/>
             PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
             CONSTRUCT {
+                ?s sbol:member <${identified.uri}>  .
                 ?s a ?type .
                 ?s sbol:displayId ?displayId .
                 ?s dcterms:title ?title .

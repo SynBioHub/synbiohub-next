@@ -7,7 +7,8 @@ import ViewDescribingTopLevel from "./ViewDescribingTopLevel";
 
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import Breadcrumbs, { Breadcrumb } from 'synbiohub/Breadcrumbs';
-import { S2Collection } from 'sbolgraph';
+import { S2Collection, S2Identified } from 'sbolgraph';
+import SBHURI from '../SBHURI';
 
 export default class ViewCollection extends ViewDescribingTopLevel {
 
@@ -15,9 +16,13 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
     collection:S2Collection
 
+    memberURLs:Map<string,string>
+
     constructor() {
 
         super()
+
+        this.memberURLs = new Map()
 
     }
 
@@ -33,6 +38,10 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
         this.collection = this.object as S2Collection
 
+        for(let member of this.collection.members) {
+            this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
+        }
+
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
             new Breadcrumb(this.uri.toURL(), this.object.displayName)
@@ -47,4 +56,5 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         res.render('templates/views/collection.jade', this)
 
     }
+
 }

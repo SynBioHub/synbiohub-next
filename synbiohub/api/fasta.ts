@@ -16,6 +16,9 @@ import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 
+    throw new Error('TODO reimplement')
+
+    /*
     const uri = SBHURI.fromURIOrURL(req.url)
 
     let result = await DefaultMDFetcher.get(req).getType(uri)
@@ -29,7 +32,7 @@ export default async function(req, res) {
     } else if(result && result==='http://sbols.org/v2#Collection') {
         fastaCollection(req, res)
         return
-    }
+    }*/
 /*
     } else if(result[0] && result[0].type==='http://sbols.org/v2#ModuleDefinition') { 
 fastaModuleDefinition(req, res)
@@ -40,7 +43,7 @@ return
     } else }
 fastaGenericTopLevel(req, res)
 return
-    } */ else {
+} */ /*else {
         let locals = {
             config: config.get(),
             section: 'errors',
@@ -50,6 +53,6 @@ return
         }
         res.send(pug.renderFile('templates/views/errors/errors.jade', locals))
         return
-    }
+    }*/
 };
 

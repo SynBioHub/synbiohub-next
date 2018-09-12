@@ -47,11 +47,11 @@ block topLevelPreview
             for member in collection.members
                 tr
                     td
-                        a(href=member.url) #{member.displayId}
+                        a(href=memberURLs.get(member.uri)) #{member.displayId}
                     td
-                        a(href=member.url) #{member.name}
+                        a(href=memberURLs.get(member.uri)) #{member.name}
                     td
-                        a(href=member.url) #{member.facadeType}
+                        a(href=memberURLs.get(member.uri)) #{member.displayType}
                     td #{member.description}
     div.sbh-project-add
         a(href=uri.toURL() + '/addDesign')

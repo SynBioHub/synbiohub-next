@@ -116,7 +116,6 @@ var api = {
 
 import makePublic from './actions/makePublic';
 import copyFromRemote from './actions/copyFromRemote';
-import createICEPart from './actions/createICEPart';
 import removeCollection from './actions/removeCollection';
 import cloneSubmission from './actions/cloneSubmission';
 import actionResetPassword from './actions/resetPassword';
@@ -156,7 +155,6 @@ var actions = {
     logout,
     makePublic,
     copyFromRemote,
-    createICEPart,
     removeCollection,
     cloneSubmission,
     resetPassword: actionResetPassword,

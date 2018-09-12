@@ -1,5 +1,5 @@
 mixin blast-button(sequence)
-    form(method='post',enctype='multipart/form-data',action=sequence.blastUrl)
+    form(method='post',enctype='multipart/form-data',action=blastUrl)
         input(type='hidden',name='QUERY',value=sequence.elements)
         button(type='submit').btn.btn-sm
             span.fa.fa-bomb

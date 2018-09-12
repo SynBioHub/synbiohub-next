@@ -38,7 +38,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     annotations:Array<any>
     submissionCitations:Array<any>
     collections:Array<any>
-    builds:Array<any>
+    //builds:Array<any>
     mutables:Mutables
     rdfType:any
 
@@ -96,6 +96,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
         // breadcrumbs already got this
         this.collections = this.object.containingCollections
 
+        /*
         let query = loadTemplate('sparql/getImplementations.sparql', {
             uri: this.uri.toURI()
         })
@@ -111,7 +112,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
             this.builds.push(impl['s'])
 
-        }
+        }*/
 
     }
 

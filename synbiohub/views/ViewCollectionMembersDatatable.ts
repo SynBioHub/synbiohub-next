@@ -30,7 +30,7 @@ export default class ViewCollectionMembersDatatable extends ViewConcerningTopLev
             sortParams.column = [
                 'name',
                 'displayId',
-                'type',
+                'displayType',
                 'description'
             ][parseInt(sortParams['column'])]
         }

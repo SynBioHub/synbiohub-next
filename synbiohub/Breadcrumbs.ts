@@ -35,7 +35,7 @@ export default class Breadcrumbs {
 
             // TODO: get collection with most? members rather than just first one returned
 
-            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0].uri)
+            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, SBHURI.fromURIOrURL(collections[0].uri))
             
             return otherCrumbs.join(new Breadcrumbs([ crumb ]))
 
