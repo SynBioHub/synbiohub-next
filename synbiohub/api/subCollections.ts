@@ -1,6 +1,5 @@
 
 
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from '../SBHURI';
 
 async function subCollections(req, res) {

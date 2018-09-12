@@ -3,11 +3,13 @@ import retrieveUris from 'synbiohub/retrieveUris';
 import config from 'synbiohub/config';
 import * as sparql from 'synbiohub/sparql/sparql';
 import loadTemplate from 'synbiohub/loadTemplate';
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from '../SBHURI';
 
 export default async function (req, res) {
 
+    // TODO reimplement
+
+    /*
     const uri = SBHURI.fromURIOrURL(req.url)
 
     let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
@@ -48,7 +50,7 @@ export default async function (req, res) {
 
         res.redirect(share);
     }))
-
+*/
 }
 
 

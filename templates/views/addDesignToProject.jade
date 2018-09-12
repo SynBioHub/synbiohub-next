@@ -6,7 +6,7 @@ block content
         div.submission-header
             p(style='font-size: 1.7em; font-weight: bolder')
                 span(style='font-size: 1em').fa.fa-plus
-                |  Add design to #{project.name}
+                |  Add design to #{object.name}
             p
                 | Designs can be uploaded as GenBank, FASTA, or SBOL files.
             form(action=uri.toURL() + '/addDesign',method='post',enctype='multipart/form-data')
@@ -16,7 +16,7 @@ block content
                             p #{error}
                         br
                 br
-                input(type="hidden", name="project", value=project.uri)
+                input(type="hidden", name="project", value=object.uri)
                 div.row
                     div.col-md-12
                         div.form-group.required

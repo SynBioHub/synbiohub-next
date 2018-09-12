@@ -1,7 +1,8 @@
 
 import { Request } from 'express'
-import DefaultMDFetcher from './fetch/DefaultMDFetcher';
 import SBHURI from 'synbiohub/SBHURI';
+import { SBOL2Graph, S2Identified } from 'sbolgraph';
+import Datastores from 'synbiohub/datastore/Datastores';
 
 export default class Breadcrumbs {
 
@@ -13,43 +14,28 @@ export default class Breadcrumbs {
 
     }
 
-    // TODO: separate requests from this kind of function
-    //
-    static async fromTopLevelObject(req:Request, object:any):Promise<Breadcrumbs> {
-
-        let crumb = new Breadcrumb(object.uri.toString(), object.name)
-
-        let collections:any = await DefaultMDFetcher.get(req).getContainingCollections(object.uri.toString())
-
-        if(collections.length > 0) {
-
-            // TODO: get collection with most? members rather than just first one returned
-
-            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0].uri)
-            
-            return otherCrumbs.join(new Breadcrumbs([ crumb ]))
-
-        } else {
-
-            return new Breadcrumbs([ crumb ])
-
-        }
-    }
-
-
     static async fromTopLevelURI(req:Request, uri:SBHURI):Promise<Breadcrumbs> {
 
-        let name = await DefaultMDFetcher.get(req).getName(uri)
+        let datastore = Datastores.forSBHURI(uri)
 
-        let crumb = new Breadcrumb(uri.toURL(), name)
+        let graph:SBOL2Graph = new SBOL2Graph()
+        let identified:S2Identified = new S2Identified(graph, uri.toURI())
 
-        let collections:any = await DefaultMDFetcher.get(req).getContainingCollections(uri)
+        let p_metadata = datastore.fetchMetadata(graph, identified)
+        let p_collections = datastore.fetchContainingCollectionMetadata(graph, identified)
+
+        await p_metadata
+        await p_collections
+
+        let crumb = new Breadcrumb(uri.toURL(), identified.displayName)
+
+        let collections = identified.containingCollections
 
         if(collections.length > 0) {
 
             // TODO: get collection with most? members rather than just first one returned
 
-            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, collections[0].uri)
+            let otherCrumbs = await Breadcrumbs.fromTopLevelURI(req, SBHURI.fromURIOrURL(collections[0].uri))
             
             return otherCrumbs.join(new Breadcrumbs([ crumb ]))
 

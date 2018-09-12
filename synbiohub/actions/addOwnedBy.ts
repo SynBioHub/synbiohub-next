@@ -3,16 +3,15 @@ import pug = require('pug')
 import * as sparql from 'synbiohub/sparql/sparql'
 import loadTemplate from 'synbiohub/loadTemplate'
 import config from 'synbiohub/config'
-import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
 import retrieveUris from 'synbiohub/retrieveUris'
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function (req, res) {
 
+    // TODO remake as ViewConcerningTopLevel
+
+    /*
     const uri = req.body.uri;
     const userUri = req.body.user;
-
-    const graphUri = getGraphUriFromTopLevelUri(uri, req.user);
 
     var d = new Date();
     var modified = d.toISOString();
@@ -60,6 +59,6 @@ export default async function (req, res) {
 
         return sparql.updateQuery(updateQuery, graphUri);
 
-    }))
+    }))*/
 }
 

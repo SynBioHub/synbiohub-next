@@ -3,12 +3,13 @@ const fs = require('fs')
 import config from 'synbiohub/config'
 const extend = require('xtend')
 
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
-
 import pug = require('pug')
 import SBHURI from 'synbiohub/SBHURI';
 
 export default async function (req, res) {
+
+    // TODO reimplement
+    /*
 
     const uri = SBHURI.fromURIOrURL(req.url)
 
@@ -40,7 +41,7 @@ export default async function (req, res) {
         config.set('collectionIcons', collectionIcons)
     }
 
-    res.redirect(req.body.collectionUrl)
+    res.redirect(req.body.collectionUrl)*/
 }
 
 

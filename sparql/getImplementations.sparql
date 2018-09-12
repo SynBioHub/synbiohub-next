@@ -1,10 +1,8 @@
-PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
-PREFIX sbol2: <http://sbols.org/v2#>
-PREFIX prov: <http://www.w3.org/ns/prov#>
 
-SELECT ?s WHERE {
+PREFIX intbio: <http://intbio.ncl.ac.uk#>
+PREFIX sbol: <http://sbols.org/v2#>
 
- ?s a sbol2:Implementation .
- ?s prov:wasDerivedFrom <$uri>.
-
+SELECT ?impl WHERE {
+	?impl intbio:built $uri . 
 }
+

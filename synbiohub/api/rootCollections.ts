@@ -1,4 +1,3 @@
-import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 
 async function rootCollections(req, res) {
 

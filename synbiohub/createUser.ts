@@ -1,14 +1,10 @@
 
 import Sequelize = require('sequelize');
 import sha1 = require('sha1');
-import * as util from './util';
 import config from './config';
 import db from './db';
 
 function createUser(info) {
-
-    var graphUri = 
-        config.get('databasePrefix') + util.createTriplestoreID(info.username)
 
     return db.model.User.findOrCreate({
 
@@ -24,7 +20,6 @@ function createUser(info) {
             username: info.username,
             affiliation: info.affiliation,
             password: sha1(config.get('passwordSalt') + sha1(info.password)),
-            graphUri: graphUri,
             isAdmin: info.isAdmin !== undefined ? info.isAdmin : false,
             isCurator: info.isCurator !== undefined ? info.isCurator : false,
             isMember: info.isMember !== undefined ? info.isMember : false

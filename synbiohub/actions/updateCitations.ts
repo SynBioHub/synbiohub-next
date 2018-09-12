@@ -7,14 +7,15 @@ import loadTemplate from 'synbiohub/loadTemplate'
 
 import config from 'synbiohub/config'
 
-import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
-
 import wiky from 'synbiohub/wiky/wiky'
 
 import retrieveCitations from 'synbiohub/citations'
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
+
+    // TODO reimplement
+
+    /*
 
     const uri = req.body.uri
 
@@ -70,5 +71,5 @@ export default async function(req, res) {
         canEdit: true
     }
 
-    res.send(pug.renderFile('templates/partials/citations.jade', locals))
+    res.send(pug.renderFile('templates/partials/citations.jade', locals))*/
 }

@@ -6,7 +6,6 @@ import * as sparql from './sparql/sparql';
 import filesize = require('filesize');
 import assert = require('assert')
 import sha1 = require('sha1');
-import SBOLFetcherLocal from 'synbiohub/fetch/SBOLFetcherLocal';
 import { S2Attachment } from 'sbolgraph';
 
 export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {

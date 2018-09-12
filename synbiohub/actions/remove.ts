@@ -4,11 +4,13 @@ import loadTemplate from 'synbiohub/loadTemplate';
 import config from 'synbiohub/config';
 import * as sparql from 'synbiohub/sparql/sparql';
 import pug = require('pug');
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from '../SBHURI';
 
 export default async function(req, res) {
 
+  // TODO reimplement
+
+  /*
     req.setTimeout(0) // no timeout
 
     const uri = SBHURI.fromURIOrURL(req.url)
@@ -60,5 +62,5 @@ export default async function(req, res) {
   await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
   res.redirect('/manage');
-
+*/
   };

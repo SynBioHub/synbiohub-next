@@ -7,14 +7,13 @@ block topLevelIcon
     span.topLevelIcon.fa.fa-bars
 
 block topLevelPreview
-    if meta.elements
-        div.row
-            div.col-md-12
-                div.sbh-sequence
-                    div.sbh-sequence-title
-                        div.float-right
-                            +blast-button(meta)
-                        | Sequence (#{meta.length} #{meta.lengthUnits})
-                    div.sbh-sequence-body
-                        pre #{meta.formatted}
+    div.row
+        div.col-md-12
+            div.sbh-sequence
+                div.sbh-sequence-title
+                    div.float-right
+                        +blast-button(sequence)
+                    | Sequence (#{sequence.elements.length} #{sequence.lengthUnits})
+                div.sbh-sequence-body
+                    pre #{formatted}
 

@@ -2,8 +2,10 @@
 import { SBHRequest } from "synbiohub/SBHRequest";
 import View from "synbiohub/views/View";
 import { Response } from 'express'
-import MDFetcherLocal from "../fetch/MDFetcherLocal";
 import SBHURI from "../SBHURI";
+import Datastores from "../datastore/Datastores";
+import { SBOL2Graph } from "sbolgraph";
+import Datastore from "synbiohub/datastore/Datastore";
 
 interface Project {
     url:string
@@ -27,9 +29,12 @@ export default class ViewIndex extends View {
 
         if(req.user) {
 
-            let collections = await (new MDFetcherLocal(req.user.graphUri)).getRootCollectionMetadata()
+            let userDatastore:Datastore = Datastores.forUser(req.user)
+            let graph:SBOL2Graph = new SBOL2Graph()
 
-            for(let collection of collections) {
+            await userDatastore.fetchRootCollectionMetadata(graph)
+
+            for(let collection of graph.collections) {
 
                 this.recentProjects.push({
                     url: SBHURI.fromURIOrURL(collection.uri).toURL(),

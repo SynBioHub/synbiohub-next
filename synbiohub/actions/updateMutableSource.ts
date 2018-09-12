@@ -7,12 +7,13 @@ import loadTemplate from 'synbiohub/loadTemplate'
 
 import config from 'synbiohub/config'
 
-import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri'
-
 import wiky from 'synbiohub/wiky/wiky'
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 
 export default async function(req, res) {
+
+    // TODO reimplement
+
+    /*
 
     const uri = req.body.uri
 
@@ -52,6 +53,7 @@ export default async function(req, res) {
     }
 
     res.send(pug.renderFile('templates/partials/mutable-source.jade', locals))
+    */
 }
 
 

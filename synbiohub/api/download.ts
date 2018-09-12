@@ -3,17 +3,9 @@ import pug = require('pug');
 import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
 import uploads from 'synbiohub/uploads';
-import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 import SBHURI from 'synbiohub/SBHURI';
 
 export default async function(req, res) {
-
-    const uri = SBHURI.fromURIOrURL(req.url)
-
-    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
-
-    const sbol = result.sbol
-    const object = result.object
 
     throw new Error('attachments need updating to sbolgraph')
 

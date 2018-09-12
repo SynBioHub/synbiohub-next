@@ -5,7 +5,6 @@ import config from 'synbiohub/config'
 
 var pug = require('pug')
 
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
 import SBHURI from 'synbiohub/SBHURI';
 

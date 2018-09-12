@@ -1,5 +1,4 @@
 
-import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
 import wiky from "synbiohub/wiky/wiky";
 import shareImages from "synbiohub/shareImages";
 import * as attachments from 'synbiohub/attachments'
@@ -11,7 +10,6 @@ import {queryJson} from '../sparql/sparql';
 import { Request, Response } from 'express'
 import filterAnnotations from "../filterAnnotations";
 import getCitationsForSubject from "./getCitationsForSubject";
-import DefaultMDFetcher from "../fetch/DefaultMDFetcher";
 import Breadcrumbs from "../Breadcrumbs";
 import { SBHRequest } from "synbiohub/SBHRequest";
 import { S2Identified, SBOL2Graph } from "sbolgraph";
@@ -30,7 +28,6 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     topLevelShareMenu:Menu
     topLevelOtherMenu:Menu
 
-    sbol:SBOL2Graph
     object:S2Identified
 
     breadcrumbs:Breadcrumbs
@@ -38,11 +35,10 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     sbolUrl:string
     searchUsesUrl:string
     canEdit:boolean
-    remote:any
     annotations:Array<any>
     submissionCitations:Array<any>
     collections:Array<any>
-    builds:Array<any>
+    //builds:Array<any>
     mutables:Mutables
     rdfType:any
 
@@ -52,24 +48,22 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         this.uri = SBHURI.fromURIOrURL(req.url)
 
-        let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.uri)
+        await this.datastore.fetchEverything(this.graph, new S2Identified(this.graph, this.uri.toURI()))
 
-        this.sbol = result.sbol
-        this.object = result.object
-        this.remote = result.remote
+        this.object = this.graph.uriToFacade(this.uri.toURI())
 
         this.buildTopLevelMenus(this.object.displayId)
 
         this.mutables = new Mutables(this.object)
 
-        this.breadcrumbs = await Breadcrumbs.fromTopLevelObject(req, this.object)
+        this.breadcrumbs = await Breadcrumbs.fromTopLevelURI(req, this.uri)
 
         this.sbolUrl = this.uri.toURL() + '/' + this.object.displayId + '.xml'
         this.searchUsesUrl = this.uri.toURL() + '/uses'
 
-        this.remote = null
-
         this.canEdit = false
+
+        /* TODO
 
         if(!this.remote && req.user) {
 
@@ -80,7 +74,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
                 this.canEdit = true
             }
 
-        }
+        }*/
 
         /*
         this.annotations = filterAnnotations(req, this.object.annotations)
@@ -99,8 +93,10 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         this.submissionCitations = await getCitationsForSubject(this.uri, this.uri.getGraph())
 
-        this.collections = await DefaultMDFetcher.get(req).getContainingCollections(this.uri)
+        // breadcrumbs already got this
+        this.collections = this.object.containingCollections
 
+        /*
         let query = loadTemplate('sparql/getImplementations.sparql', {
             uri: this.uri.toURI()
         })
@@ -116,7 +112,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
             this.builds.push(impl['s'])
 
-        }
+        }*/
 
     }
 

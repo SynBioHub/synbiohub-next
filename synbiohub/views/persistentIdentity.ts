@@ -3,7 +3,6 @@ import async = require('async');
 import config from 'synbiohub/config';
 import pug = require('pug');
 import topLevel from './topLevel';
-import DefaultMDFetcher from 'synbiohub/fetch/DefaultMDFetcher';
 import SBHURI from 'synbiohub/SBHURI';
 
 export default function(req, res) {
