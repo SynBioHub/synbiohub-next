@@ -102,23 +102,16 @@ block content
             div.card-body
                 table.table.table-striped.entry-detail-table
 
-                    if object.types && object.types.length > 0
+                    if typeNames && typeNames.length > 0
                         tr
                             td Types
                             td
-                                for type in object.types
-                                    if type.description
-                                        != type.description.name
-                                        a(href=type.term,title='Learn more about this type')
-                                            span.fa.fa-info-circle
-                                        a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
-                                            span.fa.fa-search
-                                    else
-                                        != type.uri
+                                for type in typeNames
+                                    if type.name
+                                        != type.name
                                         a(href=type.uri,title='Learn more about this type')
                                             span.fa.fa-info-circle
-                                        a(href='/search/type=<'+encodeURIComponent(type.uri)+'>&',title='Find all records with this type')
-                                            span.fa.fa-search
+
                                     br
 
                     if object.roles && object.roles.length > 0

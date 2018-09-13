@@ -31,6 +31,8 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
     displayList:any
 
     roleNames:any
+    
+    typeNames:any
 
     async prepare(req:SBHRequest) {
 
@@ -69,10 +71,8 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
         this.roleNames = []
 
         for(let role of this.componentDefinition.roles) {
-            console.log('WOOOOOOOOOOO')
-            console.log(role)
+
             if (!(role.indexOf('/SO:') === -1)){
-                console.log('GOING IN')
                 this.roleNames.push({'name' : await uriToName(role), 'uri' : role})
             }
 
@@ -81,10 +81,18 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
                 
             }
 
+            
         }
 
-        console.log('HI THERE!!!!!!!!!')
-        console.log(this.roleNames)
+        this.typeNames = []
+
+        for(let type of this.componentDefinition.types) {
+
+            this.typeNames.push({'name' : type.split('#').pop(), 'uri' : type})
+
+        }
+
+        console.log(this.typeNames)
     }
 
     async render(res:Response) {
