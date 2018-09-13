@@ -15,7 +15,7 @@ import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
-import { Specifiers } from 'bioterms';
+import { Specifiers, uriToName } from 'bioterms';
 import { S2ComponentDefinition } from 'sbolgraph';
 
 export default class ViewComponentDefinition extends ViewDescribingTopLevel {
@@ -24,9 +24,13 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
         super()
     }
 
-    meta:any
+    componentDefinition:S2ComponentDefinition
+    
+    topLevelHumanType:String
 
     displayList:any
+
+    roleNames:any
 
     async prepare(req:SBHRequest) {
 
@@ -36,26 +40,51 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
             name: 'ComponentDefinition'
         }
 
+        this.componentDefinition = this.object as S2ComponentDefinition
+
         let types = (this.object as S2ComponentDefinition).types
 
         let isDNA = types.indexOf(Specifiers.SBOL2.Type.DNA) !== -1
 
-        if (isDNA) {
-            this.meta.displayList = getDisplayList(this.object, config, req.url.toString().endsWith('/share'))
-        }
+        // visbol was here
 
 
         if(isDNA) {
-            this.meta.topLevelHumanType = 'DNA Part'
+            this.topLevelHumanType = 'DNA Part'
         } else if(types.indexOf(Specifiers.SBOL2.Type.RNA) !== -1) {
-            this.meta.topLevelHumanType = 'RNA Part'
+            this.topLevelHumanType = 'RNA Part'
         } else if(types.indexOf(Specifiers.SBOL2.Type.Protein) !== -1) {
-            this.meta.topLevelHumanType = 'Protein'
+            this.topLevelHumanType = 'Protein'
         } else if(types.indexOf(Specifiers.SBOL2.Type.SmallMolecule) !== -1) {
-            this.meta.topLevelHumanType = 'Small Molecule'
+            this.topLevelHumanType = 'Small Molecule'
         } else {
-            this.meta.topLevelHumanType = 'Part'
+            this.topLevelHumanType = 'Part'
         }
+
+
+        for(let sequence of this.componentDefinition.sequences) {
+            await this.datastore.fetchMetadata(this.graph, sequence)
+        }
+
+        this.roleNames = []
+
+        for(let role of this.componentDefinition.roles) {
+            console.log('WOOOOOOOOOOO')
+            console.log(role)
+            if (!(role.indexOf('/SO:') === -1)){
+                console.log('GOING IN')
+                this.roleNames.push({'name' : await uriToName(role), 'uri' : role})
+            }
+
+            else{
+                this.roleNames.push({'name' : role.split('/').pop(), 'uri' : role})
+                
+            }
+
+        }
+
+        console.log('HI THERE!!!!!!!!!')
+        console.log(this.roleNames)
     }
 
     async render(res:Response) {

@@ -5,19 +5,17 @@ block topLevelIcon
     span.sbh-toplevel-icon.fa.fa-dna
 
 block topLevelPreview
-    if meta.displayList
-        div.sbh-visbol-container
-            div#design
+// visbol was here
 
 block topLevelPropertyTable
 
-    if meta.sequences.length > 0
+    if componentDefinition.sequences.length > 0
         tr
             td Sequences
             td
-                for sequence in meta.sequences
-                    a(href=sequence.url)
-                        != sequence.id
+                for sequence in componentDefinition.sequences
+                    a(href=sequence.uri)
+                        != sequence.displayId
                         if (sequence.version)
                             != ' (Version '+sequence.version+')'
                     br
