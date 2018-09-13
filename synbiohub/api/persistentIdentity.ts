@@ -5,7 +5,7 @@ import config from 'synbiohub/config'
 
 var pug = require('pug')
 
-import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+
 import SBHURI from 'synbiohub/SBHURI';
 
 var sbol = require('./sbol')

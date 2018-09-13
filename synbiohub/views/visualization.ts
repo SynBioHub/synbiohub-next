@@ -7,7 +7,7 @@ import * as sparql from 'synbiohub/sparql/sparql-collate';
 import getDisplayList from 'visbol/lib/getDisplayList';
 import config from 'synbiohub/config';
 import striptags = require('striptags');
-import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+
 import SBHURI from '../SBHURI';
 
 export default async function (req, res) {

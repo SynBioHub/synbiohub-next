@@ -1,6 +1,6 @@
 
 import ViewDescribingTopLevel from './ViewDescribingTopLevel';
-import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
+
 import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 
 import { Request, Response } from 'express'

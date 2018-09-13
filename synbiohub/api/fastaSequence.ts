@@ -1,6 +1,6 @@
 import pug = require('pug');
 import config from 'synbiohub/config';
-import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+
 import { S2Sequence } from 'sbolgraph';
 import { Specifiers } from 'bioterms';
 import SBHURI from 'synbiohub/SBHURI';

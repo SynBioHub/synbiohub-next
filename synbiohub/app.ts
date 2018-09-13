@@ -44,7 +44,7 @@ import backup from './views/admin/backup';
 import backupRestore from './views/admin/backupRestore';
 import registries from './views/admin/registries';
 import mail from './views/admin/mail';
-import createImplementation from './views/createImplementation';
+import createImplementation from './views/ViewCreateImplementation';
 import createTest from './views/createTest';
 import organisms from './loadOrganisms';
 

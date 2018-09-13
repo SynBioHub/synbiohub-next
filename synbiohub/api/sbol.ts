@@ -3,7 +3,7 @@ import pug = require('pug');
 import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
 import * as fs from 'mz/fs';
-import DefaultSBOLFetcher from 'synbiohub/fetch/DefaultSBOLFetcher';
+
 import SBHURI from 'synbiohub/SBHURI';
 
 export default async function(req, res) {

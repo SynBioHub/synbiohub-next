@@ -1,6 +1,6 @@
 
 import ViewDescribingTopLevel from './ViewDescribingTopLevel';
-import DefaultSBOLFetcher from "../fetch/DefaultSBOLFetcher";
+
 import {getAttachmentsFromTopLevel, getAttachmentsFromList} from 'synbiohub/attachments';
 import loadTemplate from '../loadTemplate';
 
