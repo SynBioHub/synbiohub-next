@@ -24,21 +24,33 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
         super()
     }
 
-    meta:any
-
+    moduleDefinition:S2ModuleDefinition
+    
     modules:Array<any>
     roles:Array<any>
     models:Array<any>
     functionalComponents:Array<any>
     interactions:Array<any>
 
-    get moduleDefinition() {
-        return this.object as S2ModuleDefinition
-    }
-
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
+
+        this.rdfType = {
+            name: 'ModuleDefinition'
+        }
+
+        this.moduleDefinition = this.object as S2ModuleDefinition
+
+        this.modules = (this.object as S2ModuleDefinition).modules
+
+        this.functionalComponents = (this.object as S2ModuleDefinition).functionalComponents
+
+        this.interactions = (this.object as S2ModuleDefinition).interactions
+
+        this.models = (this.object as S2ModuleDefinition).models
+
+        
 
     }
 

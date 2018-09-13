@@ -91,8 +91,7 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
             this.typeNames.push({'name' : type.split('#').pop(), 'uri' : type})
 
         }
-
-        console.log(this.typeNames)
+        
     }
 
     async render(res:Response) {
