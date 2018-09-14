@@ -16,7 +16,8 @@ import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
-import { S2ModuleDefinition } from 'sbolgraph';
+import { S2ModuleDefinition, S2FunctionalComponent, S2Interaction } from 'sbolgraph';
+
 
 export default class ViewModuleDefinition extends ViewDescribingTopLevel {
 
@@ -29,8 +30,8 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
     modules:Array<any>
     roles:Array<any>
     models:Array<any>
-    functionalComponents:Array<any>
-    interactions:Array<any>
+    functionalComponents:S2FunctionalComponent[]
+    interactions:Array<S2Interaction>
 
     async prepare(req:SBHRequest) {
 
@@ -40,17 +41,32 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
             name: 'ModuleDefinition'
         }
 
+        
         this.moduleDefinition = this.object as S2ModuleDefinition
 
-        this.modules = (this.object as S2ModuleDefinition).modules
+        this.modules = this.moduleDefinition.modules
 
-        this.functionalComponents = (this.object as S2ModuleDefinition).functionalComponents
+        this.functionalComponents = this.moduleDefinition.functionalComponents
 
-        this.interactions = (this.object as S2ModuleDefinition).interactions
+        this.interactions = this.moduleDefinition.interactions
 
-        this.models = (this.object as S2ModuleDefinition).models
+        this.models = this.moduleDefinition.models
 
-        
+        for(let functionalComponent of this.functionalComponents) {
+            await this.datastore.fetchEverything(this.graph, functionalComponent)
+            await this.datastore.fetchMetadata(this.graph, functionalComponent.definition)
+        }
+
+        for(let interaction of this.interactions) {
+            await this.datastore.fetchMetadata(this.graph, interaction)
+        }
+
+        console.log('HI THERE')
+        console.log(this.graph.serializeXML())
+
+        console.log(this.interactions)
+
+        // console.log(this.functionalComponents[0].name)
 
     }
 
@@ -60,5 +76,4 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
 
     }
 }
-
 

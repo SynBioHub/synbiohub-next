@@ -38,11 +38,11 @@ block topLevelPropertyTable
                     br
             td
                 for functionalComponent in functionalComponents
-                    a(href=functionalComponent.url) #{functionalComponent.defId}
+                    a(href=functionalComponent.uri) #{functionalComponent.displayId}
                     br
             td
                 for functionalComponent in functionalComponents
-                    a(href=functionalComponent.url) #{functionalComponent.defName}
+                    a(href=functionalComponent.uri) #{functionalComponent.displayName}
                     br
     if interactions.length > 0
         for interaction in interactions
