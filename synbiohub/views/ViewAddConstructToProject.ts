@@ -24,17 +24,28 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
     redirect:string|null
     errors:any[]
+    submission:any
 
-    constructor() {
+    agent_names:any[]
+    agent_uris:any[]
+
+    plan_names:any[]
+    plan_uris:any[]
+
+    config:any
+
+    canEdit:boolean
+
+    constructor(req) {
        
         super()
-    }
+
+        }
     
     async prepare(req:SBHRequest){
 
         await super.prepare(req)
 
-        console.log('HELLOOOOOOOOOOOOOOO')
         if (req.method === 'POST'){
 
             await this.submitPost(req)
@@ -52,7 +63,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         if(this.redirect) {
             res.redirect(this.redirect)
         } else {
-            res.render('templates/views/createImplementation.jade', this)
+            res.render('templates/views/addConstructToProject.jade', this)
         }
 
     }
@@ -61,15 +72,25 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
+
+        this.errors = []
+
+        this.config = config.get()
+
+        this.user = req.user
+
+        this.canEdit = true
+
+        this.submission = {
+            createdBy: '',
+        }
+
+
         req.setTimeout(0) // no timeout
         
-        var plan_names = []
-        var plan_uris = []
-    
-        var submissionData = extend({
-            createdBy: req.user,
-        }, submissionData)
-    
+        this.plan_names = []
+        this.plan_uris = []
+
         var locals = extend({
           config: config.get(),
           user: req.user,
@@ -79,25 +100,18 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         }, locals)
     
         var plan_query = "PREFIX prov: <http://www.w3.org/ns/prov#> SELECT ?s WHERE { ?s a prov:Plan .}"
-    
-    
+     
         let plans = await sparql.queryJson(plan_query, uri.getGraph())
-    
-    
+
         for (var plan of plans){
-          plan_names.push(plan['s'].split('/').pop())
-          plan_uris.push(plan['s'])
+          this.plan_names.push(plan['s'].split('/').pop())
+          this.plan_uris.push(plan['s'])
         }
     
         let users = await db.model.User.findAll()
     
-    
-        locals = extend({
-          agent_names: users.map(x=>x.name),
-          agent_uris: users.map(x=>x.graphUri),
-          plan_names: plan_names,
-          plan_uris: plan_uris
-        }, locals)
+        this.agent_names = users.map(x=>x.name)
+        this.agent_uris= users.map(x=>x.graphUri)
     
     }
     
