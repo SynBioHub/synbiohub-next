@@ -50,18 +50,18 @@ block topLevelPropertyTable
                 td
                     a(href='http://sbols.org/v2#Interaction', title='http://sbols.org/v2#Interaction') Interaction
                 td
-                    != interaction.defName
+                    != interaction.displayName
                 td
-                    a(href=interaction.typeURL, title=interaction.typeURL) #{interaction.typeStr}
+                    a(href=interaction.type, title=interaction.type) #{interaction.type}
             if interaction.participations.length > 0
                 for participation in interaction.participations
                     tr
                         td
                             a(href='http://sbols.org/v2#Participation', title='http://sbols.org/v2#Participation') &nbsp; Participation
                         td
-                            a(href=participation.participant.url, title=participation.participant.url) #{participation.participant.defName}
+                            a(href=participation.participant.uri, title=participation.participant.uri) #{participation.participant.displayId}
                         td
-                            a(href=participation.roleURL, title=participation.roleURL) #{participation.roleStr}
+                            a(href=participation.roles[0], title=participation.roles[0]) #{participation.displayName}
 
     if models.length > 0
         tr

@@ -17,6 +17,7 @@ import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { S2ModuleDefinition, S2FunctionalComponent, S2Interaction } from 'sbolgraph';
+import S2Participation from 'sbolgraph/dist/sbol2/S2Participation';
 
 
 export default class ViewModuleDefinition extends ViewDescribingTopLevel {
@@ -32,6 +33,7 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
     models:Array<any>
     functionalComponents:S2FunctionalComponent[]
     interactions:Array<S2Interaction>
+    participations:Array<S2Participation>
 
     async prepare(req:SBHRequest) {
 
@@ -58,14 +60,20 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
         }
 
         for(let interaction of this.interactions) {
+            await this.datastore.fetchEverything(this.graph, interaction)
             await this.datastore.fetchMetadata(this.graph, interaction)
+        
+            for(let participation of interaction.participations){
+                await this.datastore.fetchEverything(this.graph, participation)
+                await this.datastore.fetchMetadata(this.graph, participation)
+            }
         }
-
         console.log('HI THERE')
         console.log(this.graph.serializeXML())
 
-        console.log(this.interactions)
+        console.log(this.interactions[0])
 
+        
         // console.log(this.functionalComponents[0].name)
 
     }
