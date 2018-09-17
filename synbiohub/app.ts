@@ -44,7 +44,7 @@ import backup from './views/admin/backup';
 import backupRestore from './views/admin/backupRestore';
 import registries from './views/admin/registries';
 import mail from './views/admin/mail';
-import createImplementation from './views/ViewCreateImplementation';
+import ViewAddConstructToProject from './views/ViewAddConstructToProject';
 import createTest from './views/createTest';
 import organisms from './loadOrganisms';
 
@@ -59,7 +59,6 @@ var views = {
     setup,
     addOwner,
     visualization,
-    createImplementation,
     createTest,
 
 
@@ -451,8 +450,8 @@ function App() {
         // Both public and private endpoints
 
         switch(extraPart) {
-        case 'createImplementation':
-            return requireUser(req, res, views.createImplementation)
+        case 'addConstruct':
+            return chain(req, res, requireUser, dispatchToView(ViewAddConstructToProject))
         case 'createTest':
             return requireUser(req, res, views.createTest)
         case 'cloneSubmission':

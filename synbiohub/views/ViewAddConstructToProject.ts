@@ -20,7 +20,7 @@ import SBHURI from 'synbiohub/SBHURI';
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
 
-export default class ViewCreateImplementation extends ViewConcerningTopLevel{
+export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
     redirect:string|null
     errors:any[]
@@ -34,6 +34,7 @@ export default class ViewCreateImplementation extends ViewConcerningTopLevel{
 
         await super.prepare(req)
 
+        console.log('HELLOOOOOOOOOOOOOOO')
         if (req.method === 'POST'){
 
             await this.submitPost(req)
