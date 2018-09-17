@@ -35,6 +35,7 @@ export default abstract class Datastore {
 
     abstract async fetchContainingCollectionMetadata(intoGraph:SBOL2Graph, identified:S2Identified)
 
+    abstract async fetchPlans(intoGraph:SBOL2Graph)
 
 
 

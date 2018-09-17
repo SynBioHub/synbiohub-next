@@ -212,6 +212,20 @@ export default class DatastoreSPARQL extends Datastore {
 
     }
 
+    async fetchPlans(intoGraph:SBOL2Graph){
+
+        await this.sparqlConstruct(intoGraph, `
+            PREFIX prov: <http://www.w3.org/ns/prov#>
+            CONSTRUCT {
+                ?s ?p ?o .
+            } WHERE {
+                ?s a prov:Plan .
+                ?s ?p ?o .
+            } LIMIT 1000
+        `)
+
+    }
+
 
 }
 

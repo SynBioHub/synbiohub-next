@@ -19,6 +19,7 @@ import FMAPrefix from '../FMAPrefix'
 import SBHURI from 'synbiohub/SBHURI';
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
+import { S2ProvPlan } from 'sbolgraph';
 
 export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
@@ -29,8 +30,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     agent_names:any[]
     agent_uris:any[]
 
-    plan_names:any[]
-    plan_uris:any[]
+    plans:S2ProvPlan[]
 
     config:any
 
@@ -72,7 +72,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
-
         this.errors = []
 
         this.config = config.get()
@@ -84,29 +83,15 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.submission = {
             createdBy: '',
         }
-
-
-        req.setTimeout(0) // no timeout
         
-        this.plan_names = []
-        this.plan_uris = []
+        await this.datastore.fetchPlans(this.graph)
 
-        var locals = extend({
-          config: config.get(),
-          user: req.user,
-          errors: [],
-          submission: submissionData,
-          canEdit: true,
-        }, locals)
-    
-        var plan_query = "PREFIX prov: <http://www.w3.org/ns/prov#> SELECT ?s WHERE { ?s a prov:Plan .}"
-     
-        let plans = await sparql.queryJson(plan_query, uri.getGraph())
+        this.plans = this.graph.provPlans
 
-        for (var plan of plans){
-          this.plan_names.push(plan['s'].split('/').pop())
-          this.plan_uris.push(plan['s'])
-        }
+        // for (let plan of plans){
+        //   this.plan_names.push(plan['s'].split('/').pop())
+        //   this.plan_uris.push(plan['s'])
+        // }
     
         let users = await db.model.User.findAll()
     
