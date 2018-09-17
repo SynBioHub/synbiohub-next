@@ -73,7 +73,7 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
         for(let role of this.componentDefinition.roles) {
 
             if (!(role.indexOf('/SO:') === -1)){
-                this.roleNames.push({'name' : await uriToName(role), 'uri' : role})
+                this.roleNames.push({'name' : uriToName(role), 'uri' : role})
             }
 
             else{

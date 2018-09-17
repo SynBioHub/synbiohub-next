@@ -26,11 +26,11 @@ export default class DatastoreSPARQL extends Datastore {
 
     async sparqlConstruct(intoGraph:SBOL2Graph, query:string) {
 
-        console.log('GUIIIII ' + this.sparqlConfig.graphURI)
+        // console.log('GUIIIII ' + this.sparqlConfig.graphURI)
 
-        console.log('>>>>>>>>>>>>>>>>>>>> QUERY')
-        console.log(query)
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        // console.log('>>>>>>>>>>>>>>>>>>>> QUERY')
+        // console.log(query)
+        // console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
         let result = await request({
             method: 'get',
@@ -41,9 +41,9 @@ export default class DatastoreSPARQL extends Datastore {
             }
         })
 
-        console.log('>>>>>>>>>>>>>>>>>>>> LOAD')
-        console.log(result)
-        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        // console.log('>>>>>>>>>>>>>>>>>>>> LOAD')
+        // console.log(result)
+        // console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
         await intoGraph.loadString(result)
     }
