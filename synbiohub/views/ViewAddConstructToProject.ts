@@ -27,8 +27,8 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     errors:any[]
     submission:any
 
-    agent_names:any[]
-    agent_uris:any[]
+    agentNames:any[]
+    agentURIs:any[]
 
     plans:S2ProvPlan[]
 
@@ -36,11 +36,18 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
     canEdit:boolean
 
+    constructName:string
+    plan1:string
+    plan2:string
+    agent:string
+    description:string
+    location:string
+
     constructor(req) {
        
         super()
 
-        }
+    }
     
     async prepare(req:SBHRequest){
 
@@ -73,16 +80,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let uri = SBHURI.fromURIOrURL(req.url)
     
         this.errors = []
-
-        this.config = config.get()
-
-        this.user = req.user
-
-        this.canEdit = true
-
-        this.submission = {
-            createdBy: '',
-        }
         
         await this.datastore.fetchPlans(this.graph)
 
@@ -95,8 +92,17 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let users = await db.model.User.findAll()
     
-        this.agent_names = users.map(x=>x.name)
-        this.agent_uris= users.map(x=>x.graphUri)
+        this.agentNames = users.map(x=>x.name)
+        this.agentURIs= users.map(x=>x.graphUri)
+
+
+        this.constructName = ''
+        this.plan1 = ''
+        this.plan2 = ''
+        this.agent = ''
+        this.description = ''
+        this.location = ''
+    
     
     }
     
