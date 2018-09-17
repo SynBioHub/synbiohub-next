@@ -19,13 +19,12 @@ import FMAPrefix from '../FMAPrefix'
 import SBHURI from 'synbiohub/SBHURI';
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
-import { S2ProvPlan } from 'sbolgraph';
+import { S2ProvPlan, SBOL2Graph } from 'sbolgraph';
 
 export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
     redirect:string|null
     errors:any[]
-    submission:any
 
     agentNames:any[]
     agentURIs:any[]
@@ -52,6 +51,15 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     async prepare(req:SBHRequest){
 
         await super.prepare(req)
+
+        let users = await db.model.User.findAll()
+    
+        this.agentNames = users.map(x=>x.name)
+        this.agentURIs= users.map(x=>config.get('databasePrefix') + 'user/' + x.username)
+
+        await this.datastore.fetchPlans(this.graph)
+
+        this.plans = this.graph.provPlans
 
         if (req.method === 'POST'){
 
@@ -89,12 +97,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         //   this.plan_names.push(plan['s'].split('/').pop())
         //   this.plan_uris.push(plan['s'])
         // }
-    
-        let users = await db.model.User.findAll()
-    
-        this.agentNames = users.map(x=>x.name)
-        this.agentURIs= users.map(x=>x.graphUri)
-
 
         this.constructName = ''
         this.plan1 = ''
@@ -110,26 +112,22 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
-        req.setTimeout(0) // no timeout
-    
         let { fields, files } = await parseForm(req)
     
         var errors = []
     
-        const submissionData = {
-            construct_name: fields['construct_name'][0],
-            plan1: fields['plan1'][0],
-            plan2: fields['plan2'][0],
-            agent: fields['agent'][0],
-            description: fields['description'][0],
-            location: fields['location'][0]
-    
-        }
+        this.constructName = fields['constructName'][0],
+        this.plan1 = fields['plan1'][0],
+        this.plan2 = fields['plan2'][0],
+        this.agent = fields['agent'][0],
+        this.description = fields['description'][0],
+        this.location = fields['location'][0]
+
     
         var chosen_plan = ''
         var chosen_plan_uri = ''
     
-        if (fields['construct_name'][0] === ''){
+        if (fields['constructName'][0] === ''){
     
             errors.push('Please give the built design a name.')
     
@@ -195,25 +193,8 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
           }
     
         }
-    
-        var projectId = fields['construct_name'][0].replace(/\s+/g, '')
-        var displayId = projectId + '_collection'
-        var version = '1'
-    
-        var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
-    
-        var templateParams = {
-            uri: newURI.toURI()
-        }
-    
-        var countQuery = "PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#> SELECT * WHERE { <" + templateParams['uri'] + "> sbh:topLevel  <" + templateParams['uri'] + ">}"
-        var count = await sparql.queryJson(countQuery, uri.getGraph())
-        count = JSON.parse(JSON.stringify(count))
-    
-        if (count!=0){
-          errors.push('An entry with this name already exists.')
-    
-        }
+
+        
     
         if (errors.length > 0) {
 
@@ -221,61 +202,66 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             return
             
         }
-    
-        else{
-    
-            var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
-            var taxId = org_search[0].split('|')[1]
-    
-            var form_vals = {
-    
-                prefix: uri.getURIPrefix(),
-                displayId: displayId,
-                version: version,
-                agent_str: JSON.parse(fields['agent'])[1],
-                agent_uri: JSON.parse(fields['agent'])[0],
-                description: fields['description'][0],
-                location: fields['location'][0],
-                organism: fields['organism'][0],
-                taxId: taxId,
-                chosen_plan: chosen_plan,
-                chosen_plan_uri: chosen_plan_uri,
-                graphUri: uri.getGraph(),
-                uri: uri,
-                collection_url: newURI
         
-            }
-            
+        var projectId = fields['constructName'][0].replace(/\s+/g, '')
+        var displayId = projectId + '_collection'
+        var version = '1'
     
-            var sbol_results = await this.createSBOLImplementation(form_vals)
-            var doc = sbol_results[0]
-            var impl_uri = sbol_results[1]
-    
-            let fileStream = await fs.createReadStream(files['file'][0]['path']);
-            var uploadInfo = await uploads.createUpload(fileStream)
-            const { hash, size, mime } = uploadInfo
-    
-            if (files['file'][0]['size'] != 0){
-    
-                throw new Error('TODO reimplement')
-                /*
-              await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-              files['file'][0]['originalFilename'], hash, size, mime,
-              graphUri.split('/').pop)
-              */
-            }
-            
-    
-            await sparql.upload(req.getGraph(), doc.serializeXML(), 'application/rdf+xml')
-    
-            this.redirect = impl_uri
-    
+        var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
+
+        var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
+        var taxId = org_search[0].split('|')[1]
+
+        var form_vals = {
+
+            prefix: uri.getURIPrefix(),
+            displayId: displayId,
+            version: version,
+            agent_str: JSON.parse(fields['agent'])[1],
+            agent_uri: JSON.parse(fields['agent'])[0],
+            description: fields['description'][0],
+            location: fields['location'][0],
+            organism: fields['organism'][0],
+            taxId: taxId,
+            chosen_plan: chosen_plan,
+            chosen_plan_uri: chosen_plan_uri,
+            graphUri: uri.getGraph(),
+            uri: uri,
+            collection_url: newURI
     
         }
+        
+
+        var sbol_results = await this.createSBOLImplementation(form_vals)
+        var doc = sbol_results[0]
+        var impl_uri = sbol_results[1]
+
+        let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        var uploadInfo = await uploads.createUpload(fileStream)
+        const { hash, size, mime } = uploadInfo
+
+        
+        if (files['file'][0]['size'] != 0){
+
+            throw new Error('TODO reimplement')
+            /*
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            graphUri.split('/').pop)
+            */
+        }
+        
+
+        await sparql.upload(req.getGraph(), doc.serializeXML(), 'application/rdf+xml')
+
+        this.redirect = impl_uri
+
+
+        
     
     }
     
-    async createSBOLImplementation(form_vals){
+    createSBOLImplementation(form_vals):SBOL2Graph{
     
         var prefix = form_vals['prefix']
         var displayId = form_vals['displayId']
@@ -295,8 +281,10 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         var organism = form_vals['organism']
         var taxId = form_vals['taxId']
     
-        throw new Error('needs porting to sbolgraph')
+        // throw new Error('needs porting to sbolgraph')
     
+        let graph = new SBOL2Graph()
+
         /*
     
         var doc= new SBOLDocument();
