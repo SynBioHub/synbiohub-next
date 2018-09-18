@@ -19,7 +19,8 @@ import FMAPrefix from '../FMAPrefix'
 import SBHURI from 'synbiohub/SBHURI';
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
-import { S2ProvPlan, SBOL2Graph } from 'sbolgraph';
+import { S2ProvPlan, SBOL2Graph, S2ComponentDefinition, S2ModuleDefinition } from 'sbolgraph';
+import { Predicates } from 'bioterms';
 
 export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
@@ -285,17 +286,51 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let graph = new SBOL2Graph()
 
+
+        let act = graph.createProvActivity(prefix,  displayId + '_activity/', version)
+        act.displayId = displayId + '_activity'
+        act.persistentIdentity = prefix + '/' + act.displayId
+        act.version = version
+
+
+        let asc = graph.createProvAssociation(prefix, displayId + '_association/', version)
+        asc.displayId = displayId + '_association'
+        asc.persistentIdentity = prefix + '/' + asc.displayId
+        asc.version = version
+        asc.role = 'http://sbols.org/v2#build'
+    
+
+        let impl = graph.createImplementation(prefix, displayId, version)
+
+        impl.displayId = displayId
+        impl.name = displayId
+        impl.persistentIdentity = prefix + '/' + impl.displayId
+        impl.version = version
+        impl.description = description
+
+        if(this.object instanceof S2ComponentDefinition ||
+            this.object instanceof S2ModuleDefinition) {
+            impl.built = this.object
+        } else {
+            throw new Error('nope.')
+        }
+
+        impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
+        impl.setStringProperty(Predicates.Prov.wasGeneratedBy, act.uri)
+        impl.setStringProperty(Predicates.Prov.wasDerivedFrom, uri)
+        impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
+        impl.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
+        impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
+        impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
+
+
+
         /*
     
         var doc= new SBOLDocument();
         var document = doc
     
-        var asc = doc.provAssociation(prefix + '/' + displayId + '_association/' + version)
-        asc.displayId = displayId + '_association'
-        asc.persistentIdentity = prefix + '/' + asc.displayId
-        asc.version = version
-        asc.addRole('http://sbols.org/v2#build')
-    
+
     
         if (chosen_plan_uri === ''){
     
