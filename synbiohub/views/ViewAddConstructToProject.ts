@@ -21,6 +21,8 @@ import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
 import { S2ProvPlan, SBOL2Graph, S2ComponentDefinition, S2ModuleDefinition } from 'sbolgraph';
 import { Predicates } from 'bioterms';
+import SBOLUploader from '../SBOLUploader';
+import { OverwriteMergeOption } from '../OverwriteMerge';
 
 export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
@@ -88,6 +90,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
+        console.log('HFUSDHFDSHFDSHFDHSFUDSHFDHSFHDUF')
         this.errors = []
         
         await this.datastore.fetchPlans(this.graph)
@@ -113,17 +116,19 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
-        let { fields, files } = await parseForm(req)
+        let { fields, files } = await parseForm(req) //FILES IS EMPTY
     
         var errors = []
     
+        console.log(fields)
+        console.log(files)
+
         this.constructName = fields['constructName'][0],
         this.plan1 = fields['plan1'][0],
         this.plan2 = fields['plan2'][0],
         this.agent = fields['agent'][0],
         this.description = fields['description'][0],
         this.location = fields['location'][0]
-
     
         var chosen_plan = ''
         var chosen_plan_uri = ''
@@ -170,12 +175,13 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
             chosen_plan = fields['plan2'][0]
           }
+
+        // NEED TO REIMPLEMENT FILES
+        //   if (files['file'][0]['size'] === 0){
     
-          if (files['file'][0]['size'] === 0){
+        //       errors.push('Please upload a file describing the lab protocol.')
     
-              errors.push('Please upload a file describing the lab protocol.')
-    
-          }
+        //   }
     
         }
     
@@ -203,23 +209,29 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             return
             
         }
+
+        console.log('ANSWER ME')
         
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
-        var displayId = projectId + '_collection'
+        var displayId = projectId + '_construct'
         var version = '1'
     
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
 
-        var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
-        var taxId = org_search[0].split('|')[1]
+        // REIMPLEMENT THIS
+        // var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
+        // var taxId = org_search[0].split('|')[1]
+
+        console.log('HEY')
+        var taxId = '1239'
 
         var form_vals = {
 
             prefix: uri.getURIPrefix(),
             displayId: displayId,
             version: version,
-            agent_str: JSON.parse(fields['agent'])[1],
-            agent_uri: JSON.parse(fields['agent'])[0],
+            agent_str: fields['agent'][0].split(',')[1],
+            agent_uri: fields['agent'][0].split(',')[0],
             description: fields['description'][0],
             location: fields['location'][0],
             organism: fields['organism'][0],
@@ -232,58 +244,62 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         }
         
+        console.log('THERE')
 
-        var sbol_results = await this.createSBOLImplementation(form_vals)
-        var doc = sbol_results[0]
-        var impl_uri = sbol_results[1]
+        let sbol_results = await this.createSBOLImplementation(form_vals)
+        let doc = sbol_results[0]
+        let impl_uri = sbol_results[1]
 
-        let fileStream = await fs.createReadStream(files['file'][0]['path']);
-        var uploadInfo = await uploads.createUpload(fileStream)
-        const { hash, size, mime } = uploadInfo
+        // HAVE TO REIMPLEMENT FILE STUFF
+        // let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        // let uploadInfo = await uploads.createUpload(fileStream)
+        // const { hash, size, mime } = uploadInfo
 
         
-        if (files['file'][0]['size'] != 0){
+        // if (files['file'][0]['size'] != 0){
 
-            throw new Error('TODO reimplement')
-            /*
-            await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-            files['file'][0]['originalFilename'], hash, size, mime,
-            graphUri.split('/').pop)
-            */
-        }
+        //     throw new Error('TODO reimplement')
+        //     /*
+        //     await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
+        //     files['file'][0]['originalFilename'], hash, size, mime,
+        //     graphUri.split('/').pop)
+        //     */
+        // }
         
 
-        await sparql.upload(req.getGraph(), doc.serializeXML(), 'application/rdf+xml')
+        // THIS ISN'T ACTUALLY UPLOADING FOR SOME REASON
+        let uploader = new SBOLUploader()
+        uploader.setGraph(doc)
+        uploader.setDestinationGraphUri(this.uri.getGraph())
+        uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
 
         this.redirect = impl_uri
-
-
-        
     
     }
     
-    createSBOLImplementation(form_vals):SBOL2Graph{
+    createSBOLImplementation(form_vals):any{
     
-        var prefix = form_vals['prefix']
-        var displayId = form_vals['displayId']
-        var version = form_vals['version']
-        var collection_url = form_vals['collection_url']
+        let prefix = form_vals['prefix']
+        let displayId = form_vals['displayId']
+        let version = form_vals['version']
+        let collection_url = form_vals['collection_url']
       
-        var graphUri = form_vals['graphUri']
-        var uri = form_vals['uri']
+        let graphUri = form_vals['graphUri']
+        let uri = form_vals['uri']
       
-        var agent_str = form_vals['agent_str']
-        var agent_uri = form_vals['agent_uri']
-        var plan_str = form_vals['chosen_plan']
-        var chosen_plan_uri = form_vals['chosen_plan_uri']
+        let agent_str = form_vals['agent_str']
+        let agent_uri = form_vals['agent_uri']
+        let plan_str = form_vals['chosen_plan']
+        let chosen_plan_uri = form_vals['chosen_plan_uri']
       
-        var location = form_vals['location']
-        var description = form_vals['description']
-        var organism = form_vals['organism']
-        var taxId = form_vals['taxId']
+        let location = form_vals['location']
+        let description = form_vals['description']
+        let organism = form_vals['organism']
+        let taxId = form_vals['taxId']
     
         // throw new Error('needs porting to sbolgraph')
     
+        console.log(form_vals)
         let graph = new SBOL2Graph()
 
 
@@ -300,6 +316,43 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         asc.role = 'http://sbols.org/v2#build'
     
 
+        if (chosen_plan_uri === ''){
+    
+            var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
+        }
+      
+        else{
+            plan_uri = chosen_plan_uri
+        }
+      
+      
+        let agent = graph.createProvAgent(agent_uri, '', '')
+        agent.displayId = agent_str
+        agent.name = agent_str
+        agent.persistentIdentity = agent_uri
+    
+        let plan = graph.createProvPlan(plan_uri, '', '')
+        plan.displayId = plan_str.replace(/\s+/g, '')
+        plan.name = plan_str
+        plan.persistentIdentity = plan_uri
+    
+
+        agent.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', agent.uri)
+        plan.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', plan.uri)
+    
+        asc.agent = agent
+        asc.plan = plan
+    
+        let usg = graph.createProvUsage(prefix, displayId + '_usage/', version)
+        usg.displayId = displayId + '_usage'
+        usg.persistentIdentity = prefix + '/' + usg.displayId
+        usg.version = version
+        usg.entity = graph.createComponentDefinition(uri, '', '')
+    
+        usg.role = ('http://sbols.org/v2#design')
+        act.usage =  usg
+
+
         let impl = graph.createImplementation(prefix, displayId, version)
 
         impl.displayId = displayId
@@ -308,12 +361,14 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.version = version
         impl.description = description
 
-        if(this.object instanceof S2ComponentDefinition ||
-            this.object instanceof S2ModuleDefinition) {
-            impl.built = this.object
-        } else {
-            throw new Error('nope.')
-        }
+        // THIS.OBJECT RETURNS A COLLECTION
+        // if(this.object instanceof S2ComponentDefinition ||
+        //     this.object instanceof S2ModuleDefinition) {
+        //     impl.built = this.object
+        // } else {
+        //     console.log(this.object)
+        //     throw new Error('nope.')
+        // }
 
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
         impl.setStringProperty(Predicates.Prov.wasGeneratedBy, act.uri)
@@ -324,79 +379,13 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
 
 
+        // let col = graph.createCollection(collection_url, '', '')
+        // col.add(impl)
 
-        /*
+        console.log(graph.serializeXML())
     
-        var doc= new SBOLDocument();
-        var document = doc
+        return [graph, impl.uri]
     
-
-    
-        if (chosen_plan_uri === ''){
-    
-          var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
-        }
-    
-        else{
-          plan_uri = chosen_plan_uri
-        }
-    
-    
-        var agent = doc.provAgent(agent_uri)
-        agent.displayId = agent_str
-        agent.name = agent_str
-        agent.persistentIdentity = agent_uri
-    
-        var plan = doc.provPlan(plan_uri)
-        plan.displayId = plan_str.replace(/\s+/g, '')
-        plan.name = plan_str
-        plan.persistentIdentity = plan_uri
-    
-        agent.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', agent.uri)
-        plan.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', plan.uri)
-    
-        asc.agent = agent_uri
-        asc.plan = plan_uri
-    
-        var act = doc.provActivity(prefix + '/' + displayId + '_activity/' + version)
-        act.displayId = displayId + '_activity'
-        act.persistentIdentity = prefix + '/' + act.displayId
-        act.version = version
-    
-        act.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', act.uri)
-        act.addAssociation(asc)
-    
-        var usg = doc.provUsage(prefix + '/' + displayId + '_usage/' + version)
-        usg.displayId = displayId + '_usage'
-        usg.persistentIdentity = prefix + '/' + usg.displayId
-        usg.version = version
-        usg.entity = uri
-    
-        usg.addRole('http://sbols.org/v2#design')
-        act.addUsage(usg)
-    
-        var impl = doc.implementation(prefix + '/' + displayId + '/' + version)
-        impl.displayId = displayId
-        impl.name = displayId
-        impl.persistentIdentity = prefix + '/' + impl.displayId
-        impl.version = version
-        impl.description = description
-        impl.built = prefix + '/' + displayId + '/' + version
-    
-        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
-        impl.addWasGeneratedBy(act.uri)
-        impl.wasDerivedFrom = uri
-        impl.addStringAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
-        impl.addUriAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
-        impl.addUriAnnotation('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
-        impl.addStringAnnotation('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
-        var col = doc.collection(collection_url)
-        col.addMember(impl)
-    
-        console.log(doc.serializeXML())
-    
-        return [doc, impl.uri]
-        */
     
     }
 
