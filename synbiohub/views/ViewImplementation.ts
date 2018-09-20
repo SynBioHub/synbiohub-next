@@ -52,12 +52,19 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         await this.datastore.fetchEverything(this.graph, agent)
 
+        let plan = asc.plan
+        
+        await this.datastore.fetchEverything(this.graph, plan)
+
         this.agent = agent.displayName
+
+        this.plan = plan.displayName
+
+        this.plan_url = plan.uri
 
         this.taxId = this.implementation.getUriProperty('http://w3id.org/synbio/ont#taxId')
 
         this.organism = this.implementation.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
-
 
         // console.log(this.graph.graph._graph)
         // let act = this.graph.getActivity(this.implementation.getUriProperty(Predicates.Prov.wasGeneratedBy))

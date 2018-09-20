@@ -248,20 +248,18 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let impl_uri = sbol_results[1]
 
         // HAVE TO REIMPLEMENT FILE STUFF
-        // let fileStream = await fs.createReadStream(files['file'][0]['path']);
-        // let uploadInfo = await uploads.createUpload(fileStream)
-        // const { hash, size, mime } = uploadInfo
+        let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        let uploadInfo = await uploads.createUpload(fileStream)
+        const { hash, size, mime } = uploadInfo
 
         
-        // if (files['file'][0]['size'] != 0){
+        if (files['file'][0]['size'] != 0){
 
-        //     throw new Error('TODO reimplement')
-        //     /*
-        //     await attachments.addAttachmentToTopLevel(uri.getGraph(), baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-        //     files['file'][0]['originalFilename'], hash, size, mime,
-        //     graphUri.split('/').pop)
-        //     */
-        // }
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + '/' + uri.getDisplayId(), uri.getURIPrefix() + '/' + chosen_plan.replace(/\s+/g, ''),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+            
+        }
         
         let uploader = new SBOLUploader()
         uploader.setGraph(doc)
@@ -300,13 +298,13 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let graph = new SBOL2Graph()
 
 
-        let act = graph.createProvActivity(prefix,  displayId + '_activity/', version)
+        let act = graph.createProvActivity(prefix,  displayId + '_activity', version)
         act.displayId = displayId + '_activity'
         act.persistentIdentity = prefix + '/' + act.displayId
         act.version = version
 
 
-        let asc = graph.createProvAssociation(prefix, displayId + '_association/', version)
+        let asc = graph.createProvAssociation(prefix, displayId + '_association', version)
         asc.displayId = displayId + '_association'
         asc.persistentIdentity = prefix + '/' + asc.displayId
         asc.version = version
@@ -315,20 +313,19 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         if (chosen_plan_uri === ''){
     
-            var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
+            var plan_uri = prefix + plan_str.replace(/\s+/g, '')
         }
       
         else{
             plan_uri = chosen_plan_uri
         }
       
-      
-        let agent = graph.createProvAgent(agent_uri, '', '')
+        let agent = graph.createProvAgent(agent_uri, 'agent', '1')
         agent.displayId = agent_str
         agent.name = agent_str
         agent.persistentIdentity = agent_uri
     
-        let plan = graph.createProvPlan(plan_uri, '', '')
+        let plan = graph.createProvPlan(plan_uri, 'plan', '1')
         plan.displayId = plan_str.replace(/\s+/g, '')
         plan.name = plan_str
         plan.persistentIdentity = plan_uri
@@ -340,11 +337,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         asc.agent = agent
         asc.plan = plan
     
-        let usg = graph.createProvUsage(prefix, displayId + '_usage/', version)
+        let usg = graph.createProvUsage(prefix, displayId + '_usage', version)
         usg.displayId = displayId + '_usage'
         usg.persistentIdentity = prefix + '/' + usg.displayId
         usg.version = version
-        usg.entity = graph.createComponentDefinition(uri, '', '')
+        usg.entity = graph.createComponentDefinition(uri, 'cd', '1')
     
         usg.role = ('http://sbols.org/v2#design')
 
