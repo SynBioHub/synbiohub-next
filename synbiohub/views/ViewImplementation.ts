@@ -5,9 +5,10 @@ import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
-
-import { S2ProvActivity } from 'sbolgraph'
+import { Predicates } from 'bioterms'
+import { S2ProvActivity, SBOL2Graph, S2ProvAssociation } from 'sbolgraph'
 import SBHURI from 'synbiohub/SBHURI';
+import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 
 export default class ViewImplementation extends ViewDescribingTopLevel {
 
@@ -16,7 +17,7 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
     }
 
 
-    meta:any
+    implementation:S2Implementation
 
     agent:string
     location:string
@@ -33,23 +34,35 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
             name: 'Implementation'
         }
 
-        let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
-        let activity_sbol_object = activity_sbol.object as S2ProvActivity
-        
-        let plan_uri = SBHURI.fromURIOrURL(activity_sbol_object.plan.uri)
-        
-        let plan_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(plan_uri)
-        
-        this.meta.description = this.meta.description.split('<br/>').join('')
-        this.location = this.annotations[2]['value']
-        this.agent = activity_sbol_object.associations[0].agent.name
-        this.plan = activity_sbol_object.associations[0].plan.name
-        this.taxId = this.annotations[3]['uri']
-        this.organism = this.annotations[4]['value']
+        this.implementation = this.object as S2Implementation
 
-        this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
+        await this.datastore.fetchEverything(this.graph, this.implementation)
+
+        let act = this.implementation.activity as S2ProvActivity
+
+        this.location = this.implementation.getStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation')
+
+        await this.datastore.fetchEverything(this.graph, act)
+
+        let asc = act.association as S2ProvAssociation
         
-        this.plan_url = this.meta.attachments[0]['url'] + '/download'
+        await this.datastore.fetchEverything(this.graph, asc)
+
+        let agent = asc.agent
+
+        await this.datastore.fetchEverything(this.graph, agent)
+
+        this.agent = agent.displayName
+
+        this.taxId = this.implementation.getUriProperty('http://w3id.org/synbio/ont#taxId')
+
+        this.organism = this.implementation.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
+
+
+        // console.log(this.graph.graph._graph)
+        // let act = this.graph.getActivity(this.implementation.getUriProperty(Predicates.Prov.wasGeneratedBy))
+
+        // console.log(act)
 
     }
 

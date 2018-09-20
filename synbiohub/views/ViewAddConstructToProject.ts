@@ -177,11 +177,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
           }
 
         // NEED TO REIMPLEMENT FILES
-        //   if (files['file'][0]['size'] === 0){
+          if (files['file'][0]['size'] === 0){
     
-        //       errors.push('Please upload a file describing the lab protocol.')
+              errors.push('Please upload a file describing the lab protocol.')
     
-        //   }
+          }
     
         }
     
@@ -347,7 +347,10 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         usg.entity = graph.createComponentDefinition(uri, '', '')
     
         usg.role = ('http://sbols.org/v2#design')
+
         act.usage =  usg
+        act.association = asc
+        
 
 
         let impl = graph.createImplementation(prefix, displayId, version)
@@ -368,9 +371,12 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         // }
 
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
-        impl.setStringProperty(Predicates.Prov.wasGeneratedBy, act.uri)
-        impl.setStringProperty(Predicates.Prov.wasDerivedFrom, uri)
-        impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri)
+
+        impl.activity = act
+
+        // impl.setUriProperty(Predicates.Prov.wasGeneratedBy, act.uri)
+        impl.setUriProperty(Predicates.Prov.wasDerivedFrom, uri.uri)
+        impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         impl.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
         impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
