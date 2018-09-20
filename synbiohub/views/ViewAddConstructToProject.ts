@@ -263,12 +263,12 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         //     */
         // }
         
-
-        // THIS ISN'T ACTUALLY UPLOADING FOR SOME REASON
         let uploader = new SBOLUploader()
         uploader.setGraph(doc)
         uploader.setDestinationGraphUri(this.uri.getGraph())
         uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+
+        await uploader.upload()
 
         this.redirect = impl_uri
     
