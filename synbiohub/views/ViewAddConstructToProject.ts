@@ -218,9 +218,9 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
 
-        // REIMPLEMENT THIS
-        // var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
-        // var taxId = org_search[0].split('|')[1]
+        REIMPLEMENT THIS
+        var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
+        var taxId = org_search[0].split('|')[1]
 
         console.log('HEY')
         var taxId = '1239'
