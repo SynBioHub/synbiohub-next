@@ -195,20 +195,40 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
           else {
     
-            chosen_plan = JSON.parse(fields['plan1'])[1]
-            chosen_plan_uri = JSON.parse(fields['plan1'])[0]
+            chosen_plan = fields['plan1'][0].split(',')[1]
+            chosen_plan_uri = fields['plan1'][0].split(',')[0]
           }
     
         }
 
-        
-    
+
         if (errors.length > 0) {
 
             this.errors = errors
             return
             
         }
+
+
+        // HAVE TO REIMPLEMENT FILE STUFF
+        let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        let uploadInfo = await uploads.createUpload(fileStream)
+        const { hash, size, mime } = uploadInfo
+
+        console.log(mime)
+        if (files['file'][0]['size'] != 0){
+
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + '_plan/' + uri.getVersion(),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+            
+        }
+
+        else{
+            errors.push('File error oops')
+            this.errors = errors
+        }
+
 
         console.log('ANSWER ME')
         
@@ -246,20 +266,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let sbol_results = await this.createSBOLImplementation(form_vals)
         let doc = sbol_results[0]
         let impl_uri = sbol_results[1]
-
-        // HAVE TO REIMPLEMENT FILE STUFF
-        let fileStream = await fs.createReadStream(files['file'][0]['path']);
-        let uploadInfo = await uploads.createUpload(fileStream)
-        const { hash, size, mime } = uploadInfo
-
-        
-        if (files['file'][0]['size'] != 0){
-
-            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + '/' + uri.getDisplayId(), uri.getURIPrefix() + '/' + chosen_plan.replace(/\s+/g, ''),
-            files['file'][0]['originalFilename'], hash, size, mime,
-            uri.getGraph().split('/').pop)
-            
-        }
         
         let uploader = new SBOLUploader()
         uploader.setGraph(doc)
@@ -320,12 +326,17 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             plan_uri = chosen_plan_uri
         }
       
+
+        plan_uri = plan_uri.replace(prefix, '')
+        plan_uri = plan_uri.replace('/1', '')
+        plan_uri = plan_uri.replace('_plan', '')
+
         let agent = graph.createProvAgent(agent_uri, 'agent', '1')
         agent.displayId = agent_str
         agent.name = agent_str
         agent.persistentIdentity = agent_uri
     
-        let plan = graph.createProvPlan(plan_uri, 'plan', '1')
+        let plan = graph.createProvPlan(prefix, plan_uri + '_plan', version)
         plan.displayId = plan_str.replace(/\s+/g, '')
         plan.name = plan_str
         plan.persistentIdentity = plan_uri

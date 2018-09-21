@@ -90,7 +90,7 @@ block content
                                         select.form-control(name='plan1', id="plan1")
                                                 option(value='', selected='selected') Choose an existing Lab Protocol
                                                 for plan in plans
-                                                  option(value=plan.uri) #{plan.name}
+                                                  option(value=[plan.uri, plan.name]) #{plan.name}
                                                 
 
 

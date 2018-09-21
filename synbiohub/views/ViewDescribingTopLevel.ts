@@ -12,7 +12,7 @@ import filterAnnotations from "../filterAnnotations";
 import getCitationsForSubject from "./getCitationsForSubject";
 import Breadcrumbs from "../Breadcrumbs";
 import { SBHRequest } from "synbiohub/SBHRequest";
-import { S2Identified, SBOL2Graph } from "sbolgraph";
+import { S2Identified, SBOL2Graph, S2Attachment } from "sbolgraph";
 import Mutables from "synbiohub/views/Mutables";
 import Menu, { MenuItem } from "synbiohub/Menu";
 import SBHURI from "synbiohub/SBHURI";
@@ -41,6 +41,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     //builds:Array<any>
     mutables:Mutables
     rdfType:any
+    attachments:any
 
     async prepare(req:SBHRequest) {
 
@@ -62,6 +63,10 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
         this.searchUsesUrl = this.uri.toURL() + '/uses'
 
         this.canEdit = false
+
+        await this.datastore.fetchAttachments(this.graph, this.object)
+
+        this.attachments = this.object.attachments
 
         /* TODO
 

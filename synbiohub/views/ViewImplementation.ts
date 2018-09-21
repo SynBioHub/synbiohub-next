@@ -66,11 +66,6 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         this.organism = this.implementation.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
 
-        // console.log(this.graph.graph._graph)
-        // let act = this.graph.getActivity(this.implementation.getUriProperty(Predicates.Prov.wasGeneratedBy))
-
-        // console.log(act)
-
     }
 
 

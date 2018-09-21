@@ -28,9 +28,9 @@ export default class DatastoreSPARQL extends Datastore {
 
         // console.log('GUIIIII ' + this.sparqlConfig.graphURI)
 
-        // console.log('>>>>>>>>>>>>>>>>>>>> QUERY')
-        // console.log(query)
-        // console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>> QUERY')
+        console.log(query)
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
         let result = await request({
             method: 'get',
@@ -41,10 +41,11 @@ export default class DatastoreSPARQL extends Datastore {
             }
         })
 
-        // console.log('>>>>>>>>>>>>>>>>>>>> LOAD')
-        // console.log(result)
-        // console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+        console.log('>>>>>>>>>>>>>>>>>>>> LOAD')
+        console.log(result)
+        console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
 
+        
         await intoGraph.loadString(result)
     }
 
@@ -225,6 +226,29 @@ export default class DatastoreSPARQL extends Datastore {
         `)
 
     }
+
+    async fetchAttachments(intoGraph:SBOL2Graph, identified:S2Identified) {
+
+        await this.sparqlConstruct(intoGraph, `
+        PREFIX sbol: <http://sbols.org/v2#>
+
+        CONSTRUCT{
+            <${identified.uri}> <http://sbols.org/v2#attachment> ?att .
+            ?att <http://sbols.org/v2#size> ?size .
+            ?att <http://purl.org/dc/terms/title> ?title .
+            ?att <http://sbols.org/v2#format> ?type
+        }
+        
+        WHERE {
+            <${identified.uri}> <http://sbols.org/v2#attachment> ?att .
+            ?att <http://sbols.org/v2#size> ?size .
+            ?att <http://purl.org/dc/terms/title> ?title .
+            ?att <http://sbols.org/v2#format> ?type
+        } LIMIT 1000
+        `)
+
+    }
+    
 
 
 }

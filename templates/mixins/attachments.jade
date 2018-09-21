@@ -1,6 +1,6 @@
 
-mixin attachments(url, attachments, canEdit)
-    if typeof(attachments) !== 'undefined' && (canEdit || attachments.length > 0)
+mixin attachments(url, attachments)
+    if typeof(attachments) !== 'undefined' && (attachments.length > 0)
         table.attachments-table.table.table-striped
             thead
                 th Type
@@ -10,28 +10,27 @@ mixin attachments(url, attachments, canEdit)
             tbody
             for attachment in attachments
                 tr
-                    td #{attachment.type}
+                    td #{attachment.format}
                     td
-                        a(href=attachment.url) #{attachment.name}
+                        a(href=attachment.uri) #{attachment.displayName}
                     td
-                        if attachment.sizeString
-                            | #{attachment.sizeString}
+                        if attachment.size
+                            | #{attachment.size}
                     td
-                        a(href=attachment.url + '/download')
+                        a(href=attachment.uri + '/download')
                             button.btn.btn-primary
                                 span.fa.fa-download
                                 |  Download
-        if canEdit
-            div.row
-                form#sbh-attachment-form(method='post',enctype='multipart/form-data',action=url + '/attach')
-                    div.col-xs-6
-                        div.input-group
-                            label.input-group-btn
-                                span.btn.btn-primary
-                                    | Select file(s)&hellip;
-                                    input(type="file",name="file",style="display: none;",multiple)
-                            input(type="text",class="form-control",readonly)
-                    div.col-xs-3
-                    div.col-xs-3
-                        button.btn(disabled,type='submit',style='width:100%;') Attach
+        div.row
+            form#sbh-attachment-form(method='post',enctype='multipart/form-data',action=url + '/attach')
+                div.col-xs-6
+                    div.input-group
+                        label.input-group-btn
+                            span.btn.btn-primary
+                                | Select file(s)&hellip;
+                                input(type="file",name="file",style="display: none;",multiple)
+                        input(type="text",class="form-control",readonly)
+                div.col-xs-3
+                div.col-xs-3
+                    button.btn(disabled,type='submit',style='width:100%;') Attach
 
