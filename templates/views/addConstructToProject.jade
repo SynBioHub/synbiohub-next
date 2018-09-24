@@ -37,6 +37,18 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
+                                    label(for="agent") Design
+                                        a(title='Placeholder Design Info Box Cause I Cant Think Of Anything')
+                                                span.fa.fa-info-circle
+                                    select.form-control(name='design', id="design")
+                                            option(value='', selected='selected') The design this construct is inspired by
+                                            - for(var i=0;i< designs.length;i++) {
+                                              option(value = [designs[i].uri]) #{designs[i].displayName}
+                                            - }
+
+                        div.row
+                            div.col-md-12
+                                div.form-group-100.required
                                     label(for="agent") Researcher 
                                         a(title='SynBioHub records information about provenance: who, what, where. Here, you need to fill out which user performed this specific Experiment.')
                                                 span.fa.fa-info-circle

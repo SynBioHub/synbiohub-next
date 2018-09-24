@@ -6,7 +6,7 @@ import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { Predicates } from 'bioterms'
-import { S2ProvActivity, SBOL2Graph, S2ProvAssociation } from 'sbolgraph'
+import { S2ProvActivity, SBOL2Graph, S2ProvAssociation, S2Identified, S2ComponentDefinition } from 'sbolgraph'
 import SBHURI from 'synbiohub/SBHURI';
 import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 
@@ -19,6 +19,8 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
     implementation:S2Implementation
 
+    design:string
+    design_uri:string
     agent:string
     location:string
     organism:string
@@ -65,6 +67,14 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
         this.taxId = this.implementation.getUriProperty('http://w3id.org/synbio/ont#taxId')
 
         this.organism = this.implementation.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
+
+        let design = this.implementation.design as S2ComponentDefinition //THIS GETTER IS ACTUALLY BROKEN DONT KNOW WHY HAVE TO FIX
+
+        await this.datastore.fetchEverything(this.graph, design) 
+
+        this.design_uri = design.uri
+
+        this.design = design.displayName
 
     }
 

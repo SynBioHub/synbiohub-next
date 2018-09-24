@@ -15,20 +15,22 @@ block topLevelIcon
     span.topLevelIcon.fa.fa-flask
 
 block topLevelBelowPropertyTable
-                    div.card-body
-                        table.table.table-striped.entry-detail-table
-                            tr
-                                td Researcher
-                                td #{agent}
-                            tr
-                                td Protocol
-                                td 
-                                    a(href=plan_url) #{plan}
-                            tr
-                                td Physical Location
-                                td #{location}
-                            tr
-                                td Organism
-                                td 
-                                    a(href=taxId) #{organism}
+
+    a(style='font-size:18px',href=design_uri) Original Design
+    div.card-body
+        table.table.table-striped.entry-detail-table
+            tr
+                td Researcher
+                td #{agent}
+            tr
+                td Protocol
+                td 
+                    a(href=plan_url) #{plan}
+            tr
+                td Physical Location
+                td #{location}
+            tr
+                td Organism
+                td 
+                    a(href=taxId) #{organism}
 

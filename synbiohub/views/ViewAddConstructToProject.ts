@@ -19,7 +19,7 @@ import FMAPrefix from '../FMAPrefix'
 import SBHURI from 'synbiohub/SBHURI';
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
-import { S2ProvPlan, SBOL2Graph, S2ComponentDefinition, S2ModuleDefinition } from 'sbolgraph';
+import { S2ProvPlan, SBOL2Graph, S2ComponentDefinition, S2ModuleDefinition, S2Collection, S2Identified } from 'sbolgraph';
 import { Predicates } from 'bioterms';
 import SBOLUploader from '../SBOLUploader';
 import { OverwriteMergeOption } from '../OverwriteMerge';
@@ -33,12 +33,16 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     agentURIs:any[]
 
     plans:S2ProvPlan[]
-
+    designs:S2Identified[]
+    
     config:any
 
     canEdit:boolean
 
+
+
     constructName:string
+    design:string
     plan1:string
     plan2:string
     agent:string
@@ -63,6 +67,23 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         await this.datastore.fetchPlans(this.graph)
 
         this.plans = this.graph.provPlans
+
+        this.designs = []
+
+        let col = this.object as S2Collection
+
+        await this.datastore.fetchMembersMetadata(this.graph, col)
+
+        for (let member of col.members){
+
+            if (member instanceof S2ComponentDefinition || member instanceof S2ModuleDefinition){
+
+                this.designs.push(member)
+
+            }
+        }
+
+        console.log(this.designs)
 
         if (req.method === 'POST'){
 
@@ -90,17 +111,13 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
-        console.log('HFUSDHFDSHFDSHFDHSFUDSHFDHSFHDUF')
         this.errors = []
         
         await this.datastore.fetchPlans(this.graph)
 
-        this.plans = this.graph.provPlans
 
-        // for (let plan of plans){
-        //   this.plan_names.push(plan['s'].split('/').pop())
-        //   this.plan_uris.push(plan['s'])
-        // }
+
+        this.plans = this.graph.provPlans
 
         this.constructName = ''
         this.plan1 = ''
@@ -108,7 +125,8 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.agent = ''
         this.description = ''
         this.location = ''
-    
+
+
     
     }
     
@@ -116,7 +134,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         let uri = SBHURI.fromURIOrURL(req.url)
     
-        let { fields, files } = await parseForm(req) //FILES IS EMPTY
+        let { fields, files } = await parseForm(req)
     
         var errors = []
     
@@ -129,25 +147,32 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.agent = fields['agent'][0],
         this.description = fields['description'][0],
         this.location = fields['location'][0]
+        this.design = fields['design'][0]
     
         var chosen_plan = ''
         var chosen_plan_uri = ''
-    
+
         if (fields['constructName'][0] === ''){
     
-            errors.push('Please give the built design a name.')
+            errors.push('Please give the built construct a name.')
     
         }
     
+        if (fields['design'][0] === ''){
+    
+            errors.push('Please mention which design this construct was inspired by.')
+      
+          }
+
         if (fields['agent'][0] === ''){
     
-          errors.push('Please mention who built the design.')
+          errors.push('Please mention who built the construct.')
     
         }
     
         if (fields['description'][0] === ''){
     
-            errors.push('Please mention the purpose of this built design.')
+            errors.push('Please mention the purpose of this built construct.')
     
         }
     
@@ -228,9 +253,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             errors.push('File error oops')
             this.errors = errors
         }
-
-
-        console.log('ANSWER ME')
         
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
         var displayId = projectId + '_construct'
@@ -246,6 +268,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             prefix: uri.getURIPrefix(),
             displayId: displayId,
             version: version,
+            design:fields['design'][0],
             agent_str: fields['agent'][0].split(',')[1],
             agent_uri: fields['agent'][0].split(',')[0],
             description: fields['description'][0],
@@ -260,7 +283,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         }
         
-        console.log('THERE')
         console.log(form_vals)
 
         let sbol_results = await this.createSBOLImplementation(form_vals)
@@ -287,7 +309,8 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
       
         let graphUri = form_vals['graphUri']
         let uri = form_vals['uri']
-      
+        let design_uri = form_vals['design']
+
         let agent_str = form_vals['agent_str']
         let agent_uri = form_vals['agent_uri']
         let plan_str = form_vals['chosen_plan']
@@ -297,8 +320,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let description = form_vals['description']
         let organism = form_vals['organism']
         let taxId = form_vals['taxId']
-    
-        // throw new Error('needs porting to sbolgraph')
     
         console.log(form_vals)
         let graph = new SBOL2Graph()
@@ -347,19 +368,19 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         asc.agent = agent
         asc.plan = plan
-    
+
+        let design = this.graph.getTopLevelsWithPrefix(design_uri)[0]
+
         let usg = graph.createProvUsage(prefix, displayId + '_usage', version)
         usg.displayId = displayId + '_usage'
-        usg.persistentIdentity = prefix + '/' + usg.displayId
+        usg.persistentIdentity = prefix +  usg.displayId
         usg.version = version
-        usg.entity = graph.createComponentDefinition(uri, 'cd', '1')
+        usg.entity = design
     
         usg.role = ('http://sbols.org/v2#design')
 
         act.usage =  usg
-        act.association = asc
-        
-
+        act.association = asc    
 
         let impl = graph.createImplementation(prefix, displayId, version)
 
@@ -369,21 +390,24 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.version = version
         impl.description = description
 
-        // THIS.OBJECT RETURNS A COLLECTION
-        // if(this.object instanceof S2ComponentDefinition ||
-        //     this.object instanceof S2ModuleDefinition) {
-        //     impl.built = this.object
-        // } else {
-        //     console.log(this.object)
-        //     throw new Error('nope.')
-        // }
+        impl.activity = act
+
+        console.log('HI THERE FRIEND PLEASE WORK')
+        console.log(design)
+        if(design instanceof S2ComponentDefinition) {
+            impl.built = design as S2ComponentDefinition
+        } else if(design instanceof S2ModuleDefinition) {
+            impl.built = design as S2ModuleDefinition
+        } else{
+            console.log(this.object)
+            throw new Error('nope.')
+        }
+
+        impl.design = design 
 
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
 
-        impl.activity = act
-
-        // impl.setUriProperty(Predicates.Prov.wasGeneratedBy, act.uri)
-        impl.setUriProperty(Predicates.Prov.wasDerivedFrom, uri.uri)
+        impl.setUriProperty(Predicates.Prov.wasDerivedFrom, design_uri)
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         impl.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
         impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)

@@ -68,13 +68,7 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
                 await this.datastore.fetchMetadata(this.graph, participation)
             }
         }
-        console.log('HI THERE')
-        console.log(this.graph.serializeXML())
 
-        console.log(this.interactions[0])
-
-        
-        // console.log(this.functionalComponents[0].name)
 
     }
 
