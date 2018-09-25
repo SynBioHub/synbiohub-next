@@ -400,8 +400,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.design = design 
 
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
-
-        impl.setUriProperty(Predicates.Prov.wasDerivedFrom, design_uri)
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         impl.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
         impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
