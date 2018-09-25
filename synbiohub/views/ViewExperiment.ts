@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
 
-import { S2ProvActivity } from 'sbolgraph'
+import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation } from 'sbolgraph'
 
 export default class ViewTest extends ViewDescribingTopLevel{
 
@@ -18,6 +18,10 @@ export default class ViewTest extends ViewDescribingTopLevel{
 
     meta:any
 
+    experiment:SEP21Experiment
+
+    construct:string
+    construct_uri:string
     agent:string
     dataurl:string
     organism:string
@@ -27,15 +31,52 @@ export default class ViewTest extends ViewDescribingTopLevel{
     metadata:any[]
 
 
-
-
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
 
         this.rdfType = {
-            name: 'Collection'
+            name: 'Experiment'
         }
+
+        this.experiment = this.object as SEP21Experiment
+
+        await this.datastore.fetchEverything(this.graph, this.experiment)
+
+        let act = this.experiment.activity as S2ProvActivity
+
+        await this.datastore.fetchEverything(this.graph, act)
+
+        let asc = act.association as S2ProvAssociation
+        
+        await this.datastore.fetchEverything(this.graph, asc)
+
+        let agent = asc.agent
+
+        await this.datastore.fetchEverything(this.graph, agent)
+
+        let plan = asc.plan
+        
+        await this.datastore.fetchEverything(this.graph, plan)
+
+        this.agent = agent.displayName
+
+        this.plan = plan.displayName
+
+        this.plan_url = plan.uri
+
+        this.taxId = this.experiment.getUriProperty('http://w3id.org/synbio/ont#taxId')
+
+        this.organism = this.experiment.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
+
+        let construct = this.experiment.construct as S2Implementation
+
+        await this.datastore.fetchEverything(this.graph, construct) 
+
+        this.construct_uri = construct.uri
+
+        this.construct = construct.displayName
+
 
         // TODO reimplement
 
@@ -84,7 +125,7 @@ export default class ViewTest extends ViewDescribingTopLevel{
 
     async render(res:Response) {
 
-        res.render('templates/views/test.jade', this)
+        res.render('templates/views/Experiment.jade', this)
 
     }
 }

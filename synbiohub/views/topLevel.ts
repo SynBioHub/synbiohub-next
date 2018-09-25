@@ -11,6 +11,7 @@ import ViewSBOLAttachment from './ViewSBOLAttachment';
 import ViewAttachment from './ViewAttachment';
 import ViewGenericTopLevel from './ViewGenericTopLevel';
 import ViewImplementation from './ViewImplementation';
+import ViewExperiment from './ViewExperiment';
 import ViewTest from './ViewTest';
 import SBHURI from 'synbiohub/SBHURI';
 import { SBOL2Graph, S2Identified } from 'sbolgraph';
@@ -18,6 +19,7 @@ import Datastores from '../datastore/Datastores';
 import { Types } from 'bioterms';
 import dispatchToView from './dispatchToView';
 import View404 from 'synbiohub/views/View404';
+import ViewAddExperimentToProject from './ViewAddExperimentToProject';
 
 var sparql = require('../sparql/sparql')
 
@@ -67,6 +69,8 @@ export default async function(req, res) {
         view = new ViewAttachment()
     } else if(types.indexOf('http://sbols.org/v2#Implementation') !== -1){
         view = new ViewImplementation()
+    } else if(types.indexOf('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment') !== -1){
+        view = new ViewExperiment()
 
     } else {
         view = new ViewGenericTopLevel()

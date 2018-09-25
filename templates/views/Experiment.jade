@@ -11,9 +11,9 @@ block Collections
 block Mutables
 
 block topLevelBelowPropertyTable
-    a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Construct
-    br
-    a(style='font-size:20px', href=meta.dataurl) Experimental Data URL
+    //- a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Construct
+    //- br
+    //- a(style='font-size:20px', href=meta.dataurl) Experimental Data URL
 
     div.card-body
         table.table.table-striped.entry-detail-table
@@ -31,4 +31,4 @@ block topLevelBelowPropertyTable
             tr
                 td Metadata
                 td 
-                    a(href=metadata.url + '/download') #{metadata.name}
+                    //- a(href=metadata.url + '/download') #{metadata.name}
