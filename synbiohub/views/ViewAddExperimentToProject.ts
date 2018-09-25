@@ -18,7 +18,8 @@ import { Response } from 'express'
 import ViewConcerningTopLevel from './ViewConcerningTopLevel';
 import { SBHRequest } from '../SBHRequest';
 import SBHURI from '../SBHURI';
-import { S2ProvPlan } from 'sbolgraph';
+import { S2ProvPlan, S2Identified, S2Collection } from 'sbolgraph';
+import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 
     
 
@@ -29,6 +30,9 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
     agentNames:any[]
     agentURIs:any[]
+
+    constructs:S2Identified[]
+
     
     plans:S2ProvPlan[]
 
@@ -36,7 +40,13 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
     canEdit:boolean
 
-    experiment_name:string
+    experimentName:string
+    construct:string
+    plan1:string
+    plan2:string
+    agent:string
+    description:string
+    dataurl:string
 
     constructor(req) {
         super()
@@ -56,20 +66,20 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         this.plans = this.graph.provPlans
 
-        // this.designs = []
+        this.constructs = []
 
-        // let col = this.object as S2Collection
+        let col = this.object as S2Collection
 
-        // await this.datastore.fetchMembersMetadata(this.graph, col)
+        await this.datastore.fetchMembersMetadata(this.graph, col)
 
-        // for (let member of col.members){
+        for (let member of col.members){
 
-        //     if (member instanceof S2ComponentDefinition || member instanceof S2ModuleDefinition){
+            if (member instanceof S2Implementation){
 
-        //         this.designs.push(member)
+                this.constructs.push(member)
 
-        //     }
-        // }
+            }
+        }
 
         if (req.method === 'POST'){
 
@@ -103,17 +113,15 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         
         await this.datastore.fetchPlans(this.graph)
 
-        // this.plans = this.graph.provPlans
+        this.plans = this.graph.provPlans
 
-        this.experiment_name = ''
-        
-        // this.constructName = ''
-        // this.plan1 = ''
-        // this.plan2 = ''
-        // this.agent = ''
-        // this.description = ''
-        // this.location = ''
-
+        this.experimentName = ''        
+        this.plan1 = ''
+        this.plan2 = ''
+        this.agent = ''
+        this.description = ''
+        this.dataurl = ''
+        this.construct = ''
 
 
     }
@@ -122,74 +130,109 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
     async submitPost(req){
 
-    }
-
-
-
-}
-
-// export default function(req, res) {
-
-//     if (req.method === 'POST'){
-
-//       submitPost(req, res)
-//     }
-
-//     else{
-
-//       submitForm(req, res, {}, {})
-
-//     }
-
-// }
-
-async function submitForm(req, res, submissionData, locals){
-
-    /*
-    const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
-
-    req.setTimeout(0) // no timeout
+        let uri = SBHURI.fromURIOrURL(req.url)
     
-    var plan_names = []
-    var plan_uris = []
+        let { fields, files } = await parseForm(req)
+    
+        var errors = []
+    
+        console.log(fields)
+        console.log(files)
 
-    var submissionData = extend({
-        createdBy: req.user,
-    }, submissionData)
+        this.experimentName = fields['experimentName'][0],
+        this.plan1 = fields['plan1'][0],
+        this.plan2 = fields['plan2'][0],
+        this.agent = fields['agent'][0],
+        this.description = fields['description'][0],
+        this.construct = fields['construct'][0]
 
-    var locals = extend({
-      config: config.get(),
-      user: req.user,
-      errors: [],
-      submission: submissionData,
-      canEdit: true,
-    }, locals)
+        var chosen_plan = ''
+        var chosen_plan_uri = ''
 
-    var plan_query = "PREFIX prov: <http://www.w3.org/ns/prov#> SELECT ?s WHERE { ?s a prov:Plan .}"
+        if (fields['experimentName'][0] === ''){
+                errors.push('Please give the experiment a name.')
+        }
+        
+
+        if (fields['agent'][0] === ''){
+            errors.push('Please mention who performed the experiment.')
+        }
+
+        if (fields['description'][0] === ''){
+            errors.push('Please mention the purpose of this experiment.')
+        }
+
+        if (fields['organism'][0] === ''){
+            errors.push('Please mention the organism used in this experiment.')
+        }
 
 
-    let plans = await sparql.queryJson(plan_query, graphUri)
+        if ('plan_submission_type[]' in fields){
+
+            if (fields['plan2'][0] === ''){
+                errors.push('Please mention which protocol was used in the lab.')
+            }
+        
+            else {
+                chosen_plan = fields['plan2'][0]
+            }
+        
+            if (files['file'][0]['size'] === 0){
+                errors.push('Please upload a file describing the lab protocol.')
+            }
+        
+        }
+
+        else{
+        
+            if (fields['plan1'][0] === ''){
+                errors.push('Please select the protocol that was used in the lab.')
+            }
+        
+            else {
+                chosen_plan = fields['plan1'][0].split(',')[1]
+                chosen_plan_uri = fields['plan1'][0].split(',')[0]
+            }
+
+        }
 
 
-    for (var plan of plans){
-      plan_names.push(plan['s'].split('/').pop())
-      plan_uris.push(plan['s'])
+        if (files['metadata_file'][0]['size'] === 0){
+            errors.push('Please upload a file containing metadata for the experiment.')
+
+        }
+
+        if (fields['dataurl'][0] === ''){
+            errors.push('Please specify a URL that contains the experimental data.')
+        }
+
+
+
+        if (errors.length > 0) {
+            this.errors = errors
+            return
+        }
+
+        if (files['file'][0]['size'] != 0){
+
+            let fileStream = await fs.createReadStream(files['file'][0]['path']);
+            let uploadInfo = await uploads.createUpload(fileStream)
+            const { hash, size, mime } = uploadInfo
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + '_plan/' + uri.getVersion(),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+            
+        }
+
+        else{
+            errors.push('File error oops')
+            this.errors = errors
+            return
+        }
+
     }
 
-    let users = await db.model.User.findAll()
 
-
-    locals = extend({
-      agent_names: users.map(x=>x.name),
-      agent_uris: users.map(x=>x.graphUri),
-      plan_names: plan_names,
-      plan_uris: plan_uris
-    }, locals)
-
-    res.send(pug.renderFile('templates/views/createTest.jade', locals))
-    */
-
-    throw new Error('TODO reimplement')
 
 }
 

@@ -28,10 +28,22 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="experiment_name") Experiment Name 
+                                    label(for="experimentName") Experiment Name 
                                         a(title='Every entry on SynBioHub has a name, including Experiments. Make sure to give a memorable and descriptive name for easier recognition.')
                                                 span.fa.fa-info-circle
-                                    input.form-control(name='experiment_name',id="experiment_name",placeholder='The name of the experiment.', value=experiment_name)
+                                    input.form-control(name='experimentName',id="experimentName",placeholder='The name of the experiment.', value=experimentName)
+
+                        div.row
+                            div.col-md-12
+                                div.form-group-100.required
+                                    label(for="agent") Construct
+                                        a(title='Placeholder Construct Info Box Cause I Cant Think Of Anything')
+                                                span.fa.fa-info-circle
+                                    select.form-control(name='construct', id="construct")
+                                            option(value='', selected='selected') The design this construct is derived from
+                                            - for(var i=0;i< constructs.length;i++) {
+                                              option(value = [constructs[i].uri]) #{constructs[i].displayName}
+                                            - }
 
                         div.row
                             div.col-md-12

@@ -120,7 +120,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.description = ''
         this.location = ''
 
-
     
     }
     
@@ -230,13 +229,12 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
 
         // HAVE TO REIMPLEMENT FILE STUFF
-        let fileStream = await fs.createReadStream(files['file'][0]['path']);
-        let uploadInfo = await uploads.createUpload(fileStream)
-        const { hash, size, mime } = uploadInfo
 
-        console.log(mime)
         if (files['file'][0]['size'] != 0){
 
+            let fileStream = await fs.createReadStream(files['file'][0]['path']);
+            let uploadInfo = await uploads.createUpload(fileStream)
+            const { hash, size, mime } = uploadInfo
             await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + '_plan/' + uri.getVersion(),
             files['file'][0]['originalFilename'], hash, size, mime,
             uri.getGraph().split('/').pop)
@@ -246,6 +244,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         else{
             errors.push('File error oops')
             this.errors = errors
+            return
         }
         
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
