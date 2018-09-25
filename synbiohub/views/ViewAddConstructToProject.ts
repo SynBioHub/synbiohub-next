@@ -39,8 +39,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
     canEdit:boolean
 
-
-
     constructName:string
     design:string
     plan1:string
@@ -83,8 +81,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             }
         }
 
-        console.log(this.designs)
-
         if (req.method === 'POST'){
 
             await this.submitPost(req)
@@ -114,8 +110,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.errors = []
         
         await this.datastore.fetchPlans(this.graph)
-
-
 
         this.plans = this.graph.provPlans
 

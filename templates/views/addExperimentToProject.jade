@@ -31,7 +31,7 @@ block content
                                     label(for="experiment_name") Experiment Name 
                                         a(title='Every entry on SynBioHub has a name, including Experiments. Make sure to give a memorable and descriptive name for easier recognition.')
                                                 span.fa.fa-info-circle
-                                    input.form-control(name='experiment_name',id="experiment_name",placeholder='The name of the experiment.', value=submission.experiment_name)
+                                    input.form-control(name='experiment_name',id="experiment_name",placeholder='The name of the experiment.', value=experiment_name)
 
                         div.row
                             div.col-md-12
@@ -41,8 +41,8 @@ block content
                                                 span.fa.fa-info-circle
                                     select.form-control(name='agent', id="agent")
                                             option(value='', selected='selected') The name of the researcher who performed the experiment.
-                                            - for(var i=0;i< agent_names.length;i++) {
-                                              option(value = [agent_uris[i],agent_names[i]]) #{agent_names[i]}
+                                            - for(var i=0;i< agentNames.length;i++) {
+                                              option(value = [agentURIs[i],agentNames[i]]) #{agentNames[i]}
                                             - }
 
                         div.row
@@ -52,7 +52,7 @@ block content
                                         a(title='Writing the purpose of a performed Experiment is important for properly describing it.')
                                                 span.fa.fa-info-circle
                                     input.form-control(name='description',id="description"
-                                            placeholder='Brief description about the purpose of this experiment.',value=submission.description)
+                                            placeholder='Brief description about the purpose of this experiment.',value=description)
 
                         div.row
                             div.col-md-12
@@ -69,20 +69,19 @@ block content
                                     label(for="dataurl") URL to the Experimental Data files 
                                         a(href='https://public-edd.jbei.org/accounts/login/?next=/' title='SynBioHub does not store raw or processed experimental data. Please upload the data to a repository like the Experimental Data Depot (which you can go to by clicking on this information button). Then, give a URL linking to the data.')
                                                 span.fa.fa-info-circle
-                                    input.form-control(name='dataurl',id="dataurl",placeholder='URL that stores the experimental data', value=submission.dataurl)
+                                    input.form-control(name='dataurl',id="dataurl",placeholder='URL that stores the experimental data', value=dataurl)
   
 
                         div.card.w-100
                             div.card-header
                                 div.col-md-12
                                         <b>Experimental Conditions </b>
-                                            a(title='Upload a document e.g. spreadsheet that contains the values for the conditions of the experiment e.g. temperature, pH, etc.')
+                                        a(title='Upload a document e.g. spreadsheet that contains the values for the conditions of the experiment e.g. temperature, pH, etc.')
                                                     span.fa.fa-info-circle.in
                             #collapseSix.panel-collapse
                                 .panel-body
                                     div.row
                                         div.col-md-12
-                                            if canEdit
                                                 div.row
                                                     div.col
                                                         div.input-group
@@ -111,9 +110,8 @@ block content
                                         .panel-body
                                         select.form-control(name='plan1', id="plan1")
                                                 option(value='', selected='selected') Choose an existing Lab Protocol
-                                                - for(var i=0;i< plan_names.length;i++) {
-                                                  option(value = [plan_uris[i],plan_names[i]]) #{plan_names[i]}
-                                                - }
+                                                for plan in plans
+                                                  option(value=[plan.uri, plan.name]) #{plan.name}
 
 
                         div.row
@@ -127,7 +125,7 @@ block content
                                                 | <b>Please upload a file describing the lab protocol</b>
                                           
                                                 div.form-group-100.required
-                                                    input.form-control(name='plan2',id="plan2",placeholder='The name of the lab protocol used to build the design.', value=submission.plan2)
+                                                    input.form-control(name='plan2',id="plan2",placeholder='The name of the lab protocol used to build the design.', value=plan2)
                                             
                                             #collapse.panel-collapse
                                                 .panel-body

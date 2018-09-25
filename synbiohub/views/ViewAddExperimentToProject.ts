@@ -13,22 +13,135 @@ import uploads from '../uploads'
 const fs = require('mz/fs')
 import db from 'synbiohub/db'
 import FMAPrefix from '../FMAPrefix'
+import { Response } from 'express'
 
+import ViewConcerningTopLevel from './ViewConcerningTopLevel';
+import { SBHRequest } from '../SBHRequest';
+import SBHURI from '../SBHURI';
+import { S2ProvPlan } from 'sbolgraph';
 
-export default function(req, res) {
+    
 
-    if (req.method === 'POST'){
+export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
-      submitPost(req, res)
+    redirect:string|null
+    errors:any[]
+
+    agentNames:any[]
+    agentURIs:any[]
+    
+    plans:S2ProvPlan[]
+
+    config:any
+
+    canEdit:boolean
+
+    experiment_name:string
+
+    constructor(req) {
+        super()
     }
 
-    else{
 
-      submitForm(req, res, {}, {})
+    async prepare(req:SBHRequest){
+
+        await super.prepare(req)
+
+        let users = await db.model.User.findAll()
+    
+        this.agentNames = users.map(x=>x.name)
+        this.agentURIs= users.map(x=>config.get('databasePrefix') + 'user/' + x.username)
+
+        await this.datastore.fetchPlans(this.graph)
+
+        this.plans = this.graph.provPlans
+
+        // this.designs = []
+
+        // let col = this.object as S2Collection
+
+        // await this.datastore.fetchMembersMetadata(this.graph, col)
+
+        // for (let member of col.members){
+
+        //     if (member instanceof S2ComponentDefinition || member instanceof S2ModuleDefinition){
+
+        //         this.designs.push(member)
+
+        //     }
+        // }
+
+        if (req.method === 'POST'){
+
+            await this.submitPost(req)
+          }
+      
+          else{
+      
+            await this.submitForm(req, {}, {})
+      
+          }
+    }
+
+
+    async render(res:Response) {
+
+        if(this.redirect) {
+            res.redirect(this.redirect)
+        } else {
+            res.render('templates/views/addExperimentToProject.jade', this)
+        }
 
     }
+    
+
+    async submitForm(req, submissionData, locals){
+
+        let uri = SBHURI.fromURIOrURL(req.url)
+    
+        this.errors = []
+        
+        await this.datastore.fetchPlans(this.graph)
+
+        // this.plans = this.graph.provPlans
+
+        this.experiment_name = ''
+        
+        // this.constructName = ''
+        // this.plan1 = ''
+        // this.plan2 = ''
+        // this.agent = ''
+        // this.description = ''
+        // this.location = ''
+
+
+
+    }
+
+
+
+    async submitPost(req){
+
+    }
+
+
 
 }
+
+// export default function(req, res) {
+
+//     if (req.method === 'POST'){
+
+//       submitPost(req, res)
+//     }
+
+//     else{
+
+//       submitForm(req, res, {}, {})
+
+//     }
+
+// }
 
 async function submitForm(req, res, submissionData, locals){
 

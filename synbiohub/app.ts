@@ -149,6 +149,7 @@ import ViewNewProject from 'synbiohub/views/ViewNewProject';
 import ViewUserProfile from 'synbiohub/views/ViewUserProfile';
 import SBHURI from 'synbiohub/SBHURI';
 import ViewCollectionMembersDatatable from './views/ViewCollectionMembersDatatable';
+import ViewAddExperimentToProject from './views/ViewAddExperimentToProject';
 
 var actions = {
     logout,
@@ -452,8 +453,8 @@ function App() {
         switch(extraPart) {
         case 'addConstruct':
             return chain(req, res, requireUser, dispatchToView(ViewAddConstructToProject))
-        case 'createTest':
-            return requireUser(req, res, views.createTest)
+        case 'addExperiment':
+            return chain(req, res, requireUser, dispatchToView(ViewAddExperimentToProject))
         case 'cloneSubmission':
             return chain(req, res, requireUser, actions.cloneSubmission)
         case 'remove':
