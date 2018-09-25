@@ -32,7 +32,7 @@ block content
                                     label(for="constructName") Construct Name 
                                         a(title='Every entry on SynBioHub has a name, including Constructs. Make sure to give a memorable and descriptive name for easier recognition.')
                                                     span.fa.fa-info-circle
-                                    input.form-control(name='constructName',id="constructName",placeholder='The name of the built design.', value=constructName)
+                                    input.form-control(name='constructName',id="constructName",placeholder='The name of the built construct', value=constructName)
 
                         div.row
                             div.col-md-12
@@ -41,7 +41,7 @@ block content
                                         a(title='Placeholder Design Info Box Cause I Cant Think Of Anything')
                                                 span.fa.fa-info-circle
                                     select.form-control(name='design', id="design")
-                                            option(value='', selected='selected') The design this construct is inspired by
+                                            option(value='', selected='selected') The design this construct is derived from
                                             - for(var i=0;i< designs.length;i++) {
                                               option(value = [designs[i].uri]) #{designs[i].displayName}
                                             - }
@@ -53,7 +53,7 @@ block content
                                         a(title='SynBioHub records information about provenance: who, what, where. Here, you need to fill out which user performed this specific Experiment.')
                                                 span.fa.fa-info-circle
                                     select.form-control(name='agent', id="agent")
-                                            option(value='', selected='selected') The name of the researcher who built the design.
+                                            option(value='', selected='selected') The name of the researcher who built the construct
                                             - for(var i=0;i< agentNames.length;i++) {
                                               option(value = [agentURIs[i],agentNames[i]]) #{agentNames[i]}
                                             - }
@@ -64,7 +64,7 @@ block content
                                         a(title='Writing the purpose of a built Construct is important for properly describing it.')
                                                 span.fa.fa-info-circle
                                     input.form-control(name='description',id="description"
-                                            placeholder='Brief description about the purpose of this construct.',value=description)
+                                            placeholder='Brief description about the purpose of this construct',value=description)
                         div.row
                             div.col-md-12
                                 div.form-group-100.required

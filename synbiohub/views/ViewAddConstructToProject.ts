@@ -413,6 +413,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
 
+        let col_uri = SBHURI.fromURIOrURL(this.object.uri)
+
+        let col = graph.createCollection(col_uri.getURIPrefix(), col_uri.getDisplayId(), col_uri.getVersion())
+
+        col.addMember(impl)
 
         // let col = graph.createCollection(collection_url, '', '')
         // col.add(impl)

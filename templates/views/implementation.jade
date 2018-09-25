@@ -16,7 +16,9 @@ block topLevelIcon
 
 block topLevelBelowPropertyTable
 
-    a(style='font-size:18px',href=design_uri) Original Design
+    div.card-body
+        p(style='font-size:18px') Original Design: 
+            a(style='font-size:18px',href=design_uri) #{design}
     div.card-body
         table.table.table-striped.entry-detail-table
             tr
