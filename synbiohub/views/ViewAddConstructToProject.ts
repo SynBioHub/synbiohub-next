@@ -322,6 +322,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         act.displayId = displayId + '_activity'
         act.persistentIdentity = prefix + '/' + act.displayId
         act.version = version
+        act.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', act.uri)
 
 
         let asc = graph.createProvAssociation(prefix, displayId + '_association', version)
