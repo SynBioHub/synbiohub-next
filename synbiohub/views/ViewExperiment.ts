@@ -8,9 +8,9 @@ import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
 
-import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation } from 'sbolgraph'
+import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation, SEP21ExperimentalData, S2Identified, S2ProvUsage } from 'sbolgraph'
 
-export default class ViewTest extends ViewDescribingTopLevel{
+export default class ViewExperiment extends ViewDescribingTopLevel{
 
     constructor(){
         super()
@@ -19,9 +19,11 @@ export default class ViewTest extends ViewDescribingTopLevel{
     meta:any
 
     experiment:SEP21Experiment
+    experimentalData:S2Identified[]
 
     construct:string
     construct_uri:string
+
     agent:string
     dataurl:string
     organism:string
@@ -47,8 +49,12 @@ export default class ViewTest extends ViewDescribingTopLevel{
 
         await this.datastore.fetchEverything(this.graph, act)
 
-        let asc = act.association as S2ProvAssociation
+        let usg = act.usage as S2ProvUsage
         
+        await this.datastore.fetchEverything(this.graph, usg)
+        
+        let asc = act.association as S2ProvAssociation
+
         await this.datastore.fetchEverything(this.graph, asc)
 
         let agent = asc.agent
@@ -58,6 +64,12 @@ export default class ViewTest extends ViewDescribingTopLevel{
         let plan = asc.plan
         
         await this.datastore.fetchEverything(this.graph, plan)
+
+        await this.datastore.fetchAttachments(this.graph, plan)
+
+        for (let attachment of plan.attachments){
+            await this.datastore.fetchEverything(this.graph, attachment)
+        }
 
         this.agent = agent.displayName
 
@@ -76,6 +88,13 @@ export default class ViewTest extends ViewDescribingTopLevel{
         this.construct_uri = construct.uri
 
         this.construct = construct.displayName
+
+        console.log(this.graph.serializeXML())
+
+        this.experimentalData = this.experiment.experimentalData
+
+        console.log(this.experimentalData)
+
 
 
         // TODO reimplement

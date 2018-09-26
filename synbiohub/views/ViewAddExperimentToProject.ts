@@ -215,37 +215,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
             return
         }
 
-        // if (files['file'][0]['size'] != 0){
-
-        //     let fileStream = await fs.createReadStream(files['file'][0]['path']);
-        //     let uploadInfo = await uploads.createUpload(fileStream)
-        //     const { hash, size, mime } = uploadInfo
-        //     await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + '_plan/' + uri.getVersion(),
-        //     files['file'][0]['originalFilename'], hash, size, mime,
-        //     uri.getGraph().split('/').pop)
-            
-        // }
-
-        // else{
-        //     errors.push('File error oops')
-        //     this.errors = errors
-        //     return
-        // }
-
-        // if (files['metadata_file'][0]['size'] != 0){
-
-        //     let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
-
-        //     let metaUploadInfo = await uploads.createUpload(metaFileStream)
-        
-        //     var { hash, size, mime } = metaUploadInfo
-
-        //     await attachments.addAttachmentToTopLevel(graphUri, baseUri, activity_uri,
-        //     files['metadata_file'][0]['originalFilename'], hash, size, mime,
-        //     temp)
-        // }
-
-
         var projectId = fields['experimentName'][0].replace(/\s+/g, '')
         var displayId = projectId + '_experiment'
         var version = '1'
@@ -277,38 +246,39 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         
         var sbol_results = await this.createSBOLExperiment(form_vals)
 
-        let doc = sbol_results[0] 
+        let doc = sbol_results[0] as SBOL2Graph
         let exp_uri = sbol_results[1]
+        let expData_uri = sbol_results[2]
         // var activity_uri = doc.provActivities[0].uri.toString()
 
         // let temp = graphUri.split('/').pop()
 
-        // if (files['file'][0]['size'] != 0){
+        // HAVE TO REIMPLEMENT FILE STUFF
 
-        //     let fileStream = await fs.createReadStream(files['file'][0]['path']);
+        if (files['file'] && files['file'][0]['size'] != 0){
+            console.log('IM ADDING IT')
+            let fileStream = await fs.createReadStream(files['file'][0]['path']);
+            let uploadInfo = await uploads.createUpload(fileStream)
+            const { hash, size, mime } = uploadInfo
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + uri.getVersion(),
+            files['file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+            
+        }
 
-        //     let uploadInfo = await uploads.createUpload(fileStream)
+
+        if (files['metadata_file'][0]['size'] != 0){
+
+            let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
+
+            let metaUploadInfo = await uploads.createUpload(metaFileStream)
         
-        //     var { hash, size, mime } = uploadInfo
-        
-        //     await attachments.addAttachmentToTopLevel(graphUri, baseUri, prefix + '/' + chosen_plan.replace(/\s+/g, ''),
-        //     files['file'][0]['originalFilename'], hash, size, mime,
-        //     temp)
-        // }
+            var { hash, size, mime } = metaUploadInfo
 
-
-        // if (files['metadata_file'][0]['size'] != 0){
-
-        //     let metaFileStream = await fs.createReadStream(files['metadata_file'][0]['path']);
-
-        //     let metaUploadInfo = await uploads.createUpload(metaFileStream)
-        
-        //     var { hash, size, mime } = metaUploadInfo
-
-        //     await attachments.addAttachmentToTopLevel(graphUri, baseUri, activity_uri,
-        //     files['metadata_file'][0]['originalFilename'], hash, size, mime,
-        //     temp)
-        // }
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), expData_uri,
+            files['metadata_file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+        }
 
         let uploader = new SBOLUploader()
         uploader.setGraph(doc)
@@ -354,21 +324,21 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
   
         if (chosen_plan_uri === ''){
-            var plan_uri = prefix + '/' + plan_str.replace(/\s+/g, '')
+            var plan_uri = prefix + plan_str.replace(/\s+/g, '') + '/1'
         }
     
         else{
              plan_uri = chosen_plan_uri
         }
 
-        plan_uri = plan_uri.replace(prefix, '')
-        plan_uri = plan_uri.replace('/1', '')
-        plan_uri = plan_uri.replace('_plan', '')
+            console.log(plan_uri)
+            
+        let planSBHuri = SBHURI.fromURIOrURL(plan_uri)
 
-        let plan = graph.createProvPlan(prefix, plan_uri + '_plan', version)
+        let plan = graph.createProvPlan(planSBHuri.getURIPrefix(), planSBHuri.getDisplayId(),  planSBHuri.getVersion())
         plan.displayId = plan_str.replace(/\s+/g, '')
         plan.name = plan_str
-        plan.persistentIdentity = plan_uri
+        plan.persistentIdentity = planSBHuri.getPersistentIdentity()
 
         let agent = graph.createProvAgent(agent_uri, 'agent', '1')
         agent.displayId = agent_str
@@ -421,6 +391,9 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         exp.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         exp.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
 
+        let expData = graph.createExperimentalData(prefix, displayId + '_metadata', version)
+        
+        exp.addExperimentalData(expData)
 
 //     var dataAttachment = doc.attachment(dataurl)
 //     dataAttachment.source = dataurl
@@ -428,7 +401,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
   
         console.log(graph.serializeXML())
     
-        return [graph, exp.uri]
+        return [graph, exp.uri, expData.uri]
 
     }
 

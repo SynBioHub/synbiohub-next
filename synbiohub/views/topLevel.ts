@@ -12,7 +12,6 @@ import ViewAttachment from './ViewAttachment';
 import ViewGenericTopLevel from './ViewGenericTopLevel';
 import ViewImplementation from './ViewImplementation';
 import ViewExperiment from './ViewExperiment';
-import ViewTest from './ViewTest';
 import SBHURI from 'synbiohub/SBHURI';
 import { SBOL2Graph, S2Identified } from 'sbolgraph';
 import Datastores from '../datastore/Datastores';

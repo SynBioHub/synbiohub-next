@@ -241,12 +241,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             
         }
 
-        else{
-            errors.push('File error oops')
-            this.errors = errors
-            return
-        }
-        
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
         var displayId = projectId + '_construct'
         var version = '1'
