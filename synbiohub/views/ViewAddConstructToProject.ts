@@ -106,6 +106,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     async submitForm(req, submissionData, locals){
     
         let uri = SBHURI.fromURIOrURL(req.url)
+        console.log(uri.getURIPrefix())
     
         this.errors = []
         
@@ -230,17 +231,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         // HAVE TO REIMPLEMENT FILE STUFF
 
-        if (files['file'][0]['size'] != 0){
-
-            let fileStream = await fs.createReadStream(files['file'][0]['path']);
-            let uploadInfo = await uploads.createUpload(fileStream)
-            const { hash, size, mime } = uploadInfo
-            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + '_plan/' + uri.getVersion(),
-            files['file'][0]['originalFilename'], hash, size, mime,
-            uri.getGraph().split('/').pop)
-            
-        }
-
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
         var displayId = projectId + '_construct'
         var version = '1'
@@ -275,6 +265,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let sbol_results = await this.createSBOLImplementation(form_vals)
         let doc = sbol_results[0]
         let impl_uri = sbol_results[1]
+        let plan_uri = sbol_results[2]
         
         let uploader = new SBOLUploader()
         uploader.setGraph(doc)
@@ -282,6 +273,19 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
 
         await uploader.upload()
+        
+        if (files['file'][0]['size'] != 0){
+
+            let fileStream = await fs.createReadStream(files['file'][0]['path']);
+            let uploadInfo = await uploads.createUpload(fileStream)
+            const { hash, size, mime } = uploadInfo
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() 
+            , plan_uri,
+            files['file'][0]['originalFilename'], hash, size, mime,
+            uri.getGraph().split('/').pop)
+            
+        }
+
 
         this.redirect = impl_uri
     
@@ -404,7 +408,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         console.log(graph.serializeXML())
     
-        return [graph, impl.uri]
+        return [graph, impl.uri, plan.uri]
     
     
     }

@@ -12,7 +12,7 @@ export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, up
 
     //console.log('Adding:'+name+' to:'+topLevelUri)
     const displayId = 'attachment_' + sliver.getId()
-    const persistentIdentity = baseUri + '/' + displayId
+    const persistentIdentity = baseUri  + displayId
     // TODO: should get version from topLevelUri
     const version = '1'
     const attachmentURI = persistentIdentity + '/' + version

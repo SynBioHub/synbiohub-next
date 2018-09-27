@@ -4,19 +4,25 @@ import serializeSBOL from 'synbiohub/serializeSBOL';
 import config from 'synbiohub/config';
 import uploads from 'synbiohub/uploads';
 import SBHURI from 'synbiohub/SBHURI';
+import { SBOL2Graph, S2Identified, S2Attachment } from 'sbolgraph';
+import Datastores from '../datastore/Datastores';
 
 export default async function(req, res) {
 
-    throw new Error('attachments need updating to sbolgraph')
+    let uri = SBHURI.fromURIOrURL(req.url)
+    let datastore = Datastores.forSBHURI(uri)
+    let graph = new SBOL2Graph()
 
-    /*
-    var attachmentType = object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentType')
-    var attachmentHash = object.getAnnotation('http://wiki.synbiohub.org/wiki/Terms/synbiohub#attachmentHash')
+    await datastore.fetchMetadata(graph, new S2Identified(graph, uri.toURI()))
 
-    if(sbol.attachments.length === 1) {
-        attachmentType = sbol.attachments[0].format
-        attachmentHash = sbol.attachments[0].hash
-    }
+    let object:S2Attachment = graph.uriToFacade(uri.toURI()) as S2Attachment
+
+    object = object as S2Attachment
+
+    await datastore.fetchEverything(graph, object)
+
+    let attachmentType = object.format
+    let attachmentHash = object.hash
 
     const readStream = uploads.createCompressedReadStream(attachmentHash)
 
@@ -24,9 +30,9 @@ export default async function(req, res) {
 
     res.status(200)
     res.header('Content-Encoding', 'gzip')
-    res.header('Content-Disposition', 'attachment; filename="' + object.name + '"')
+    res.header('Content-Disposition', 'attachment; filename="' + object.displayName + '"')
     res.type(mimeType)
-    readStream.pipe(res)*/
+    readStream.pipe(res)
 };
 
 

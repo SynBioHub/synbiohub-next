@@ -249,12 +249,14 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let doc = sbol_results[0] as SBOL2Graph
         let exp_uri = sbol_results[1]
         let expData_uri = sbol_results[2]
+        let plan_uri = sbol_results[3]
 
         if (files['file'] && files['file'][0]['size'] != 0){
             let fileStream = await fs.createReadStream(files['file'][0]['path']);
             let uploadInfo = await uploads.createUpload(fileStream)
             const { hash, size, mime } = uploadInfo
-            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), uri.getURIPrefix() + chosen_plan.replace(/\s+/g, '') + uri.getVersion(),
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() 
+            , plan_uri,
             files['file'][0]['originalFilename'], hash, size, mime,
             uri.getGraph().split('/').pop)
             
@@ -269,7 +271,8 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         
             var { hash, size, mime } = metaUploadInfo
 
-            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() + uri.getDisplayId() + uri.getVersion(), expData_uri,
+            await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix()
+            , expData_uri,
             files['metadata_file'][0]['originalFilename'], hash, size, mime,
             uri.getGraph().split('/').pop)
         }
@@ -394,7 +397,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
   
         console.log(graph.serializeXML())
     
-        return [graph, exp.uri, expData.uri]
+        return [graph, exp.uri, expData.uri, plan.uri]
 
     }
 

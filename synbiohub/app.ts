@@ -450,6 +450,8 @@ function App() {
 
         // Both public and private endpoints
 
+        console.log('EXTRA PART')
+        console.log(extraPart)
         switch(extraPart) {
         case 'addConstruct':
             return chain(req, res, requireUser, dispatchToView(ViewAddConstructToProject))
