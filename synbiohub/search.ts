@@ -17,19 +17,24 @@ export function search(graphUri, criteria, offset, limit, user) {
     }
     if (user) {
 	templateParams.from = 'FROM <' + config.get('databasePrefix')+'public>' 
-	    + ' FROM <'+user.graphUri+'>' 
+	    + ' FROM <'+user+'>' 
     }
 
     var countQuery = loadTemplate('sparql/searchCount.sparql', templateParams)
 	var searchQuery = loadTemplate('sparql/search.sparql', templateParams)
 	
-	console.log(countQuery);
-	console.log(searchQuery);
+	// console.log('PPARAMS')
+	// console.log(user)
+
+	// console.log('QUERY')
+	// console.log(countQuery);
+	// console.log(searchQuery);
 
     return Promise.all([
 
         sparql.queryJson(countQuery, graphUri).then((result) => {
-
+			// console.log('HERE')
+			// console.log(result)
             if(result && result[0] && result[0].count !== undefined) {
                 return Promise.resolve(result[0].count)
             } else {

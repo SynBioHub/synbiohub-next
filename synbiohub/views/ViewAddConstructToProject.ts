@@ -369,13 +369,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         act.association = asc    
 
         let impl = graph.createImplementation(prefix, displayId, version)
-
         impl.displayId = displayId
         impl.name = displayId
         impl.persistentIdentity = prefix + '/' + impl.displayId
         impl.version = version
         impl.description = description
-
         impl.activity = act
 
         if(design instanceof S2ComponentDefinition) {

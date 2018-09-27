@@ -63,8 +63,11 @@ export default class ViewProjects extends View {
 
             }),
 
-            search.search(req.user.graphUri, criteria, undefined, undefined, req.user).then((searchRes) => {
+            search.search(req.user.graphUri, criteria, undefined, undefined, config.get('databasePrefix') + 'user/' + req.user.username).then((searchRes) => {
 
+                // let dbPrefix = config.get('databasePrefix')
+                // console.log('REQ USER')
+                // let user = dbPrefix + 'user/' + req.user.username
                 const results = searchRes.results
 
                 this.privateProjects = results.filter((result) => {
@@ -129,6 +132,10 @@ export default class ViewProjects extends View {
     }
 
     async render(res:Response) {
+
+        // console.log(this.publicProjects)
+        // console.log(this.publicProjects)
+        // console.log(this.sharedProjects)
 
         res.render('templates/views/projects.jade', this)
 

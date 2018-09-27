@@ -368,10 +368,10 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         let exp = graph.createExperiment(prefix, displayId , version)
         exp.displayId = displayId
+        exp.name = displayId
         exp.persistentIdentity = prefix + '/' + displayId
         exp.version = version
         exp.description = description
-
 
         exp.construct = construct
         exp.activity = act

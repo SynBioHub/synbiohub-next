@@ -18,7 +18,7 @@ WHERE {
     $criteria
 
     ?subject a ?type .
-    ?subject sbh:topLevel ?subject
+#    ?subject sbh:topLevel ?subject
     OPTIONAL { ?subject sbol2:displayId ?displayId . }
     OPTIONAL { ?subject sbol2:version ?version . }
     OPTIONAL { ?subject dcterms:title ?name . }
