@@ -11,11 +11,9 @@ block Collections
 block Mutables
 
 block topLevelBelowPropertyTable
-    //- a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Construct
-    //- br
-    a(style='font-size:20px', href=dataurl) Experimental Data URL
 
     div.card-body
+        a(style='font-size:18px', href=dataurl) Digital Data Repository
         p(style='font-size:18px') Original Construct: 
             a(style='font-size:18px',href=construct_uri) #{construct}
 

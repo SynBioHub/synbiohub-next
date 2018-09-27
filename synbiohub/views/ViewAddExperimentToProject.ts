@@ -251,7 +251,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let expData_uri = sbol_results[2]
 
         if (files['file'] && files['file'][0]['size'] != 0){
-            console.log('IM ADDING IT')
             let fileStream = await fs.createReadStream(files['file'][0]['path']);
             let uploadInfo = await uploads.createUpload(fileStream)
             const { hash, size, mime } = uploadInfo
@@ -386,6 +385,12 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let expData = graph.createExperimentalData(prefix, displayId + '_metadata', version)
         
         exp.addExperimentalData(expData)
+
+        let col_uri = SBHURI.fromURIOrURL(this.object.uri)
+
+        let col = graph.createCollection(col_uri.getURIPrefix(), col_uri.getDisplayId(), col_uri.getVersion())
+
+        col.addMember(exp)
 
 //     var dataAttachment = doc.attachment(dataurl)
 //     dataAttachment.source = dataurl
