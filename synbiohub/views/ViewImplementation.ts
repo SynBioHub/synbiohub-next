@@ -68,7 +68,7 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         this.organism = this.implementation.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
 
-        let design = this.implementation.design as S2ComponentDefinition //THIS GETTER IS ACTUALLY BROKEN DONT KNOW WHY HAVE TO FIX
+        let design = this.implementation.design as S2Identified
 
         await this.datastore.fetchEverything(this.graph, design) 
 

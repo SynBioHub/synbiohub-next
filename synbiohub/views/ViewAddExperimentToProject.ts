@@ -249,11 +249,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let doc = sbol_results[0] as SBOL2Graph
         let exp_uri = sbol_results[1]
         let expData_uri = sbol_results[2]
-        // var activity_uri = doc.provActivities[0].uri.toString()
-
-        // let temp = graphUri.split('/').pop()
-
-        // HAVE TO REIMPLEMENT FILE STUFF
 
         if (files['file'] && files['file'][0]['size'] != 0){
             console.log('IM ADDING IT')
@@ -330,8 +325,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         else{
              plan_uri = chosen_plan_uri
         }
-
-            console.log(plan_uri)
             
         let planSBHuri = SBHURI.fromURIOrURL(plan_uri)
 
@@ -363,8 +356,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         let construct = this.graph.getTopLevelsWithPrefix(construct_uri)[0] as S2Implementation
 
-
-        console.log(this.graph.getTopLevelsWithPrefix(construct_uri)[0])
         let usg = graph.createProvUsage(prefix, displayId + '_usage', version)
         usg.displayId = displayId + '_usage'
         usg.persistentIdentity = prefix +  usg.displayId
@@ -390,6 +381,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         exp.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', exp.uri)
         exp.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         exp.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
+        exp.setUriProperty('http://purl.obolibrary.org/obo/NCIT_C114457', dataurl) //ONTOLOGY TERM FOR DIGITAL DATA REPOSITORY
 
         let expData = graph.createExperimentalData(prefix, displayId + '_metadata', version)
         

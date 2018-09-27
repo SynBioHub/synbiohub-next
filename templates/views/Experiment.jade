@@ -13,7 +13,7 @@ block Mutables
 block topLevelBelowPropertyTable
     //- a(style='font-size:20px', href=meta.wasDerivedFrom.toString().startsWith(config.databasePrefix)?'/'+meta.wasDerivedFrom.toString().replace(config.databasePrefix,''):meta.wasDerivedFrom.toString()) Original Construct
     //- br
-    //- a(style='font-size:20px', href=meta.dataurl) Experimental Data URL
+    a(style='font-size:20px', href=dataurl) Experimental Data URL
 
     div.card-body
         p(style='font-size:18px') Original Construct: 
@@ -33,6 +33,8 @@ block topLevelBelowPropertyTable
                 td 
                     a(href=taxId) #{organism}
             tr
-                td Metadata
+                td Experimental Conditions
                 td 
-                    //- a(href=metadata.url + '/download') #{metadata.name}
+                    for data in experimentalData
+                        if data.attachments[0].displayName
+                            a(href=data.attachments[0].uri + '/download') #{data.attachments[0].displayName}

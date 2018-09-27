@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
 
-import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation, SEP21ExperimentalData, S2Identified, S2ProvUsage } from 'sbolgraph'
+import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation, SEP21ExperimentalData, S2Identified, S2ProvUsage, S2Attachment } from 'sbolgraph'
 
 export default class ViewExperiment extends ViewDescribingTopLevel{
 
@@ -81,6 +81,8 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
         this.organism = this.experiment.getUriProperty('http://www.biopax.org/release/biopax-level3.owl#organism')
 
+        this.dataurl = this.experiment.getUriProperty('http://purl.obolibrary.org/obo/NCIT_C114457')
+
         let construct = this.experiment.construct as S2Implementation
 
         await this.datastore.fetchEverything(this.graph, construct) 
@@ -93,53 +95,9 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
         this.experimentalData = this.experiment.experimentalData
 
-        console.log(this.experimentalData)
-
-
-
-        // TODO reimplement
-
-        /*
-        let activity_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(this.meta.wasGeneratedBy.uri)
-        let activity_sbol_object = activity_sbol.object as S2ProvActivity
-
-        let plan_uri = activity_sbol_object.associations[0].plan.uri.toString()
-        
-        let plan_sbol = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(plan_uri)
-        
-        this.meta.description = this.meta.description.split('<br/>').join('')
-        this.agent = activity_sbol_object.associations[0].agent.name
-        this.plan = activity_sbol_object.associations[0].plan.name
-
-        this.meta.attachments = getAttachmentsFromTopLevel(plan_sbol, plan_sbol.object, req.url.toString().endsWith('/share'))
-        this.plan_url = this.meta.attachments[0]['url'] + '/download'
-
-        this.metadata = getAttachmentsFromTopLevel(activity_sbol, activity_sbol.object, req.url.toString().endsWith('/share'))[0]
-
-        this.organism = this.annotations[4]['value']
-        this.taxId = this.annotations[0]['uri']
-
-        const { graphUri, uri, designId, baseUri, url } = getUrisFromReq(req)
-
-        var templateParams = {
-            uri: uri
+        for (let data of this.experimentalData){
+            await this.datastore.fetchAttachments(this.graph, data) as S2Attachment
         }
-
-        var getAttachmentsQuery = loadTemplate('sparql/GetAttachments.sparql', templateParams)
-
-		let dataurlAttachmentList = await sparql.queryJson(getAttachmentsQuery, graphUri)
-
-        let dataurlAttachment = await getAttachmentsFromList(graphUri, dataurlAttachmentList,
-            req.url.toString().endsWith('/share'))
-
-
-        for (let attachment of dataurlAttachment){
-            if (attachment['size'] === 0){
-                this.meta.dataurl = attachment['url']
-            }
-
-        }*/
-
     }
 
     async render(res:Response) {
