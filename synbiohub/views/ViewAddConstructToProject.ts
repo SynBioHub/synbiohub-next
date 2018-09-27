@@ -308,7 +308,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         let organism = form_vals['organism']
         let taxId = form_vals['taxId']
     
-        console.log(form_vals)
         let graph = new SBOL2Graph()
 
 
@@ -328,7 +327,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         if (chosen_plan_uri === ''){
     
-            var plan_uri = prefix + plan_str.replace(/\s+/g, '')
+            var plan_uri = prefix + plan_str.replace(/\s+/g, '') + '/1'
         }
       
         else{
@@ -336,19 +335,18 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         }
       
 
-        plan_uri = plan_uri.replace(prefix, '')
-        plan_uri = plan_uri.replace('/1', '')
-        plan_uri = plan_uri.replace('_plan', '')
+        let planSBHuri = SBHURI.fromURIOrURL(plan_uri)
+
+        let plan = graph.createProvPlan(planSBHuri.getURIPrefix(), planSBHuri.getDisplayId(),  planSBHuri.getVersion())
+        plan.displayId = plan_str.replace(/\s+/g, '')
+        plan.name = plan_str
+        plan.persistentIdentity = planSBHuri.getPersistentIdentity()
+    
 
         let agent = graph.createProvAgent(agent_uri, 'agent', '1')
         agent.displayId = agent_str
         agent.name = agent_str
         agent.persistentIdentity = agent_uri
-    
-        let plan = graph.createProvPlan(prefix, plan_uri + '_plan', version)
-        plan.displayId = plan_str.replace(/\s+/g, '')
-        plan.name = plan_str
-        plan.persistentIdentity = plan_uri
     
 
         agent.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', agent.uri)
@@ -380,8 +378,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         impl.activity = act
 
-        console.log('HI THERE FRIEND PLEASE WORK')
-        console.log(design)
         if(design instanceof S2ComponentDefinition) {
             impl.built = design as S2ComponentDefinition
         } else if(design instanceof S2ModuleDefinition) {

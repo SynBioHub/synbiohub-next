@@ -391,10 +391,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let col = graph.createCollection(col_uri.getURIPrefix(), col_uri.getDisplayId(), col_uri.getVersion())
 
         col.addMember(exp)
-
-//     var dataAttachment = doc.attachment(dataurl)
-//     dataAttachment.source = dataurl
-//     col.addAttachment(dataAttachment)
   
         console.log(graph.serializeXML())
     
