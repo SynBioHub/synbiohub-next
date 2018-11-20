@@ -1,10 +1,21 @@
 
+
+
 extends ../layouts/topLevel.jade
 
 include ../mixins/blast-button.jade
 include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
+
+link(href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css", rel="stylesheet")
+script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+
+block js
+    script.
+        $(document).ready(function() {
+                $('.display').DataTable();
+            } );
 
 block topLevelIcon
     span.topLevelIcon.fa.fa-folder
@@ -37,7 +48,9 @@ block modal
                     button.btn.btn-primary(type="submit", form="iconForm") Save changes
 
 block topLevelPreview
-    table.table.table-striped.entry-detail-table.sbh-collection-members-datatable
+    table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable
+
+    
         thead
             th Identifier
             th Name
@@ -131,4 +144,10 @@ block topLevelButtons
         li.btn.btn-success
             a(href=copyFromRemote, title='Copy to SynBioHub',style="color:white")
                span.fa.fa-share-alt
+
+
+
+
+
+
 
