@@ -19,6 +19,10 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
     memberURLs:Map<string,string>
 
+    components:any[]
+
+    CDCheck: any[]
+
     constructor() {
 
         super()
@@ -37,10 +41,12 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         }
 
         this.collection = this.object as S2Collection
+
+        this.components = []
+        this.CDCheck = []
         
         for(let member of this.collection.members) {
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
-            this.memberURLs.set(member.displayType, 'bla')
 
             if (member.objectType === Types.SBOL2.ComponentDefinition){
 
@@ -48,14 +54,25 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
                 await this.datastore.fetchComponents(this.graph, tempCD)
 
-                for(let component of tempCD.components) {
-                    console.log(component.definition)
+                if (tempCD.components.length !== 0) {
+
+                    console.log(tempCD.components)
+                    let tempComponents = [tempCD]
+                    this.CDCheck.push(tempCD.displayId)
+                    
+                    for(let component of tempCD.components) {
+                        tempComponents.push(component.definition)
+                    }
+
+                    this.components.push(tempComponents)
                 }
 
             }
-        
-        }
 
+            
+        }
+        
+        console.log(this.components)
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
             new Breadcrumb(this.uri.toURL(), this.object.displayName)

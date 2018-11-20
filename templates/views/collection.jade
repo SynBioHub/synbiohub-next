@@ -45,7 +45,7 @@ block topLevelPreview
             th Description
         tbody
             for member in collection.members
-                if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence")
+                if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
                     tr
                         td
                             a(href=memberURLs.get(member.uri)) #{member.displayId}
@@ -54,6 +54,59 @@ block topLevelPreview
                         td
                             a(href=memberURLs.get(member.uri)) #{member.displayType}
                         td #{member.description}
+            for componentList in components
+                tr
+
+                    td
+                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
+                        br
+                        ||____
+                        - count = 0
+                        for component in componentList.slice(1, componentList.length)
+                            - count += 1
+                            a(href=memberURLs.get(component.uri)) #{component.displayId}
+                            if (count !== componentList.length -1 )
+                                br
+                                ||____
+
+
+                    td
+                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
+                        br
+                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        - count = 0
+                        for component in componentList.slice(1, componentList.length)
+                            - count += 1
+                            a(href=memberURLs.get(component.uri)) #{component.name}
+                            if (count !== componentList.length -1 )
+                                br
+                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    td
+                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
+                        br
+                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        - count = 0
+                        for component in componentList.slice(1, componentList.length)
+                            - count += 1
+                            a(href=memberURLs.get(component.uri)) #{component.displayType}
+                            if (count !== componentList.length -1 )
+                                br
+                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    td  #{componentList[0].description}
+                        br
+                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        - count = 0
+                        for component in componentList.slice(1, componentList.length)
+                            - count += 1
+                            a #{component.description}
+                            if (count !== componentList.length -1 )
+                                br
+                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                
+
     div.sbh-project-add
         a(href=uri.toURL() + '/addDesign')
             button.btn.sbh-design-button
