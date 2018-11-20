@@ -45,14 +45,15 @@ block topLevelPreview
             th Description
         tbody
             for member in collection.members
-                tr
-                    td
-                        a(href=memberURLs.get(member.uri)) #{member.displayId}
-                    td
-                        a(href=memberURLs.get(member.uri)) #{member.name}
-                    td
-                        a(href=memberURLs.get(member.uri)) #{member.displayType}
-                    td #{member.description}
+                if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence")
+                    tr
+                        td
+                            a(href=memberURLs.get(member.uri)) #{member.displayId}
+                        td
+                            a(href=memberURLs.get(member.uri)) #{member.name}
+                        td
+                            a(href=memberURLs.get(member.uri)) #{member.displayType}
+                        td #{member.description}
     div.sbh-project-add
         a(href=uri.toURL() + '/addDesign')
             button.btn.sbh-design-button

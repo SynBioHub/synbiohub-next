@@ -9,6 +9,7 @@ mixin search-result-component-definition(submission)
                 div.ribbon-private Private
 
         if submission.name && submission.name != submission.displayId
+            
             a(href=submission.url) #{submission.displayId} (#{submission.name})
         else
             a(href=submission.url) #{submission.displayId}
@@ -36,38 +37,42 @@ mixin search-result-component-definition(submission)
 mixin search-result-collection(submission,removePublicEnabled)
     div.search-result-item
 
-        div.ribbon-wrapper
-            if submission.triplestore == 'public'
-                div.ribbon-public Public
-            else
-                div.ribbon-private Private
-
-        if submission.name
-            a(href=submission.url,title=submission.displayId) #{submission.name}
+        if submission.triplestore == 'public'
+            span.searchResultIcon.fas.fa-folder
         else
-            a(href=submission.url) #{submission.displayId}
+            span.searchResultIcon.privateResult.fas.fa-folder
 
-        if submission.version !== '1'
-            p version #{submission.version}
 
-        div.keywords
-            if submission.description != ''
-                strong #{submission.description}
-        br
+        
+        div.content
+            div.resultName
+                if submission.name
+                    a(href=submission.url,title=submission.displayId) #{submission.name}
+                else
+                    a(href=submission.url) #{submission.displayId}
+
+                if submission.version !== '1'
+                    p version #{submission.version}
+
+            div.resultDescription
+                if submission.description != ''
+                    strong #{submission.description}
+
+            div.resultButtons
+                if submission.triplestore != 'public'
+                    if locals.user && locals.user.isCurator
+                        a(href=submission.url + '/makePublic')
+                            button(type='button', class='resultButton').btn.btn-success.public-btn Make Public
+                        | 
+                    a(href=submission.url + '/removeCollection')
+                        button(type='button', class='resultButton').btn.btn-success.remove-btn Remove
+                    | 
+                    a(href=submission.url + '/cloneSubmission')
+                        button(type='button', class='resultButton').btn.btn-success.clone-btn Copy
+                else if removePublicEnabled
+                    a(href=submission.url + '/removeCollection')
+                        button(type='button', class='resultButton').btn.btn-success.remove-btn Remove
+
 
         //button(type='button',data-designid=submission.id).btn.btn-default.journal-btn Submit to Journal
-
-        if submission.triplestore != 'public'
-            if locals.user && locals.user.isCurator
-                a(href=submission.url + '/makePublic')
-                    button(type='button').btn.btn-success.public-btn Make Public
-                | 
-            a(href=submission.url + '/removeCollection')
-                button(type='button').btn.btn-success.remove-btn Remove
-            | 
-            a(href=submission.url + '/cloneSubmission')
-                button(type='button').btn.btn-success.clone-btn Copy
-        else if removePublicEnabled
-            a(href=submission.url + '/removeCollection')
-                button(type='button').btn.btn-success.remove-btn Remove
 

@@ -250,6 +250,24 @@ export default class DatastoreSPARQL extends Datastore {
     }
     
 
+    async fetchComponents(intoGraph:SBOL2Graph, identified:S2Identified) {
+
+        await this.sparqlConstruct(intoGraph, `
+        PREFIX sbol: <http://sbols.org/v2#>
+
+        CONSTRUCT{
+            <${identified.uri}> <http://sbols.org/v2#component> ?tempComponent .
+            ?tempComponent <http://sbols.org/v2#definition> ?component
+        }
+        
+        WHERE {
+            <${identified.uri}> <http://sbols.org/v2#component> ?tempComponent .
+            ?tempComponent <http://sbols.org/v2#definition> ?component
+        } LIMIT 1000
+        `)
+
+    }
+
 
 }
 

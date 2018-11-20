@@ -9,7 +9,7 @@ block content
 
     div.container
         div.row
-            div.col-md-4.submission-list
+            div.col-md-5.submission-list
                 h4 Private
 
                 p You currently have #{privateProjects.length} private project(s)
@@ -17,7 +17,7 @@ block content
                 each project in privateProjects
                     +search-result-collection(project,removePublicEnabled)
 
-            div.col-md-4.submission-list
+            div.col-md-5.submission-list
                 h4 Public
 
                 p You currently have #{publicProjects.length} public project(s)
@@ -25,7 +25,7 @@ block content
                 each project in publicProjects
                     +search-result-collection(project,removePublicEnabled)
 
-            div.col-md-4.submission-list
+            div.col-md-5.submission-list
                 h4 Shared with me
 
                 p There are currently #{sharedProjects.length} project(s) shared with you

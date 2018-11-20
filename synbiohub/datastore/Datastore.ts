@@ -39,6 +39,7 @@ export default abstract class Datastore {
 
     abstract async fetchAttachments(intoGraph:SBOL2Graph, identified:S2Identified)
 
+    abstract async fetchComponents(intoGraph:SBOL2Graph, identified:S2Identified)
 
 
 }

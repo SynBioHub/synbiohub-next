@@ -7,8 +7,9 @@ import ViewDescribingTopLevel from "./ViewDescribingTopLevel";
 
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import Breadcrumbs, { Breadcrumb } from 'synbiohub/Breadcrumbs';
-import { S2Collection, S2Identified } from 'sbolgraph';
+import { S2Collection, S2Identified, S2ComponentDefinition, S2ComponentInstance } from 'sbolgraph';
 import SBHURI from '../SBHURI';
+import { Types, Predicates } from 'bioterms';
 
 export default class ViewCollection extends ViewDescribingTopLevel {
 
@@ -31,15 +32,28 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         await super.prepare(req)
 
         await this.datastore.fetchMembersMetadata(this.graph, this.object as S2Collection)
-
         this.rdfType = {
             name: 'Collection',
         }
 
         this.collection = this.object as S2Collection
-
+        
         for(let member of this.collection.members) {
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
+            this.memberURLs.set(member.displayType, 'bla')
+
+            if (member.objectType === Types.SBOL2.ComponentDefinition){
+
+                let tempCD = member as S2ComponentDefinition
+
+                await this.datastore.fetchComponents(this.graph, tempCD)
+
+                for(let component of tempCD.components) {
+                    console.log(component.definition)
+                }
+
+            }
+        
         }
 
         this.breadcrumbs = new Breadcrumbs([
@@ -48,6 +62,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         ])
 
         console.log('OBJECT IS ' + this.object)
+        
 
     }
 
