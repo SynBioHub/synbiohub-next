@@ -58,7 +58,7 @@ block topLevelPreview
                 th Description
             tbody
                 for member in collection.members
-                    if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
+                    if (member.version!= 'null' && member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
                         tr
                             td
                                 a(href=memberURLs.get(member.uri)) #{member.displayId}

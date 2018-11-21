@@ -34,7 +34,6 @@ export default class ViewCollection extends ViewDescribingTopLevel {
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
-        console.log(this.menu)
 
         await this.datastore.fetchMembersMetadata(this.graph, this.object as S2Collection)
         this.rdfType = {
@@ -45,6 +44,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
         this.components = []
         this.CDCheck = []
+        let indexArray = []
         
 
         for(let member of this.collection.members) {
@@ -63,12 +63,25 @@ export default class ViewCollection extends ViewDescribingTopLevel {
                     
                     for(let component of tempCD.components) {
                         tempComponents.push(component.definition)
+                        let index = this.collection.members.map(x => x.uri).indexOf(component.definition.uri)
+                        if (index !== -1){
+                            indexArray.push(index)
+
+                        }
                     }
 
                     this.components.push(tempComponents)
                 }
 
             }
+
+            
+        }
+
+        for(let index of indexArray){
+
+            this.collection.members[index].version = 'null'
+
 
             
         }
