@@ -14,7 +14,9 @@ script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
 block js
     script.
         $(document).ready(function() {
-                $('.display').DataTable();
+                $('.display').DataTable({
+                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+                })
             } );
 
 block topLevelIcon
@@ -47,92 +49,92 @@ block modal
                     button.btn.btn-danger(data-dismiss="modal") Close
                     button.btn.btn-primary(type="submit", form="iconForm") Save changes
 
+
 block topLevelPreview
-    table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable
-
-    
-        thead
-            th Identifier
-            th Name
-            th Type
-            th Description
-        tbody
-            for member in collection.members
-                if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
+    block table
+        table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+            thead
+                th Identifier
+                th Name
+                th Type
+                th Description
+            tbody
+                for member in collection.members
+                    if (member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
+                        tr
+                            td
+                                a(href=memberURLs.get(member.uri)) #{member.displayId}
+                            td
+                                a(href=memberURLs.get(member.uri)) #{member.name}
+                            td
+                                a(href=memberURLs.get(member.uri)) #{member.displayType}
+                            td #{member.description}
+                for componentList in components
                     tr
+
                         td
-                            a(href=memberURLs.get(member.uri)) #{member.displayId}
+                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
+                            br
+                            ||____
+                            - count = 0
+                            for component in componentList.slice(1, componentList.length)
+                                - count += 1
+                                a(href=memberURLs.get(component.uri)) #{component.displayId}
+                                if (count !== componentList.length -1 )
+                                    br
+                                    ||____
+
+
                         td
-                            a(href=memberURLs.get(member.uri)) #{member.name}
+                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
+                            br
+                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            - count = 0
+                            for component in componentList.slice(1, componentList.length)
+                                - count += 1
+                                a(href=memberURLs.get(component.uri)) #{component.name}
+                                if (count !== componentList.length -1 )
+                                    br
+                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
                         td
-                            a(href=memberURLs.get(member.uri)) #{member.displayType}
-                        td #{member.description}
-            for componentList in components
-                tr
+                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
+                            br
+                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            - count = 0
+                            for component in componentList.slice(1, componentList.length)
+                                - count += 1
+                                a(href=memberURLs.get(component.uri)) #{component.displayType}
+                                if (count !== componentList.length -1 )
+                                    br
+                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                    td
-                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
-                        br
-                        ||____
-                        - count = 0
-                        for component in componentList.slice(1, componentList.length)
-                            - count += 1
-                            a(href=memberURLs.get(component.uri)) #{component.displayId}
-                            if (count !== componentList.length -1 )
-                                br
-                                ||____
-
-
-                    td
-                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
-                        br
-                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        - count = 0
-                        for component in componentList.slice(1, componentList.length)
-                            - count += 1
-                            a(href=memberURLs.get(component.uri)) #{component.name}
-                            if (count !== componentList.length -1 )
-                                br
-                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                    td
-                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
-                        br
-                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        - count = 0
-                        for component in componentList.slice(1, componentList.length)
-                            - count += 1
-                            a(href=memberURLs.get(component.uri)) #{component.displayType}
-                            if (count !== componentList.length -1 )
-                                br
-                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-                    td  #{componentList[0].description}
-                        br
-                        |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        - count = 0
-                        for component in componentList.slice(1, componentList.length)
-                            - count += 1
-                            a #{component.description}
-                            if (count !== componentList.length -1 )
-                                br
-                                |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        td  #{componentList[0].description}
+                            br
+                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            - count = 0
+                            for component in componentList.slice(1, componentList.length)
+                                - count += 1
+                                a #{component.description}
+                                if (count !== componentList.length -1 )
+                                    br
+                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
                                 
-
-    div.sbh-project-add
-        a(href=uri.toURL() + '/addDesign')
-            button.btn.sbh-design-button
-                span.fa.fa-plus
-                |  Add design
-        a(href=uri.toURL() + '/addConstruct')
-            button.btn.sbh-construct-button
-                span.fa.fa-plus
-                |  Add construct
-        a(href=uri.toURL() + '/addExperiment')
-            button.btn.sbh-experiment-button
-                span.fa.fa-plus
-                |  Add experiment
+    block creationButtons
+        div.sbh-project-add.creationButtons
+            a(href=uri.toURL() + '/addDesign')
+                button.btn.sbh-design-button
+                    span.fa.fa-plus
+                    |  Add design
+            a(href=uri.toURL() + '/addConstruct')
+                button.btn.sbh-construct-button
+                    span.fa.fa-plus
+                    |  Add construct
+            a(href=uri.toURL() + '/addExperiment')
+                button.btn.sbh-experiment-button
+                    span.fa.fa-plus
+                    |  Add experiment
 
 
 block topLevelButtons
