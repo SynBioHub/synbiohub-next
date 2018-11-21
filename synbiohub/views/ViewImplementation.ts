@@ -6,7 +6,7 @@ import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { Predicates } from 'bioterms'
-import { S2ProvActivity, SBOL2Graph, S2ProvAssociation, S2Identified, S2ComponentDefinition } from 'sbolgraph'
+import { S2ProvActivity, SBOL2Graph, S2ProvAssociation, S2Identified, S2ComponentDefinition, S2Attachment } from 'sbolgraph'
 import SBHURI from 'synbiohub/SBHURI';
 import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 
@@ -27,6 +27,7 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
     taxId:string
     plan:string
     plan_url:string
+    plan_filename:string
 
     async prepare(req:SBHRequest) {
 
@@ -62,7 +63,10 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         this.plan = plan.displayName
 
-        this.plan_url = plan.uri
+        await this.datastore.fetchAttachments(this.graph, plan) as S2Attachment
+
+        this.plan_url = plan.attachments[0].uri
+        this.plan_filename = plan.attachments[0].displayName
 
         this.taxId = this.implementation.getUriProperty('http://w3id.org/synbio/ont#taxId')
 

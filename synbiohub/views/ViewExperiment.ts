@@ -30,6 +30,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
     taxId:string
     plan:string
     plan_url:string
+    plan_filename:string
     metadata:any[]
 
 
@@ -75,7 +76,10 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
         this.plan = plan.displayName
 
-        this.plan_url = plan.uri
+        await this.datastore.fetchAttachments(this.graph, plan) as S2Attachment
+
+        this.plan_url = plan.attachments[0].uri
+        this.plan_filename = plan.attachments[0].displayName
 
         this.taxId = this.experiment.getUriProperty('http://w3id.org/synbio/ont#taxId')
 
