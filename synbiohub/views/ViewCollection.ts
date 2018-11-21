@@ -34,6 +34,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
     async prepare(req:SBHRequest) {
 
         await super.prepare(req)
+        console.log(this.menu)
 
         await this.datastore.fetchMembersMetadata(this.graph, this.object as S2Collection)
         this.rdfType = {
@@ -45,6 +46,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         this.components = []
         this.CDCheck = []
         
+
         for(let member of this.collection.members) {
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
 
@@ -56,7 +58,6 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
                 if (tempCD.components.length !== 0) {
 
-                    console.log(tempCD.components)
                     let tempComponents = [tempCD]
                     this.CDCheck.push(tempCD.displayId)
                     
@@ -72,14 +73,10 @@ export default class ViewCollection extends ViewDescribingTopLevel {
             
         }
         
-        console.log(this.components)
         this.breadcrumbs = new Breadcrumbs([
             new Breadcrumb('/projects', 'Projects'),
             new Breadcrumb(this.uri.toURL(), this.object.displayName)
-        ])
-
-        console.log('OBJECT IS ' + this.object)
-        
+        ])   
 
     }
 

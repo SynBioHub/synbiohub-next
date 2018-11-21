@@ -20,6 +20,7 @@ export default class ViewConcerningTopLevel extends View {
 
     async prepare(req:SBHRequest) {
 
+        await super.prepare(req)
         this.uri = SBHURI.fromURIOrURL(req.url)
         this.datastore = Datastores.forSBHURI(this.uri)
         this.graph = new SBOL2Graph()
