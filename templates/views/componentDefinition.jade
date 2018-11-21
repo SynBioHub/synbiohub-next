@@ -14,10 +14,21 @@ block topLevelPropertyTable
             td Sequences
             td
                 for sequence in componentDefinition.sequences
-                    a(href=sequence.uri)
-                        != sequence.displayId
-                        if (sequence.version)
-                            != ' (Version '+sequence.version+')'
+
+                    div.col-md-12
+                        .container.float-left
+                            #accordion.panel-group
+                                .panel.panel-default
+                                    .panel-heading
+                                        div.sbh-sequence-title
+                                            a.accordion-toggle(data-toggle='collapse', href='#collapseOne')
+                                                | Sequence (#{sequence.elements.length} #{sequence.lengthUnits})
+                                    #collapseOne.panel-collapse.collapse.in
+                                        .panel-body
+                                        pre #{formatted}
+
+                    div.float-right
+                         +blast-button(sequence)
                     br
 
 block topLevelButtonsSearch

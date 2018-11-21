@@ -16,7 +16,7 @@ import ViewDescribingTopLevel from './ViewDescribingTopLevel';
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { Specifiers, uriToName } from 'bioterms';
-import { S2ComponentDefinition } from 'sbolgraph';
+import { S2ComponentDefinition, S2Sequence } from 'sbolgraph';
 
 export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
@@ -33,6 +33,14 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
     roleNames:any
     
     typeNames:any
+
+
+    meta:any
+
+    sequence:S2Sequence
+    blastUrl:string
+    lengthUnits:string
+    formatted:string
 
     async prepare(req:SBHRequest) {
 
@@ -66,6 +74,17 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
         for(let sequence of this.componentDefinition.sequences) {
             await this.datastore.fetchMetadata(this.graph, sequence)
+            await this.datastore.fetchEverything(this.graph, sequence)
+
+            this.sequence = sequence as S2Sequence
+
+            this.blastUrl = this.sequence.encoding === Specifiers.SBOL2.SequenceEncoding.AminoAcid ?
+                'http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastp&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome' :
+                'http://blast.ncbi.nlm.nih.gov/Blast.cgi?PROGRAM=blastn&PAGE_TYPE=BlastSearch&LINK_LOC=blasthome'
+
+            this.lengthUnits = this.sequence.encoding === Specifiers.SBOL2.SequenceEncoding.AminoAcid ? 'aa' : 'bp'
+
+            this.formatted = formatSequence(this.sequence.elements)
         }
 
         this.roleNames = []
@@ -91,6 +110,7 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
             this.typeNames.push({'name' : type.split('#').pop(), 'uri' : type})
 
         }
+
         
     }
 
