@@ -9,12 +9,11 @@ import streamToString = require('stream-to-string');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
 import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import SBHURI from 'synbiohub/SBHURI';
+import { Request, Response } from 'express'
 
 export default async function (req, res) {
 
 	// TODO reimplement
-
-	/*
 
 	var attachmentObjects = []
 
@@ -22,11 +21,11 @@ export default async function (req, res) {
 
 	let uri:SBHURI = SBHURI.fromURIOrURL(req.url)
 
-	let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
+	// let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
-	if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
-		return res.status(401).send('not authorized to edit this submission')
-	}
+	// if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
+	// 	return res.status(401).send('not authorized to edit this submission')
+	// }
 
 	var done = false
 
@@ -54,24 +53,32 @@ export default async function (req, res) {
 				uri: uri
 			}
 
-		let attachmentObjects = await getAttachmentsForSubject(uri, uri.getGraph())
+		// let attachmentObjects = await getAttachmentsForSubject(uri, uri.getGraph())
 
 		const locals = {
 			config: config.get(),
 			canEdit: true,
-			url: req.url,
-			attachments: attachmentObjects
+			url: req.url
+			// attachments: attachmentObjects
 		}
 
-		res.send(pug.renderFile('templates/partials/attachments.jade', locals))
+		// res.send(pug.renderFile('templates/partials/attachments.jade', locals))
+		console.log('umm???')
+		var response:Response = res
+		await res.redirect(uri.getPersistentIdentity() + uri.getVersion())
+		console.log('hello???')
+
 	})
 
-	form.on('error', (err) => {
-		throw err
-	})
+	// form.on('error', (err) => {
+	// 	throw err
+	// })
+
 
 	form.parse(req)
-	*/
+	
+	let response:Response
+	response.redirect(uri.getPersistentIdentity() + uri.getVersion())
 };
 
 

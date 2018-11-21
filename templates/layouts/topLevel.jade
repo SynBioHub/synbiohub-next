@@ -95,39 +95,41 @@ block content
 
                     block topLevelBelowTitle
 
-        div.card.w-100
-            div.card-header
-                a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
-                    | <b>Details</b>
-            div.card-body
-                table.table.table-striped.entry-detail-table
+        block details
+            div.card.w-100
+                div.card-header
+                    a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
+                        | <b>Details </b>
+                        span.topLevelIcon.fab.fa-wpforms
+                div.card-body
+                    table.table.table-striped.entry-detail-table
 
-                    if typeNames && typeNames.length > 0
-                        tr
-                            td Types
-                            td
-                                for type in typeNames
-                                    if type.name
-                                        != type.name
-                                        a(href=type.uri,title='Learn more about this type')
-                                            span.fa.fa-info-circle
+                        if typeNames && typeNames.length > 0
+                            tr
+                                td Types
+                                td
+                                    for type in typeNames
+                                        if type.name
+                                            != type.name
+                                            a(href=type.uri,title='Learn more about this type')
+                                                span.fa.fa-info-circle
 
-                                    br
+                                        br
 
-                    if roleNames && roleNames.length > 0
-                        tr
-                            td Roles
-                            td
-                                for role in roleNames
-                                    if role.name
-                                        != role.name
-                                        a(href=role.uri,title='Learn more about this role')
-                                            span.fa.fa-info-circle
-                                    br
+                        if roleNames && roleNames.length > 0
+                            tr
+                                td Roles
+                                td
+                                    for role in roleNames
+                                        if role.name
+                                            != role.name
+                                            a(href=role.uri,title='Learn more about this role')
+                                                span.fa.fa-info-circle
+                                        br
 
-                    block topLevelPropertyTable
+                        block topLevelPropertyTable
 
-                block topLevelBelowPropertyTable
+                    block topLevelBelowPropertyTable
 
         block Collections
             if collections.length > 0
@@ -195,7 +197,9 @@ block content
             div.card.w-100
                 div.card-header
                     a.accordion-toggle(data-toggle='collapse', href='#collapseSeven')
-                        | <b>Attachments</b>
+                        | <b>Attachments </b>
+                        span.topLevelIcon.fas.fa-paperclip
+
                 div.card-body
                     +attachments(uri, attachments)
 

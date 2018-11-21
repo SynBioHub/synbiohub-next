@@ -21,16 +21,16 @@ mixin attachments(url, attachments)
                             button.btn.btn-primary
                                 span.fa.fa-download
                                 |  Download
-        div.row
-            form#sbh-attachment-form(method='post',enctype='multipart/form-data',action=url + '/attach')
-                div.col-xs-6
-                    div.input-group
-                        label.input-group-btn
-                            span.btn.btn-primary
-                                | Select file(s)&hellip;
-                                input(type="file",name="file",style="display: none;",multiple)
-                        input(type="text",class="form-control",readonly)
-                div.col-xs-3
-                div.col-xs-3
-                    button.btn(disabled,type='submit',style='width:100%;') Attach
+    div.row
+        form#sbh-attachment-form(method='post',enctype='multipart/form-data',action=url + '/attach')
+            div.col-xs-6
+                div.input-group
+                    label.input-group-btn
+                        span.btn.btn-primary
+                            | Select file(s)&hellip;
+                            input(type="file",name="file",style="display: none;",multiple)
+                    input(type="text",class="form-control",readonly)
+            div.col-xs-3
+            div.col-xs-3
+                button.btn(disabled,type='submit',style='width:100%;') Attach
 

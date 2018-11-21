@@ -175,10 +175,10 @@ export function getAttachmentsFromList(graphUri, attachmentList, share) {
     })
 }
 
-export async function getAttachmentsForSubject(subject, graphUri) {
+// export async function getAttachmentsForSubject(subject, graphUri) {
 
-    throw new Error('not implemented yet')
+//     throw new Error('not implemented yet')
 
-}
+// }
 
 
