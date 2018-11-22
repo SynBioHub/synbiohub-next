@@ -6,17 +6,15 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
-link(href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css", rel="stylesheet")
-script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
-
 block js
     script.
         $(document).ready(function() {
-                $('.display').DataTable({
-                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
-                })
-            } );
-
+            $('.display').DataTable({
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                mark: true
+            })
+        } );
+        
 block topLevelIcon
     span.topLevelIcon.fa.fa-folder
 
