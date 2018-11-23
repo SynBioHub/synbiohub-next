@@ -42,6 +42,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     mutables:Mutables
     rdfType:any
     attachments:any
+    comment:string
 
     async prepare(req:SBHRequest) {
 
@@ -118,6 +119,8 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
             this.builds.push(impl['s'])
 
         }*/
+
+        this.comment = this.object.getUriProperty('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment')
 
     }
 

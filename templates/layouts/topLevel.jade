@@ -131,6 +131,26 @@ block content
 
                     block topLevelBelowPropertyTable
 
+
+        block comments
+            div.card.w-100
+                div.card-header
+                    a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
+                        | <b>Comments </b>
+                        span.topLevelIcon.fab.fa-wpforms
+                div.card-body
+                    form#sbh-comment-form(method='post',enctype='multipart/form-data',action=uri + '/comment')
+                            textarea.form-control(id="comment", name="comment", rows=3, autocomplete="off", form="sbh-comment-form")
+                                if comment != ''
+                                 | #{comment}
+                                else
+                                 | lol please write comments here
+                            div.row
+                                    div.col-xs-3
+                                        button.btn.btn-primary.btn-lg(type='submit',style='width:100%;') Update Comment                
+
+
+
         block Collections
             if collections.length > 0
                 div.card.w-100

@@ -1,0 +1,9 @@
+DELETE {
+
+<$uri> <http://www.w3.org/1999/02/22-rdf-syntax-ns#comment> ?o
+
+}
+WHERE{
+<$uri> <http://www.w3.org/1999/02/22-rdf-syntax-ns#comment> ?o
+
+}

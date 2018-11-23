@@ -119,6 +119,7 @@ import removeCollection from './actions/removeCollection';
 import cloneSubmission from './actions/cloneSubmission';
 import actionResetPassword from './actions/resetPassword';
 import setNewPassword from './actions/setNewPassword';
+import updateComment from './actions/updateComment';
 import remove from './actions/remove';
 import updateMutableDescription from './actions/updateMutableDescription';
 import updateMutableNotes from './actions/updateMutableNotes';
@@ -168,6 +169,7 @@ var actions = {
     createSnapshot,
     updateCollectionIcon,
     removeOwner,
+    updateComment,
     admin: {
         saveRemote,
         saveRegistry,
@@ -465,6 +467,8 @@ function App() {
             return chain(req, res, requireUser, actions.createICEPart)
         case 'attach':
             return chain(req, res, requireUser, actions.upload)
+        case 'comment':
+            return chain(req, res, requireUser, actions.updateComment)
         case 'download':
             return chain(req, res, requireUser, api.download)
         case 'icon':
