@@ -147,7 +147,26 @@ block content
                                  | lol please write comments here
                             div.row
                                     div.col-xs-3
-                                        button.btn.btn-primary.btn-lg(type='submit',style='width:100%;') Update Comment                
+                                        button.btn.btn-primary.btn-lg(type='submit',style='width:100%;') Update Comment 
+
+                                    div.col-xs-3
+                                        a(data-toggle="modal" href="#normalModal").btn.btn-default History
+
+                                        #normalModal(class="modal fade")
+                                            div(class="modal-dialog")
+                                                div(class="modal-content")
+                                                    div(class="modal-header")
+                                                        h4.modal-title Comment History
+                                                        button(type="button" class="close" data-dismiss="modal" aria-hidden="true") &times;
+                                                    
+                                                    div.modal-body
+                                                        for com in commentHistory
+                                                            p
+                                                                | #{com} 
+
+
+
+                                                   
 
 
 

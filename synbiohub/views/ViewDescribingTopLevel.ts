@@ -43,6 +43,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     rdfType:any
     attachments:any
     comment:string
+    commentHistory:string[]
 
     async prepare(req:SBHRequest) {
 
@@ -120,7 +121,22 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         }*/
 
-        this.comment = this.object.getUriProperty('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment')
+        let tempHistory = this.object.getUriProperties('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment')
+        let indices = tempHistory.map(x => x.split(' - ').pop()).sort()
+        
+        tempHistory.sort(function(a,b) {
+
+            let tempA = parseInt(a.split(' - ').pop())
+            let tempB = parseInt(b.split(' - ').pop())
+
+            let tempResult = tempB - tempA
+            return tempResult
+
+        })
+
+        tempHistory = tempHistory.map(x => x.split(' - ')[0])
+        this.commentHistory = tempHistory
+        this.comment = this.commentHistory[0]
 
     }
 
