@@ -19,10 +19,11 @@ export default async function (req, res) {
     let datastore = Datastores.forSBHURI(uri)
     let graph = new SBOL2Graph()
 
-    let object = new S2Identified(graph, uri.toURI())
-    await datastore.fetchMetadata(graph, object)
+    let temp_object = new S2Identified(graph, uri.toURI())
+    await datastore.fetchMetadata(graph, temp_object)
     let types:Array<string> = graph.getTypes(uri.toURI())
-
+    
+    let object
     if(types.indexOf('http://sbols.org/v2#Collection') !== -1) {
         object = new S2Collection(graph, uri.toURI())
     } else if(types.indexOf('http://sbols.org/v2#ComponentDefinition') !== -1) {
@@ -48,10 +49,7 @@ export default async function (req, res) {
     
     let currentComment = fields['comment'][0]
     
-    // object.setUriProperty('http://purl.obolibrary.org/obo/NCIT_C25393')
-
-    // await datastore.fetchEverything(graph, object)
-    await datastore.fetchEverything(graph, new S2Identified(graph, uri.toURI()))
+    await datastore.fetchComments(graph, object)
 
     let commentHistory = object.getUriProperties('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment')
 
@@ -59,14 +57,10 @@ export default async function (req, res) {
 
     object.setStringProperty('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment', currentComment + ' - ' + String(commentHistory.length))
 
-    console.log(graph.serializeXML())
 
     let templateParams = {
         uri: uri.toURI()
     }
-
-    // let removeQuery = loadTemplate('sparql/removeComment.sparql', templateParams)
-    // await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
     let uploader = new SBOLUploader()
     uploader.setGraph(graph)

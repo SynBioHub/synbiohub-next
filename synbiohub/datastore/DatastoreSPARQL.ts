@@ -269,5 +269,22 @@ export default class DatastoreSPARQL extends Datastore {
     }
 
 
+    async fetchComments(intoGraph:SBOL2Graph, identified:S2Identified) {
+
+        await this.sparqlConstruct(intoGraph, `
+        PREFIX sbol: <http://sbols.org/v2#>
+
+        CONSTRUCT{
+            <${identified.uri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#comment> ?comment .
+        }
+        
+        WHERE {
+            <${identified.uri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#comment> ?comment .
+        } LIMIT 1000
+        `)
+
+    }
+
+
 }
 
