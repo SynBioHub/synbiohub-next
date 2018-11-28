@@ -472,13 +472,40 @@ input:-webkit-autofill, .sbol-login-text, .change_password input {
     color:white;
 }
 
-.modal-content {
-    background-color: #2C3E50;
-    color:white;
+.modal-header, .modal-body, .modal-footer {
+    border:none;    
+    color: @baseColor
 }
 
-.modal-header, .modal-body, .modal-footer {
-    border:none;
+.modal-body {
+    background-color: white;
+    color: black;
+
+}
+
+.modal-content {
+    width: 200%;
+    right: 48%;
+}
+
+.modal-header{
+    font-weight: bold;
+}
+
+.commentButton{
+
+    margin: 10px;
+}
+
+.date{
+    font-weight: bold;
+}
+
+.attachmentImage{
+
+    max-width: 300px;
+    max-height: 300px;
+
 }
 
 [data-uri] {
@@ -554,6 +581,7 @@ input:-webkit-autofill, .sbol-login-text, .change_password input {
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
     background-color: #ffe1d5;
 }
+
 
 .resultsCol{
     max-width: 32.667%;

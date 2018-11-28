@@ -6,6 +6,8 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
+
+
 block jsState
     script.
         function popup() {
@@ -13,6 +15,14 @@ block jsState
                 content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
             });
         }
+
+block js
+    script.
+        $(document).ready(function() {
+            $('#lightgallery').lightGallery({
+                selector: '.sele'
+            });
+        })
 
 block content
     br
@@ -137,37 +147,38 @@ block content
                 div.card-header
                     a.accordion-toggle(data-toggle='collapse', href='#collapseDetails')
                         | <b>Comments </b>
-                        span.topLevelIcon.fab.fa-wpforms
+                        span.topLevelIcon.fas.fa-comment-alt
                 div.card-body
                     form#sbh-comment-form(method='post',enctype='multipart/form-data',action=uri + '/comment')
                             textarea.form-control(id="comment", name="comment", rows=3, autocomplete="off", form="sbh-comment-form")
                                 if comment != ''
                                  | #{comment}
                                 else
-                                 | lol please write comments here
+                                 | Write comments here!
                             div.row
                                     div.col-xs-3
-                                        button.btn.btn-primary.btn-lg(type='submit',style='width:100%;') Update Comment 
+                                        button.btn.btn-primary.btn-lg.commentButton(type='submit',style='width:100%;') Update Comment 
 
                                     div.col-xs-3
-                                        a(data-toggle="modal" href="#normalModal").btn.btn-primary.btn-lg History
-
+                                        a(data-toggle="modal" href="#normalModal" style="margin-left: 25px;").btn.btn-primary.btn-lg.commentButton Comment History
                                         #normalModal(class="modal fade")
                                             div(class="modal-dialog")
                                                 div(class="modal-content")
                                                     div(class="modal-header")
                                                         h4.modal-title Comment History
-                                                        button(type="button" class="close" data-dismiss="modal" aria-hidden="true") &times;
-                                                    
+                                                        button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+
                                                     div.modal-body
                                                         for com in commentHistory
-                                                            p
-                                                                | #{com} 
+                                                            - temp = com.split(' - ')
+                                                            - tempComment = temp[0]
+                                                            - tempDate = temp[1]
+                                                            p.comment
+                                                              |  #{tempComment}
+                                                            p.date
+                                                              |  #{tempDate}
 
-
-
-                                                   
-
+                                                            hr
 
 
         block Collections

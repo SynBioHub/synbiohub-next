@@ -55,7 +55,9 @@ export default async function (req, res) {
 
     console.log(commentHistory)
 
-    object.setStringProperty('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment', currentComment + ' - ' + String(commentHistory.length))
+    let date = new Date()
+
+    object.setStringProperty('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment', currentComment + ' *** ' + date + ' *** ' + String(commentHistory.length))
 
 
     let templateParams = {

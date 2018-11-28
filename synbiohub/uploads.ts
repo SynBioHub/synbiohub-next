@@ -29,13 +29,18 @@ function createUpload(inputStream) {
 
         var mimeType
 
+        let type = ''
         fileStream.on('data', chunk => {
-            let type = filetype(chunk)
-            console.log(type)
-            if (type) {
-                mimeType = "http://purl.org/NET/mediatypes/" + type["mime"]
-            } else {
-                mimeType = 'http://purl.org/NET/mediatypes/text/plain'
+            if (type === ''){
+
+                type = filetype(chunk)
+                if (type) {
+                    mimeType = "http://purl.org/NET/mediatypes/" + type["mime"]
+                } else {
+                    mimeType = 'http://purl.org/NET/mediatypes/text/plain'
+                }
+                console.log('THIS IS THE TYPE')
+                console.log(type)
             }
         })
 

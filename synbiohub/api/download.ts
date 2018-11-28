@@ -33,6 +33,8 @@ export default async function(req, res) {
     res.header('Content-Disposition', 'attachment; filename="' + object.displayName + '"')
     res.type(mimeType)
     readStream.pipe(res)
+
+    console.log(res)
 };
 
 

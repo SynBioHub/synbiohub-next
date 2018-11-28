@@ -1,5 +1,6 @@
 
 mixin attachments(url, attachments)
+    
     if typeof(attachments) !== 'undefined' && (attachments.length > 0)
         table.attachments-table.table.table-striped
             thead
@@ -8,9 +9,18 @@ mixin attachments(url, attachments)
                 th Size
                 th
             tbody
+
+            div#lightgallery
+                for attachment in attachments
+                    if attachment.format.includes('http://purl.org/NET/mediatypes/image')
+                        a.sele(href=attachment.uri + '/download')
+                            img.attachmentImage(src=attachment.uri + '/download')
+
+
             for attachment in attachments
                 tr
                     td #{attachment.format}
+
                     td
                         a(href=attachment.uri) #{attachment.displayName}
                     td
