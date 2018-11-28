@@ -34,7 +34,6 @@ export default async function(req, res) {
     res.type(mimeType)
     readStream.pipe(res)
 
-    console.log(res)
 };
 
 

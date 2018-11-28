@@ -21,7 +21,9 @@ block js
         $(document).ready(function() {
             $('#lightgallery').lightGallery({
                 selector: '.sele',
-                speed: 500
+                speed: 500,
+                escKey: true
+
             });
         })
 
@@ -151,11 +153,9 @@ block content
                         span.topLevelIcon.fas.fa-comment-alt
                 div.card-body
                     form#sbh-comment-form(method='post',enctype='multipart/form-data',action=uri + '/comment')
-                            textarea.form-control(id="comment", name="comment", rows=3, autocomplete="off", form="sbh-comment-form")
+                            textarea.form-control(id="comment", name="comment", placeholder="Write comments here!" rows=3, autocomplete="off", form="sbh-comment-form")
                                 if comment != ''
                                  | #{comment}
-                                else
-                                 | Write comments here!
                             div.row
                                     div.col-xs-3
                                         button.btn.btn-primary.btn-lg.commentButton(type='submit',style='width:100%;') Update Comment 

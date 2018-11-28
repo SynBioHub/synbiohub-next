@@ -11,7 +11,7 @@ mixin attachments(url, attachments)
             div#lightgallery
                 for attachment in attachments
                     if attachment.format.includes('http://purl.org/NET/mediatypes/image')
-                            a.sele(href=attachment.uri + '/download', data-sub-html='<h3>' + attachment.displayName + '</h3>')
+                            a.sele(style='height:300px;width:300px' href=attachment.uri + '/download', data-sub-html='<h3>' + attachment.displayName + '</h3>')
                                 img.attachmentImage(src=attachment.uri + '/download')
 
             for attachment in attachments
