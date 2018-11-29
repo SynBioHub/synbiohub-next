@@ -8,7 +8,7 @@ block content
     div.clearfix
         div(style="padding-top:50px").container
             div.col-md-5.submission-list.resultsCol
-                h4 Private
+                h4 Private Projects
                 br
                 table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
                     thead
@@ -16,11 +16,13 @@ block content
                         th Designs
                         th Constructs
                         th Experiments
+                        th
                     tbody
                         each project in privateProjects
                             tr
                                 td
-                                    a(href=project.url) #{project.name}
+                                    span.topLevelIcon.fas.fa-folder
+                                    a(href=project.url)  #{project.name}
                                 td
                                     if project.typeBooleans[0]
                                         span.topLevelIcon.fas.fa-check
@@ -36,12 +38,19 @@ block content
                                         span.topLevelIcon.fas.fa-check
                                     else
                                         span.topLevelIcon.fas.fa-times
+                                td
+                                    if project.triplestore != 'public'
+                                        a(href=project.url + '/makePublic')
+                                            button(type='button').btn.btn-success.public-btn Make Public
+                                        | 
+                                        a(href=project.url + '/removeSubmission')
+                                            button(type='button').btn.btn-success.remove-btn Remove
 
             br
             br
 
             div.col-md-5.submission-list.resultsCol
-                h4 Public
+                h4 Public Projects
                 br
                 table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
                     thead
@@ -53,7 +62,8 @@ block content
                         each project in publicProjects
                             tr
                                 td
-                                    a(href=project.url) #{project.name}
+                                    span.topLevelIcon.fas.fa-folder
+                                    a(href=project.url)   #{project.name}
                                 td
                                     if project.typeBooleans[0]
                                         span.topLevelIcon.fas.fa-check

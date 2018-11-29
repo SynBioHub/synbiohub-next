@@ -79,8 +79,6 @@ export default class ViewProjects extends View {
             this.privateProjects.push(temp_result)
         }
 
-        console.log(this.privateProjects)
-
         // for (let  result of results){
 
         //     let temp_result = await this.mapPrivateResult(results)
@@ -249,7 +247,6 @@ export default class ViewProjects extends View {
         // foundURIs[result.uri] = true
 
         if (triplestore === "public"){
-            console.log('RIGHT HERE BITCH')
             this.foundURIs[result.uri] = true
         }
 
