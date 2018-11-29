@@ -6,8 +6,9 @@ import escape = require('pg-escape');
 import prefixify from './prefixify';
 import config from './config';
 import * as sparql from './sparql/sparql';
+import { Types } from 'bioterms';
 
-export function search(graphUri, criteria, offset, limit, user) {
+export async function search(graphUri, criteria, offset, limit, user) {
 
     var templateParams = {
         criteria: criteria,
@@ -148,4 +149,5 @@ export function lucene(value) {
     return criteriaStr
 
 }
+
 

@@ -10,7 +10,7 @@ block js
     script.
         $(document).ready(function() {
             $('.display').DataTable({
-                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
                 mark: true
             })
         } );
@@ -47,90 +47,152 @@ block modal
 
 
 block topLevelPreview
+    
     block table
-        table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
-            thead
-                th Identifier
-                th Name
-                th Type
-                th Description
-            tbody
-                for member in collection.members
-                    if (member.version!= 'null' && member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && !CDCheck.includes(member.displayId))
-                        tr
-                            td
-                                a(href=memberURLs.get(member.uri)) #{member.displayId}
-                            td
-                                a(href=memberURLs.get(member.uri)) #{member.name}
-                            td
-                                a(href=memberURLs.get(member.uri)) #{member.displayType}
-                            td #{member.description}
-                for componentList in components
-                    tr
+        div.projectTable
+            h4.projectTableHeader
+                | Designs
+            
+            if !typeBooleans[0]
+                | This project doesn't have any Designs yet!
+            else
+                table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+                    thead
+                        th Identifier
+                        th Name
+                        th Type
+                        th Description
+                    tbody
+                        for member in collection.members
+                            if (member.version!= 'null' && member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && member.displayType !== "Construct" && member.displayType !== "Experiment" && !CDCheck.includes(member.displayId))
+                                tr
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.name}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayType}
+                                    td #{member.description}
+                        for componentList in components
+                            tr
 
-                        td
-                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
-                            br
-                            ||____
-                            - count = 0
-                            for component in componentList.slice(1, componentList.length)
-                                - count += 1
-                                a(href=memberURLs.get(component.uri)) #{component.displayId}
-                                if (count !== componentList.length -1 )
+                                td
+                                    a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
                                     br
                                     ||____
+                                    - count = 0
+                                    for component in componentList.slice(1, componentList.length)
+                                        - count += 1
+                                        a(href=memberURLs.get(component.uri)) #{component.displayId}
+                                        if (count !== componentList.length -1 )
+                                            br
+                                            ||____
 
 
-                        td
-                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
-                            br
-                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            - count = 0
-                            for component in componentList.slice(1, componentList.length)
-                                - count += 1
-                                a(href=memberURLs.get(component.uri)) #{component.name}
-                                if (count !== componentList.length -1 )
+                                td
+                                    a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
                                     br
                                     |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    - count = 0
+                                    for component in componentList.slice(1, componentList.length)
+                                        - count += 1
+                                        a(href=memberURLs.get(component.uri)) #{component.name}
+                                        if (count !== componentList.length -1 )
+                                            br
+                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                        td
-                            a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
-                            br
-                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            - count = 0
-                            for component in componentList.slice(1, componentList.length)
-                                - count += 1
-                                a(href=memberURLs.get(component.uri)) #{component.displayType}
-                                if (count !== componentList.length -1 )
+                                td
+                                    a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
                                     br
                                     |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    - count = 0
+                                    for component in componentList.slice(1, componentList.length)
+                                        - count += 1
+                                        a(href=memberURLs.get(component.uri)) #{component.displayType}
+                                        if (count !== componentList.length -1 )
+                                            br
+                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                        td  #{componentList[0].description}
-                            br
-                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            - count = 0
-                            for component in componentList.slice(1, componentList.length)
-                                - count += 1
-                                a #{component.description}
-                                if (count !== componentList.length -1 )
+                                td  #{componentList[0].description}
                                     br
                                     |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    - count = 0
+                                    for component in componentList.slice(1, componentList.length)
+                                        - count += 1
+                                        a #{component.description}
+                                        if (count !== componentList.length -1 )
+                                            br
+                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                                
-    block creationButtons
-        div.sbh-project-add.creationButtons
-            a(href=uri.toURL() + '/addDesign')
-                button.btn.sbh-design-button
-                    span.fa.fa-plus
-                    |  Add design
-            a(href=uri.toURL() + '/addConstruct')
-                button.btn.sbh-construct-button
-                    span.fa.fa-plus
-                    |  Add construct
-            a(href=uri.toURL() + '/addExperiment')
-                button.btn.sbh-experiment-button
-                    span.fa.fa-plus
-                    |  Add experiment
+            div.sbh-project-add.creationButtons
+                a(href=uri.toURL() + '/addDesign')
+                    button.btn.sbh-design-button
+                        span.fa.fa-plus
+                        |  Add design
+
+
+        div.projectTable
+            h4.projectTableHeader
+                | Constructs
+            if !typeBooleans[1]
+                | This project doesn't have any Constructs yet!
+            else
+                table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+                    thead
+                        th Identifier
+                        th Name
+                        th Type
+                        th Description
+                    tbody
+                        for member in collection.members
+                            if (member.version!= 'null' && member.displayType === "Construct")
+                                tr
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.name}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayType}
+                                    td #{member.description}
+
+            div.sbh-project-add.creationButtons
+                a(href=uri.toURL() + '/addConstruct')
+                    button.btn.sbh-construct-button
+                        span.fa.fa-plus
+                        |  Add construct
+
+
+        div.projectTable
+            h4.projectTableHeader
+                | Experiments
+            if !typeBooleans[2]
+                | This project doesn't have any Experiments yet!
+            else
+                table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+                    thead
+                        th Identifier
+                        th Name
+                        th Type
+                        th Description
+                    tbody
+                        for member in collection.members
+                            if (member.version!= 'null' && member.displayType === "Experiment")
+                                tr
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.name}
+                                    td
+                                        a(href=memberURLs.get(member.uri)) #{member.displayType}
+                                    td #{member.description}
+
+            div.sbh-project-add.creationButtons
+                a(href=uri.toURL() + '/addExperiment')
+                    button.btn.sbh-experiment-button
+                        span.fa.fa-plus
+                        |  Add experiment
+                                    
+
 
 
 block topLevelButtons

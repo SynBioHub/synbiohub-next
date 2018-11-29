@@ -11,12 +11,16 @@ import * as sparql from 'synbiohub/sparql/sparql';
 import getGraphUriFromTopLevelUri from 'synbiohub/getGraphUriFromTopLevelUri';
 import sha1 = require('sha1')
 import SBHURI from '../SBHURI';
+import Datastores from '../datastore/Datastores';
+import { SBOL2Graph, S2Collection } from 'sbolgraph';
+import { Types } from 'bioterms';
 
 export default class ViewProjects extends View {
 
     privateProjects: any[]
     publicProjects: any[]
     sharedProjects:any[]
+    foundURIs: any
 
     removePublicEnabled:boolean
 
@@ -42,52 +46,120 @@ export default class ViewProjects extends View {
             'FILTER NOT EXISTS { ?otherCollection sbol2:member ?subject }'
         ].join('\n')
 
-        var foundURIs = {}
+        this.foundURIs = {}
 
-        await Promise.all([
+        let searchRes = await search.search(null, criteria, undefined, undefined, undefined)
 
-            search.search(null, criteria, undefined, undefined, undefined).then((searchRes) => {
+        let results = searchRes.results
 
-                const results = searchRes.results
+        this.publicProjects = []
 
-                this.publicProjects = results.map((result) => {
+        for (let result of results){
 
-                    result.triplestore = 'public'
-                    result.url = SBHURI.fromURIOrURL(result.uri).toURL()
+            let temp_result = await this.mapResult(result, 'public')
+            this.publicProjects.push(temp_result)
+            
+        }
 
-                    foundURIs[result.uri] = true
+        searchRes = await search.search(req.user.graphUri, criteria, undefined, undefined, config.get('databasePrefix') + 'user/' + req.user.username)
 
-                    return result
+        results = searchRes.results
 
-                })
+        this.privateProjects = []
 
-            }),
-
-            search.search(req.user.graphUri, criteria, undefined, undefined, config.get('databasePrefix') + 'user/' + req.user.username).then((searchRes) => {
-
-                // let dbPrefix = config.get('databasePrefix')
-                // console.log('REQ USER')
-                // let user = dbPrefix + 'user/' + req.user.username
-                const results = searchRes.results
-
-                this.privateProjects = results.filter((result) => {
+        let privateResults = await results.filter((result) => {
                     
-                    return !foundURIs[result.uri]
+            return !this.foundURIs[result.uri]
+            
+        })
+
+        for (let result of privateResults){
+
+            let temp_result = await this.mapResult(result, 'private')
+            this.privateProjects.push(temp_result)
+        }
+
+        console.log(this.privateProjects)
+
+        // for (let  result of results){
+
+        //     let temp_result = await this.mapPrivateResult(results)
+
+
+        // }
+
+        // await Promise.all([
+
+            // await search.search(null, criteria, undefined, undefined, undefined).then(async (searchRes) => {
+
+            //     const results = searchRes.results
+
+            //     this.publicProjects = await results.map(async (result) => {
+
+            //         result.triplestore = 'public'
+            //         result.url = SBHURI.fromURIOrURL(result.uri).toURL()
+
+            //         let uri:SBHURI = SBHURI.fromURIOrURL(result.url)
+            //         let datastore = Datastores.forSBHURI(uri)
+            //         let graph = new SBOL2Graph()
+            //         let temp_object = new S2Collection(graph, uri.toURI())
+
+            //         let typeBooleans = [false, false, false]
+
+            //         await datastore.fetchMembersMetadata(graph, temp_object as S2Collection)
+                
+            //         for(let member of temp_object.members) {
+
+            //             if (member.objectType === Types.SBOL2.ComponentDefinition){
+            
+            //                 typeBooleans[0] = true
+            //             }
+            
+            //             else if (member.objectType === Types.SBOL2.Implementation){
+            //                 typeBooleans[1] = true
+            //             }
+            
+            //             else if (member.objectType === Types.SBOL2.Experiment){
+            //                 typeBooleans[2] = true
+            //             }
+                        
+            //         }
+
+            //         result.typeBooleans = typeBooleans
+
+            //         foundURIs[result.uri] = true
+
+            //         return result
+
+            //     })
+
+            // }),
+
+        //     search.search(req.user.graphUri, criteria, undefined, undefined, config.get('databasePrefix') + 'user/' + req.user.username).then((searchRes) => {
+
+        //         // let dbPrefix = config.get('databasePrefix')
+        //         // console.log('REQ USER')
+        //         // let user = dbPrefix + 'user/' + req.user.username
+        //         const results = searchRes.results
+
+        //         this.privateProjects = results.filter((result) => {
                     
-                }).map((result) => {
+        //             return !this.foundURIs[result.uri]
+                    
+        //         }).map((result) => {
 
-                    result.triplestore = 'private'
-                    result.url = SBHURI.fromURIOrURL(result.uri).toURL()
+        //             result.triplestore = 'private'
+        //             result.url = SBHURI.fromURIOrURL(result.uri).toURL()
 
-                    return result
+        //             return result
 
-                })
+        //         })
 
-            }),
+        //     }),
 
-            this.findSharedWithMe(req)
+        //     this.findSharedWithMe(req)
 
-        ])
+        // ])
 
     }
 
@@ -131,6 +203,7 @@ export default class ViewProjects extends View {
         this.sharedProjects = collated
     }
 
+    
     async render(res:Response) {
 
         // console.log(this.publicProjects)
@@ -140,6 +213,49 @@ export default class ViewProjects extends View {
         res.render('templates/views/projects.jade', this)
 
     }
+
+    async mapResult(result, triplestore){
+
+        result.triplestore = triplestore
+        result.url = SBHURI.fromURIOrURL(result.uri).toURL()
+
+        let uri:SBHURI = SBHURI.fromURIOrURL(result.url)
+        let datastore = Datastores.forSBHURI(uri)
+        let graph = new SBOL2Graph()
+        let temp_object = new S2Collection(graph, uri.toURI())
+
+        let typeBooleans = [false, false, false]
+
+        await datastore.fetchMembersMetadata(graph, temp_object as S2Collection)
+    
+        for(let member of temp_object.members) {
+
+            if (member.objectType === Types.SBOL2.ComponentDefinition){
+
+                typeBooleans[0] = true
+            }
+
+            else if (member.objectType === Types.SBOL2.Implementation){
+                typeBooleans[1] = true
+            }
+
+            else if (member.objectType === Types.SBOL2.Experiment){
+                typeBooleans[2] = true
+            }
+            
+        }
+
+        result.typeBooleans = typeBooleans
+        // foundURIs[result.uri] = true
+
+        if (triplestore === "public"){
+            console.log('RIGHT HERE BITCH')
+            this.foundURIs[result.uri] = true
+        }
+
+        return result
+    }
+
 
     private projectIsPublic(project) {
         for (var i = 0; i < this.publicProjects.length; ++i)

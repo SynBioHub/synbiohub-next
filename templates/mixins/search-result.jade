@@ -37,12 +37,11 @@ mixin search-result-component-definition(submission)
 mixin search-result-collection(submission,removePublicEnabled)
     div.search-result-item
 
+        //- - console.log(submission)
         if submission.triplestore == 'public'
             span.searchResultIcon.fas.fa-folder
         else
             span.searchResultIcon.privateResult.fas.fa-folder
-
-
         
         div.content
             div.resultName

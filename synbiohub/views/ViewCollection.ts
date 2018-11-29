@@ -23,6 +23,8 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
     CDCheck: any[]
 
+    typeBooleans: boolean[]
+
     constructor() {
 
         super()
@@ -46,11 +48,14 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         this.CDCheck = []
         let indexArray = []
         
+        this.typeBooleans = [false, false, false]
 
         for(let member of this.collection.members) {
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
 
             if (member.objectType === Types.SBOL2.ComponentDefinition){
+
+                this.typeBooleans[0] = true
 
                 let tempCD = member as S2ComponentDefinition
 
@@ -75,14 +80,22 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
             }
 
+            else if (member.objectType === Types.SBOL2.Implementation){
+                this.typeBooleans[1] = true
+            }
+
+            else if (member.objectType === Types.SBOL2.Experiment){
+                this.typeBooleans[2] = true
+            }
+
             
         }
+
+        await this.typeBoolean()
 
         for(let index of indexArray){
 
             this.collection.members[index].version = 'null'
-
-
             
         }
         
@@ -96,6 +109,27 @@ export default class ViewCollection extends ViewDescribingTopLevel {
     async render(res:Response) {
 
         res.render('templates/views/collection.jade', this)
+
+    }
+
+    async typeBoolean(){ 
+
+        for(let member of this.collection.members) {
+
+            if (member.objectType === Types.SBOL2.ComponentDefinition){
+
+                this.typeBooleans[0] = true
+            }
+
+            else if (member.objectType === Types.SBOL2.Implementation){
+                this.typeBooleans[1] = true
+            }
+
+            else if (member.objectType === Types.SBOL2.Experiment){
+                this.typeBooleans[2] = true
+            }
+            
+        }
 
     }
 

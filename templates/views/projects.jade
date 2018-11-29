@@ -14,7 +14,7 @@ block content
 
                 p You currently have #{privateProjects.length} private project(s)
 
-                each project in privateProjects
+                each project in privateProjects              
                     +search-result-collection(project,removePublicEnabled)
 
             div.col-md-5.submission-list.resultsCol
@@ -25,11 +25,11 @@ block content
                 each project in publicProjects
                     +search-result-collection(project,removePublicEnabled)
 
-            div.col-md-5.submission-list.resultsCol
-                h4 Shared with me
+            //- div.col-md-5.submission-list.resultsCol
+            //-     h4 Shared with me
 
-                p There are currently #{sharedProjects.length} project(s) shared with you
+            //-     p There are currently #{sharedProjects.length} project(s) shared with you
 
-                each project in sharedProjects
-                    +search-result-collection(project,removePublicEnabled)
+            //-     each project in sharedProjects
+            //-         +search-result-collection(project,removePublicEnabled)
                     
