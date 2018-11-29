@@ -30,6 +30,7 @@ export default abstract class View {
 
         if(this.user) {
             this.menu.addItem(new MenuItem('Projects', '/projects', 'fa-folder'))
+            this.menu.addItem(new MenuItem('Create New Project', '/newproject', 'fa-plus'))
             this.menu.addItem(new MenuItem('Admin', '/admin', 'fa-cogs'))
             this.menu.addItem(new MenuItem('Profile', '/profile', 'fa-id-card'))
             this.menu.addItem(new MenuItem('Logout', '/logout', 'fa-sign-out-alt'))
