@@ -6,30 +6,95 @@ include ../mixins/search-result.jade
 block content
 
     div.clearfix
-
-    div.container
-        div.row
+        div(style="padding-top:50px").container
             div.col-md-5.submission-list.resultsCol
                 h4 Private
+                br
+                table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+                    thead
+                        th Project Name
+                        th Designs
+                        th Constructs
+                        th Experiments
+                    tbody
+                        each project in privateProjects
+                            tr
+                                td
+                                    a(href=project.url) #{project.name}
+                                td
+                                    if project.typeBooleans[0]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
+                                td
+                                    if project.typeBooleans[1]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
+                                td
+                                    if project.typeBooleans[2]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
 
-                p You currently have #{privateProjects.length} private project(s)
-
-                each project in privateProjects              
-                    +search-result-collection(project,removePublicEnabled)
+            br
+            br
 
             div.col-md-5.submission-list.resultsCol
                 h4 Public
+                br
+                table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+                    thead
+                        th Project Name
+                        th Designs
+                        th Constructs
+                        th Experiments
+                    tbody
+                        each project in publicProjects
+                            tr
+                                td
+                                    a(href=project.url) #{project.name}
+                                td
+                                    if project.typeBooleans[0]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
+                                td
+                                    if project.typeBooleans[1]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
+                                td
+                                    if project.typeBooleans[2]
+                                        span.topLevelIcon.fas.fa-check
+                                    else
+                                        span.topLevelIcon.fas.fa-times
+                                
 
-                p You currently have #{publicProjects.length} public project(s)
 
-                each project in publicProjects
-                    +search-result-collection(project,removePublicEnabled)
+    //- div.container
+    //-     div.row
+    //-         div.col-md-5.submission-list.resultsCol
+    //-             h4 Private
 
-            //- div.col-md-5.submission-list.resultsCol
-            //-     h4 Shared with me
+    //-             p You currently have #{privateProjects.length} private project(s)
 
-            //-     p There are currently #{sharedProjects.length} project(s) shared with you
+    //-             each project in privateProjects              
+    //-                 +search-result-collection(project,removePublicEnabled)
 
-            //-     each project in sharedProjects
-            //-         +search-result-collection(project,removePublicEnabled)
+    //-         div.col-md-5.submission-list.resultsCol
+    //-             h4 Public
+
+    //-             p You currently have #{publicProjects.length} public project(s)
+
+    //-             each project in publicProjects
+    //-                 +search-result-collection(project,removePublicEnabled)
+
+    //-         //- div.col-md-5.submission-list.resultsCol
+    //-         //-     h4 Shared with me
+
+    //-         //-     p There are currently #{sharedProjects.length} project(s) shared with you
+
+    //-         //-     each project in sharedProjects
+    //-         //-         +search-result-collection(project,removePublicEnabled)
                     
