@@ -8,6 +8,93 @@ block breadcrumbs
             |  Experiment Submission
 
 
+block js
+    script.
+        interact('.draggable').draggable({
+            inertia: true,
+            restrict: {
+            restriction: "parent",
+            endOnly: true,
+            elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+            },
+            autoScroll: true,
+            // dragMoveListener from the dragging demo above
+            onmove: dragMoveListener,
+            });
+
+        interact('.dropzone').dropzone({
+            // only accept elements matching this CSS selector
+            accept: '.draggable',
+            // Require a 75% element overlap for a drop to be possible
+            overlap: 0.75,
+
+            // listen for drop related events:
+
+            ondropactivate: function (event) {
+                // add active dropzone feedback
+                event.target.classList.add('drop-active');
+            },
+            ondragenter: function (event) {
+                var draggableElement = event.relatedTarget,
+                    dropzoneElement = event.target;
+
+                // feedback the possibility of a drop
+                dropzoneElement.classList.add('drop-target');
+                draggableElement.classList.add('can-drop');
+                //- draggableElement.textContent = 'Dragged in';
+            },
+            ondragleave: function (event) {
+                // remove the drop feedback style
+                //- alert("REMOVED " + event.relatedTarget.getAttribute('name'))
+                event.target.classList.remove('drop-target');
+                event.relatedTarget.classList.remove('can-drop');
+                //- event.relatedTarget.textContent = 'Dragged out';
+                var form = document.getElementById("constructForm")
+                var input = document.getElementById(event.relatedTarget.getAttribute('name'))
+              
+                if (input != null){
+                    form.removeChild(input)
+                }
+
+            },
+            ondrop: function (event) {
+                //- event.relatedTarget.textContent = 'Dropped';
+                //- alert("ADDED " + event.relatedTarget.getAttribute('name'))
+                
+                if (document.getElementById(event.relatedTarget.getAttribute('name')) != null){
+                    return
+                }
+                var input = document.createElement("input");
+                input.type = 'hidden'
+                input.name = 'constructs'
+                input.value = event.relatedTarget.id + ' - ' + event.relatedTarget.getAttribute('name')
+                input.id = event.relatedTarget.getAttribute('name')
+                var form = document.getElementById("constructForm")
+                form.appendChild(input)
+            },
+            ondropdeactivate: function (event) {
+                // remove active dropzone feedback
+                event.target.classList.remove('drop-active');
+                event.target.classList.remove('drop-target');
+            }
+            });
+
+        function dragMoveListener (event) {
+            var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+            // translate the element
+            target.style.webkitTransform =
+            target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)';
+
+            // update the posiion attributes
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        }
+
 block content
     div.submission-container(align='center')
         div.submission-header
@@ -16,7 +103,19 @@ block content
                 | Tell us about your experiment!
 
             div.tab-content
-            form(method='post',enctype='multipart/form-data')
+            form(method='post',enctype='multipart/form-data')#constructForm
+
+                        div(style="-webkit-user-select: none;")
+
+                            for construct in constructs
+                                div(name=construct.uri, id=construct.displayName).draggable
+                                    p
+                                        | #{construct.displayName}
+                            br
+                            
+                            div.dropzone
+                                p
+                                    | Drag and Drop Constructs used in this Experiment into this box!
                         if errors.length > 0
 
                             each error in errors
