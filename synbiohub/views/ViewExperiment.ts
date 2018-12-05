@@ -9,6 +9,7 @@ import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
 
 import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation, SEP21ExperimentalData, S2Identified, S2ProvUsage, S2Attachment } from 'sbolgraph'
+import { Predicates } from 'bioterms';
 
 export default class ViewExperiment extends ViewDescribingTopLevel{
 
@@ -23,6 +24,8 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
     construct:string
     construct_uri:string
+
+    constructs: S2Implementation[]
 
     agent:string
     dataurl:string
@@ -87,15 +90,26 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
         this.dataurl = this.experiment.getUriProperty('http://purl.obolibrary.org/obo/NCIT_C114457')
 
-        let construct = this.experiment.construct as S2Implementation
+        let constructs = this.experiment.getUriProperties(Predicates.Prov.wasDerivedFrom)
 
-        await this.datastore.fetchEverything(this.graph, construct) 
+        this.constructs = []
+        
+        for (let construct of constructs){
 
-        this.construct_uri = construct.uri
+            let temp_construct = new S2Implementation(this.graph, construct)
 
-        this.construct = construct.displayName
+            await this.datastore.fetchEverything(this.graph, temp_construct) 
 
-        console.log(this.graph.serializeXML())
+            this.constructs.push(temp_construct)
+            
+        }
+
+
+        // this.construct_uri = construct.uri
+
+        // this.construct = construct.displayName
+
+        // console.log(this.graph.serializeXML())
 
         this.experimentalData = this.experiment.experimentalData
 

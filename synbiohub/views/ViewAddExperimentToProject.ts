@@ -141,12 +141,12 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         console.log(fields)
         console.log(files)
 
-        this.experimentName = fields['experimentName'][0],
-        this.plan1 = fields['plan1'][0],
-        this.plan2 = fields['plan2'][0],
-        this.agent = fields['agent'][0],
-        this.description = fields['description'][0],
-        this.construct = fields['construct'][0]
+        this.experimentName = fields['experimentName'][0]
+        this.plan1 = fields['plan1'][0]
+        this.plan2 = fields['plan2'][0]
+        this.agent = fields['agent'][0]
+        this.description = fields['description'][0]
+        // this.construct = fields['construct'][0]
 
         var chosen_plan = ''
         var chosen_plan_uri = ''
@@ -154,7 +154,6 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         if (fields['experimentName'][0] === ''){
                 errors.push('Please give the experiment a name.')
         }
-        
 
         if (fields['agent'][0] === ''){
             errors.push('Please mention who performed the experiment.')
@@ -229,7 +228,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
             prefix: uri.getURIPrefix(),
             displayId: displayId,
             version: version,
-            construct: fields['construct'][0],
+            constructs: fields['constructs'],
             agent_str: fields['agent'][0].split(',')[1],
             agent_uri: fields['agent'][0].split(',')[0],
             description: fields['description'][0],
@@ -250,6 +249,8 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         let exp_uri = sbol_results[1]
         let expData_uri = sbol_results[2]
         let plan_uri = sbol_results[3]
+
+        console.log(doc.serializeXML())
 
         if (files['file'] && files['file'][0]['size'] != 0){
             let fileStream = await fs.createReadStream(files['file'][0]['path']);
@@ -308,7 +309,8 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         var description = form_vals['description']
         var organism = form_vals['organism']
         var taxId = form_vals['taxId']
-        let construct_uri = form_vals['construct']
+        // let construct_uri = form_vals['construct']
+        let constructs = form_vals['constructs']
 
   
         let graph = new SBOL2Graph()
@@ -356,13 +358,14 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         asc.agent = agent
         asc.plan = plan
 
-        let construct = this.graph.getTopLevelsWithPrefix(construct_uri)[0] as S2Implementation
+        // let construct = this.graph.getTopLevelsWithPrefix(construct_uri)[0] as S2Implementation
+
 
         let usg = graph.createProvUsage(prefix, displayId + '_usage', version)
         usg.displayId = displayId + '_usage'
         usg.persistentIdentity = prefix +  usg.displayId
         usg.version = version
-        usg.entity = construct
+        // usg.entity = construct
     
         usg.role = ('http://sbols.org/v2#build')
 
@@ -376,8 +379,17 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         exp.version = version
         exp.description = description
 
-        exp.construct = construct
+        // exp.construct = construct
+
         exp.activity = act
+
+        for (let construct of constructs){
+
+            let tempConstruct = new S2Implementation(graph, construct)
+
+            exp.addConstruct(tempConstruct)
+        }
+
 
         exp.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         exp.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', exp.uri)

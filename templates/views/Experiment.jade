@@ -12,12 +12,17 @@ block Mutables
 
 block topLevelBelowPropertyTable
 
-    div.card-body
-        a(style='font-size:18px', href=dataurl) Digital Data Repository
-        p(style='font-size:18px') Original Construct: 
-            a(style='font-size:18px',href=construct_uri) #{construct}
+    //- div.card-body
+    //-     a(style='font-size:18px', href=dataurl) Digital Data Repository
 
     div.card-body
+
+        h4 Constructs Involved
+        for construct in constructs
+            a(style='font-size:18px',href=construct.uri) #{construct.displayName}
+            br
+        br
+
         table.table.table-striped.entry-detail-table
             tr
                 td Researcher

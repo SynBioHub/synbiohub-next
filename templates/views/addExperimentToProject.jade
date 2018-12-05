@@ -67,7 +67,7 @@ block js
                 var input = document.createElement("input");
                 input.type = 'hidden'
                 input.name = 'constructs'
-                input.value = event.relatedTarget.id + ' - ' + event.relatedTarget.getAttribute('name')
+                input.value = event.relatedTarget.getAttribute('name')
                 input.id = event.relatedTarget.getAttribute('name')
                 var form = document.getElementById("constructForm")
                 form.appendChild(input)
@@ -109,12 +109,12 @@ block content
 
                             for construct in constructs
                                 div(name=construct.uri, id=construct.displayName).draggable
-                                    p
+                                    p(style='font-weight:bold;')
                                         | #{construct.displayName}
                             br
                             
                             div.dropzone
-                                p
+                                p(style='font-weight:bold;')
                                     | Drag and Drop Constructs used in this Experiment into this box!
                         if errors.length > 0
 
@@ -132,17 +132,17 @@ block content
                                                 span.fa.fa-info-circle
                                     input.form-control(name='experimentName',id="experimentName",placeholder='The name of the experiment.', value=experimentName)
 
-                        div.row
-                            div.col-md-12
-                                div.form-group-100.required
-                                    label(for="agent") Construct
-                                        a(title='Placeholder Construct Info Box Cause I Cant Think Of Anything')
-                                                span.fa.fa-info-circle
-                                    select.form-control(name='construct', id="construct")
-                                            option(value='', selected='selected') The construct this experiment is derived from
-                                            - for(var i=0;i< constructs.length;i++) {
-                                              option(value = [constructs[i].uri]) #{constructs[i].displayName}
-                                            - }
+                        //- div.row
+                        //-     div.col-md-12
+                        //-         div.form-group-100.required
+                        //-             label(for="agent") Construct
+                        //-                 a(title='Placeholder Construct Info Box Cause I Cant Think Of Anything')
+                        //-                         span.fa.fa-info-circle
+                        //-             select.form-control(name='construct', id="construct")
+                        //-                     option(value='', selected='selected') The construct this experiment is derived from
+                        //-                     - for(var i=0;i< constructs.length;i++) {
+                        //-                       option(value = [constructs[i].uri]) #{constructs[i].displayName}
+                        //-                     - }
 
                         div.row
                             div.col-md-12
