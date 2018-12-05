@@ -232,7 +232,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         // HAVE TO REIMPLEMENT FILE STUFF
 
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
-        var displayId = projectId + '_construct'
+        var displayId = projectId 
         var version = '1'
     
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
@@ -285,7 +285,6 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
             uri.getGraph().split('/').pop)
             
         }
-
 
         this.redirect = impl_uri
     

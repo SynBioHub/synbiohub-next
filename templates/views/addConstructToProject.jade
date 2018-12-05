@@ -19,6 +19,7 @@ block content
 
 
             div.tab-content
+                form(method='post',enctype='multipart/form-data')#constructForm
                         if errors.length > 0
 
                             each error in errors

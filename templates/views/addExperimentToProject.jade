@@ -49,7 +49,7 @@ block js
                 event.target.classList.remove('drop-target');
                 event.relatedTarget.classList.remove('can-drop');
                 //- event.relatedTarget.textContent = 'Dragged out';
-                var form = document.getElementById("constructForm")
+                var form = document.getElementById("experimentForm")
                 var input = document.getElementById(event.relatedTarget.getAttribute('name'))
               
                 if (input != null){
@@ -69,7 +69,7 @@ block js
                 input.name = 'constructs'
                 input.value = event.relatedTarget.getAttribute('name')
                 input.id = event.relatedTarget.getAttribute('name')
-                var form = document.getElementById("constructForm")
+                var form = document.getElementById("experimentForm")
                 form.appendChild(input)
             },
             ondropdeactivate: function (event) {
@@ -103,7 +103,7 @@ block content
                 | Tell us about your experiment!
 
             div.tab-content
-            form(method='post',enctype='multipart/form-data')#constructForm
+            form(method='post',enctype='multipart/form-data')#experimentForm
 
                         div(style="-webkit-user-select: none;")
 

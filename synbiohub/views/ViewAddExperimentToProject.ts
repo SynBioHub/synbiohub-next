@@ -215,7 +215,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         }
 
         var projectId = fields['experimentName'][0].replace(/\s+/g, '')
-        var displayId = projectId + '_experiment'
+        var displayId = projectId
         var version = '1'
     
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
