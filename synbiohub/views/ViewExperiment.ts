@@ -22,10 +22,10 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
     experiment:SEP21Experiment
     experimentalData:S2Identified[]
 
-    construct:string
     construct_uri:string
-
+    
     constructs: S2Implementation[]
+    constructNames:string[]
 
     agent:string
     dataurl:string
@@ -93,7 +93,8 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
         let constructs = this.experiment.getUriProperties(Predicates.Prov.wasDerivedFrom)
 
         this.constructs = []
-        
+        this.constructNames = []
+
         for (let construct of constructs){
 
             let temp_construct = new S2Implementation(this.graph, construct)
@@ -101,6 +102,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
             await this.datastore.fetchEverything(this.graph, temp_construct) 
 
             this.constructs.push(temp_construct)
+            this.constructNames.push(temp_construct.displayName)
             
         }
 

@@ -10,18 +10,75 @@ block Attachments
 block Collections
 block Mutables
 
+
+block js
+    script.
+
+        let expName = "#{experiment.displayName}"
+        let temp_elements = [{data: { id: expName, type: "exp"}}]
+
+        let constructs = !{JSON.stringify(constructNames)}
+
+        for (construct of constructs){
+
+            temp_elements.push({
+                data: { id: construct, type: "cons"}
+            })
+
+            temp_elements.push({
+                data: { id: expName + construct, source: expName, target: construct }
+            })
+        }
+
+        var cy = cytoscape({
+            container: document.getElementById('cy'),
+            elements: temp_elements,
+            style: [ // the stylesheet for the graph
+                {
+                    selector: 'node[type="exp"]',
+                    style: {
+                        'background-color': 'red',
+                        'label': 'data(id)' 
+                        }
+                },
+
+                {
+                    selector: 'node[type="cons"]',
+                    style: {
+                        'background-color': 'blue',
+                        'label': 'data(id)'
+                        }
+                },
+
+                {
+                    selector: 'edge',
+                    style: {
+                        'width': 8,
+                        'line-color': '#ccc',
+                        'target-arrow-color': '#ccc',
+                        'target-arrow-shape': 'triangle'
+                        }
+                }
+            ],
+
+            layout: {
+                name: 'circle',
+                rows: 3
+            }
+            });
+
+            cy.nodes().ungrabify()
+            cy.panningEnabled( false )
+
+            
 block topLevelBelowPropertyTable
 
     //- div.card-body
     //-     a(style='font-size:18px', href=dataurl) Digital Data Repository
 
-    div.card-body
+    div#cy
 
-        h4 Constructs Involved
-        for construct in constructs
-            a(style='font-size:18px',href=construct.uri) #{construct.displayName}
-            br
-        br
+    div.card-body
 
         table.table.table-striped.entry-detail-table
             tr
