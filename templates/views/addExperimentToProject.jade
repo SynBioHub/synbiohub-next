@@ -177,10 +177,10 @@ block content
                         div.row
                             div.col-md-12
                                 div.form-group-100.required
-                                    label(for="dataurl") URL to Digital Data Repository 
-                                        a(href='https://public-edd.jbei.org/accounts/login/?next=/' title='SynBioHub does not store raw or processed experimental data. Please upload the data to a repository like the Experimental Data Depot (which you can go to by clicking on this information button). Then, give a URL linking to the data.')
+                                    label(for="location") Raw and Processed Data Location 
+                                        a(title='SynBioHub does not store raw or processed experimental data. Please point to a physical location where the data is stored (USB, Hard Disk), or to a URL that stores the data.')
                                                 span.fa.fa-info-circle
-                                    input.form-control(name='dataurl',id="dataurl",placeholder='URL to a repository that stores the experimental data', value=dataurl)
+                                    input.form-control(name='location',id="location",placeholder='Location of the raw/processed data resulting from this experiment', value=location)
   
 
                         div.card.w-100
@@ -189,6 +189,9 @@ block content
                                         <b>Experimental Conditions </b>
                                         a(title='Upload a document e.g. spreadsheet that contains the values for the conditions of the experiment e.g. temperature, pH, etc.')
                                                     span.fa.fa-info-circle.in
+
+                                        a(href='/metadataDownload')
+                                                    span.fas.fa-table                                                   
                             #collapseSix.panel-collapse
                                 .panel-body
                                     div.row

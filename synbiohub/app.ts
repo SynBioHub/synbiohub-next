@@ -314,6 +314,12 @@ function App() {
     app.post('/updateMutableSource', requireUser, actions.updateMutableSource);
     app.post('/updateCitations', requireUser, actions.updateCitations);
 
+    app.get('/metadataDownload', function(req, res){
+
+        console.log()
+        res.download('./MetadataSpreadsheet.ods')
+    });
+
     app.get('/autocomplete/:query', api.autocomplete)
     app.get('/organisms/:query', api.organisms)
     app.get('/projects', requireUser, dispatchToView(ViewProjects))

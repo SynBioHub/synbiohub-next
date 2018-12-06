@@ -6,7 +6,6 @@ block topLevelIcon
     span.topLevelIcon.fa.fa-flask
 
 block OtherProperties
-block Attachments
 block Collections
 block Mutables
 
@@ -69,6 +68,7 @@ block js
 
             cy.nodes().ungrabify()
             cy.panningEnabled( false )
+            cy.autolock( true )
 
             
 block topLevelBelowPropertyTable

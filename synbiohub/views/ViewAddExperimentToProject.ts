@@ -48,7 +48,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
     plan2:string
     agent:string
     description:string
-    dataurl:string
+    location:string
 
     constructor(req) {
         super()
@@ -122,7 +122,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         this.plan2 = ''
         this.agent = ''
         this.description = ''
-        this.dataurl = ''
+        this.location = ''
         this.construct = ''
 
 
@@ -203,8 +203,8 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         }
 
-        if (fields['dataurl'][0] === ''){
-            errors.push('Please specify a URL that contains the experimental data.')
+        if (fields['location'][0] === ''){
+            errors.push('Please specify the location of the raw/processed data of this experiment.')
         }
 
 
@@ -232,7 +232,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
             agent_str: fields['agent'][0].split(',')[1],
             agent_uri: fields['agent'][0].split(',')[0],
             description: fields['description'][0],
-            dataurl: fields['dataurl'][0],
+            location: fields['location'][0],
             organism: fields['organism'][0],
             taxId: taxId,
             chosen_plan: chosen_plan,
@@ -305,7 +305,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         var plan_str = form_vals['chosen_plan']
         var chosen_plan_uri = form_vals['chosen_plan_uri']
     
-        var dataurl = form_vals['dataurl']
+        var location = form_vals['location']
         var description = form_vals['description']
         var organism = form_vals['organism']
         var taxId = form_vals['taxId']
@@ -395,7 +395,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         exp.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', exp.uri)
         exp.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         exp.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
-        exp.setUriProperty('http://purl.obolibrary.org/obo/NCIT_C114457', dataurl) //ONTOLOGY TERM FOR DIGITAL DATA REPOSITORY
+        exp.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
 
         let expData = graph.createExperimentalData(prefix, displayId + '_metadata', version)
         
