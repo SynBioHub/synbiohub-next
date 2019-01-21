@@ -182,22 +182,23 @@ block content
                                                 span.fa.fa-info-circle
                                     input.form-control(name='location',id="location",placeholder='Location of the raw/processed data resulting from this experiment', value=location)
   
-
+                        br
                         div.card.w-100
                             div.card-header
                                 div.col-md-12
                                         <b>Experimental Conditions </b>
-                                        a(title='Upload a document e.g. spreadsheet that contains the values for the conditions of the experiment e.g. temperature, pH, etc.')
+                                        a(title='Upload a document e.g. spreadsheet that contains the experimental conditions for the experiment. A template spreadsheet is offered below.')
                                                     span.fa.fa-info-circle.in
 
-                                        a(href='/metadataDownload')
-                                                    span.fas.fa-table                                                   
+                                                  
                             #collapseSix.panel-collapse
                                 .panel-body
                                     div.row
                                         div.col-md-12
                                                 div.row
                                                     div.col
+                                                        a(href='/metadataDownload') Template Conditions Spreadsheet 
+                                                                span.fas.fa-table 
                                                         div.input-group
                                                             label.input-group-btn
                                                                 span.btn.btn-primary
@@ -205,7 +206,7 @@ block content
                                                                     input(type="file",name="metadata_file",style="display: none;",multiple)
                                                             input(type="text",class="form-control",readonly)
                                                     div.col-xs-3         
-
+                        br
                         div.row
                             div.col-md-12
                               div.form-group-100.required
