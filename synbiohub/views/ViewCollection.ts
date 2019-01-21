@@ -1,6 +1,5 @@
 
 import { Request, Response } from 'express'
-import { getAttachmentsForSubject } from "synbiohub/attachments";
 
 import extend = require('xtend')
 import ViewDescribingTopLevel from "./ViewDescribingTopLevel";

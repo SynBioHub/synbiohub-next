@@ -5,23 +5,26 @@ import config from 'synbiohub/config';
 import * as fs from 'mz/fs';
 
 import SBHURI from 'synbiohub/SBHURI';
+import { SBOL2Graph, S2Identified } from 'sbolgraph';
+import Datastores from 'synbiohub/datastore/Datastores';
 
 export default async function(req, res) {
 
     req.setTimeout(0) // no timeout
 
-    const uri = SBHURI.fromURIOrURL(req.url)
-	
-    let tempFilename = await DefaultSBOLFetcher.get(req).fetchSBOLSource(uri)
+    let uri = SBHURI.fromURIOrURL(req.url)
+
+    let datastore = Datastores.forSBHURI(uri)
+
+    let graph:SBOL2Graph = new SBOL2Graph()
+    let identified:S2Identified = new S2Identified(graph, uri.toURI())
+
+    await datastore.fetchEverything(graph, identified)
 
     res.status(200).type('application/rdf+xml')
         //.set({ 'Content-Disposition': 'attachment; filename=' + collection.name + '.xml' })
 
-    const readStream = fs.createReadStream(tempFilename)
-        
-    readStream.pipe(res).on('finish', () => {
-        fs.unlink(tempFilename)
-    })
+    res.send(graph.serializeXML())
 };
 
 

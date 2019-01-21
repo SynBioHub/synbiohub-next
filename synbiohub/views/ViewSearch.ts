@@ -2,7 +2,6 @@
 import pug = require('pug');
 import * as search from 'synbiohub/search';
 import config from 'synbiohub/config';
-import SBOLFetcherICE from '../fetch/SBOLFetcherICE';
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { Response } from 'express'
 import View from 'synbiohub/views/View';
