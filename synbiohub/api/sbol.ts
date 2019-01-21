@@ -19,7 +19,7 @@ export default async function(req, res) {
     let graph:SBOL2Graph = new SBOL2Graph()
     let identified:S2Identified = new S2Identified(graph, uri.toURI())
 
-    await datastore.fetchEverything(graph, identified)
+    await datastore.fetchTopLevel(graph, identified)
 
     res.status(200).type('application/rdf+xml')
         //.set({ 'Content-Disposition': 'attachment; filename=' + collection.name + '.xml' })

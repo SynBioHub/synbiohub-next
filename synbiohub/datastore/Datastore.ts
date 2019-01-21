@@ -20,7 +20,11 @@ export default abstract class Datastore {
     // type, ownedBy, name, description
     abstract async fetchMetadata(intoGraph:SBOL2Graph, identified:S2Identified)
 
-    abstract async fetchEverything(intoGraph:SBOL2Graph, identified:S2Identified)
+    // all direct properties for a subject
+    abstract async fetchProperties(intoGraph:SBOL2Graph, identified:S2Identified)
+
+    // top level and its owned objects recursively
+    abstract async fetchTopLevel(intoGraph:SBOL2Graph, identified:S2Identified)
 
 
     /// Metadata in SBH lab is just an SBOL object with only the type/uri/name/description populated

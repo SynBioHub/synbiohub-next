@@ -18,7 +18,7 @@ export default async function(req, res) {
     let graph:SBOL2Graph = new SBOL2Graph()
     let identified:S2Identified = new S2Identified(graph, uri.toURI())
 
-    await datastore.fetchEverything(graph, identified)
+    await datastore.fetchProperties(graph, identified)
 
     if(identified.objectType !== Types.SBOL2.ComponentDefinition) {
         throw new Error('expected componentdefinition')
@@ -32,7 +32,7 @@ export default async function(req, res) {
 
     let sequence:S2Sequence = componentDefinition.sequences[0]
 
-    await datastore.fetchEverything(graph, sequence)
+    await datastore.fetchProperties(graph, sequence)
 
 
 

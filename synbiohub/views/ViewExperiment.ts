@@ -47,32 +47,32 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
         this.experiment = this.object as SEP21Experiment
 
-        await this.datastore.fetchEverything(this.graph, this.experiment)
+        await this.datastore.fetchProperties(this.graph, this.experiment)
 
         let act = this.experiment.activity as S2ProvActivity
 
-        await this.datastore.fetchEverything(this.graph, act)
+        await this.datastore.fetchProperties(this.graph, act)
 
         let usg = act.usage as S2ProvUsage
         
-        await this.datastore.fetchEverything(this.graph, usg)
+        await this.datastore.fetchProperties(this.graph, usg)
         
         let asc = act.association as S2ProvAssociation
 
-        await this.datastore.fetchEverything(this.graph, asc)
+        await this.datastore.fetchProperties(this.graph, asc)
 
         let agent = asc.agent
 
-        await this.datastore.fetchEverything(this.graph, agent)
+        await this.datastore.fetchProperties(this.graph, agent)
 
         let plan = asc.plan
         
-        await this.datastore.fetchEverything(this.graph, plan)
+        await this.datastore.fetchProperties(this.graph, plan)
 
         await this.datastore.fetchAttachments(this.graph, plan)
 
         for (let attachment of plan.attachments){
-            await this.datastore.fetchEverything(this.graph, attachment)
+            await this.datastore.fetchProperties(this.graph, attachment)
         }
 
         this.agent = agent.displayName
@@ -99,7 +99,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
             let temp_construct = new S2Implementation(this.graph, construct)
 
-            await this.datastore.fetchEverything(this.graph, temp_construct) 
+            await this.datastore.fetchProperties(this.graph, temp_construct) 
 
             this.constructs.push(temp_construct)
             this.constructNames.push(temp_construct.displayName)

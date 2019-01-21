@@ -19,7 +19,7 @@ export default async function(req, res) {
 
     object = object as S2Attachment
 
-    await datastore.fetchEverything(graph, object)
+    await datastore.fetchProperties(graph, object)
 
     let attachmentType = object.format
     let attachmentHash = object.hash

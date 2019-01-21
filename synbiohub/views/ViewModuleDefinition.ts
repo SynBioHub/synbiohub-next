@@ -55,16 +55,16 @@ export default class ViewModuleDefinition extends ViewDescribingTopLevel {
         this.models = this.moduleDefinition.models
 
         for(let functionalComponent of this.functionalComponents) {
-            await this.datastore.fetchEverything(this.graph, functionalComponent)
+            await this.datastore.fetchProperties(this.graph, functionalComponent)
             await this.datastore.fetchMetadata(this.graph, functionalComponent.definition)
         }
 
         for(let interaction of this.interactions) {
-            await this.datastore.fetchEverything(this.graph, interaction)
+            await this.datastore.fetchProperties(this.graph, interaction)
             await this.datastore.fetchMetadata(this.graph, interaction)
         
             for(let participation of interaction.participations){
-                await this.datastore.fetchEverything(this.graph, participation)
+                await this.datastore.fetchProperties(this.graph, participation)
                 await this.datastore.fetchMetadata(this.graph, participation)
             }
         }

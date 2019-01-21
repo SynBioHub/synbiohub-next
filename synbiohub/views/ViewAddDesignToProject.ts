@@ -6,7 +6,7 @@ import parseForm from "../parseForm";
 import fs = require('mz/fs')
 import SBHURI from "synbiohub/SBHURI";
 import ViewConcerningTopLevel from "./ViewConcerningTopLevel";
-import { SBOL2Graph, S2Collection, node } from 'sbolgraph'
+import { SBOL2Graph, S2Collection, node, S2Identified } from 'sbolgraph'
 import SBOLUploader from "../SBOLUploader";
 import { OverwriteMergeOption } from "../OverwriteMerge";
 import { Predicates, Types } from 'bioterms'
@@ -81,6 +81,15 @@ export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
         for(let topLevel of g.topLevels) {
             g.add(this.uri.toURI(), Predicates.a, node.createUriNode(Types.SBOL2.Collection)) // needed for sbolgraph to serialize to xml
             g.add(this.uri.toURI(), Predicates.SBOL2.member, node.createUriNode(topLevel.uri))
+
+            let addTopLevelAnnotations = (obj:S2Identified) => {
+                obj.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', topLevel.uri)
+                for(let child of obj.containedObjects) {
+                    addTopLevelAnnotations(child)
+                }
+            }
+
+            addTopLevelAnnotations(topLevel)
         }
 
         let uploader = new SBOLUploader()

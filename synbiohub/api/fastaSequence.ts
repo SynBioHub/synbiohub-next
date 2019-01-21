@@ -16,7 +16,7 @@ export default async function(req, res) {
     let graph:SBOL2Graph = new SBOL2Graph()
     let identified:S2Identified = new S2Identified(graph, uri.toURI())
 
-    await datastore.fetchEverything(graph, identified)
+    await datastore.fetchProperties(graph, identified)
 
     if(identified.objectType !== Types.SBOL2.Sequence) {
         throw new Error('expected sequence')
