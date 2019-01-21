@@ -74,7 +74,7 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
         for(let sequence of this.componentDefinition.sequences) {
             await this.datastore.fetchMetadata(this.graph, sequence)
-            await this.datastore.fetchEverything(this.graph, sequence)
+            await this.datastore.fetchProperties(this.graph, sequence)
 
             this.sequence = sequence as S2Sequence
 

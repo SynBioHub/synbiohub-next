@@ -7,7 +7,6 @@ import uploads from 'synbiohub/uploads';
 import * as attachments from 'synbiohub/attachments';
 import streamToString = require('stream-to-string');
 import * as sparql from 'synbiohub/sparql/sparql-collate';
-import { getAttachmentsForSubject } from 'synbiohub/attachments'
 import SBHURI from 'synbiohub/SBHURI';
 import { Request, Response } from 'express'
 

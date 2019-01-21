@@ -1,6 +1,5 @@
 import SBHURI from "../SBHURI";
 import { SBOL2Graph, S2Identified, node, S2Collection, S2ComponentDefinition, S2ModuleDefinition, S2Sequence, S2Attachment, S2Implementation, SEP21Experiment } from "sbolgraph";
-import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory';
 import Datastores from "../datastore/Datastores";
 import parseForm from "../parseForm";
 import SBOLUploader from "../SBOLUploader";

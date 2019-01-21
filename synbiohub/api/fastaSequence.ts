@@ -1,18 +1,31 @@
 import pug = require('pug');
 import config from 'synbiohub/config';
 
-import { S2Sequence } from 'sbolgraph';
 import { Specifiers } from 'bioterms';
 import SBHURI from 'synbiohub/SBHURI';
+import Datastores from 'synbiohub/datastore/Datastores';
+import { SBOL2Graph, S2Identified, S2Sequence } from 'sbolgraph';
+import { Types } from 'bioterms'
 
 export default async function(req, res) {
 
     let uri = SBHURI.fromURIOrURL(req.url)
 
-    let result = await DefaultSBOLFetcher.get(req).fetchSBOLObjectRecursive(uri)
+    let datastore = Datastores.forSBHURI(uri)
 
-    const sbol = result.sbol
-    const sequence = result.object as S2Sequence
+    let graph:SBOL2Graph = new SBOL2Graph()
+    let identified:S2Identified = new S2Identified(graph, uri.toURI())
+
+    await datastore.fetchProperties(graph, identified)
+
+    if(identified.objectType !== Types.SBOL2.Sequence) {
+        throw new Error('expected sequence')
+    }
+
+    let sequence = new S2Sequence(graph, uri.toURI())
+
+
+    // TODO: fasta generation code duplicated in fastaComponentDefinition
 
     var lines = []
     var charsPerLine = 70

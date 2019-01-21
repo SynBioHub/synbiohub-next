@@ -39,25 +39,25 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         this.implementation = this.object as S2Implementation
 
-        await this.datastore.fetchEverything(this.graph, this.implementation)
+        await this.datastore.fetchProperties(this.graph, this.implementation)
 
         let act = this.implementation.activity as S2ProvActivity
 
         this.location = this.implementation.getStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation')
 
-        await this.datastore.fetchEverything(this.graph, act)
+        await this.datastore.fetchProperties(this.graph, act)
 
         let asc = act.association as S2ProvAssociation
         
-        await this.datastore.fetchEverything(this.graph, asc)
+        await this.datastore.fetchProperties(this.graph, asc)
 
         let agent = asc.agent
 
-        await this.datastore.fetchEverything(this.graph, agent)
+        await this.datastore.fetchProperties(this.graph, agent)
 
         let plan = asc.plan
         
-        await this.datastore.fetchEverything(this.graph, plan)
+        await this.datastore.fetchProperties(this.graph, plan)
 
         this.agent = agent.displayName
 
@@ -74,7 +74,7 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
 
         let design = this.implementation.design as S2Identified
 
-        await this.datastore.fetchEverything(this.graph, design) 
+        await this.datastore.fetchProperties(this.graph, design) 
 
         this.design_uri = design.uri
 

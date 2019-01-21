@@ -51,7 +51,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         this.uri = SBHURI.fromURIOrURL(req.url)
 
-        await this.datastore.fetchEverything(this.graph, new S2Identified(this.graph, this.uri.toURI()))
+        await this.datastore.fetchProperties(this.graph, new S2Identified(this.graph, this.uri.toURI()))
 
         this.object = this.graph.uriToFacade(this.uri.toURI())
 

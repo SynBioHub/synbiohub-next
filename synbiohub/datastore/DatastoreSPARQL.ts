@@ -4,6 +4,8 @@ import { SBOL2Graph, S2Collection, S2Identified } from 'sbolgraph'
 import request = require('request-promise')
 import DatastoreSearchQuery, { SortDirection } from "./DatastoreSearchQuery";
 
+let arbitraryLimitTODO = 10000
+
 export interface SPARQLConfig {
     endpointURL:string
     graphURI:string
@@ -67,12 +69,12 @@ export default class DatastoreSPARQL extends Datastore {
                 OPTIONAL { <${identified.uri}> dcterms:title ?title . }
                 OPTIONAL { <${identified.uri}> dcterms:description ?desc . }
                 OPTIONAL { <${identified.uri}> sbh:ownedBy ?ownedBy . }
-            } LIMIT 100
+            } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
 
-    async fetchEverything(intoGraph:SBOL2Graph, identified:S2Identified) {
+    async fetchProperties(intoGraph:SBOL2Graph, identified:S2Identified) {
         await this.sparqlConstruct(intoGraph, `
             PREFIX sbol: <http://sbols.org/v2#>
             PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -81,7 +83,21 @@ export default class DatastoreSPARQL extends Datastore {
                 <${identified.uri}> ?p ?o .
             } WHERE {
                 <${identified.uri}> ?p ?o .
-            } LIMIT 1000
+            } LIMIT ${arbitraryLimitTODO}
+        `)
+    }
+
+    async fetchTopLevel(intoGraph:SBOL2Graph, topLevel:S2Identified) {
+        await this.sparqlConstruct(intoGraph, `
+            PREFIX sbol: <http://sbols.org/v2#>
+            PREFIX dcterms: <http://purl.org/dc/terms/>
+            PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+            CONSTRUCT {
+                ?s ?p ?o .
+            } WHERE {
+                ?s sbh:topLevel <${topLevel.uri}> .
+                ?s ?p ?o .
+            } LIMIT ${arbitraryLimitTODO}
         `)
     }
 
@@ -104,7 +120,7 @@ export default class DatastoreSPARQL extends Datastore {
                 OPTIONAL { ?s dcterms:title ?title . }
                 OPTIONAL { ?s dcterms:description ?description . }
                 OPTIONAL { ?s sbh:ownedBy ?ownedBy . }
-            } LIMIT 100
+            } LIMIT ${arbitraryLimitTODO}
         `)
 
 
@@ -149,7 +165,7 @@ export default class DatastoreSPARQL extends Datastore {
                 OPTIONAL { ?s sbol:encoding ?encoding . }
                 ${searchQuery ? this.sparqlFilterFromSearchQuery('?s', searchQuery) : ''}
                 ${searchQuery ? this.sparqlBindOrderPredicateFromSearchQuery('?s', searchQuery) : ''}
-            } LIMIT 100
+            } LIMIT ${arbitraryLimitTODO}
         `)
     }
 
@@ -208,7 +224,7 @@ export default class DatastoreSPARQL extends Datastore {
                 OPTIONAL { ?s dcterms:title ?title . }
                 OPTIONAL { ?s dcterms:description ?description . }
                 OPTIONAL { ?s sbh:ownedBy ?ownedBy . }
-            } LIMIT 100
+            } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
@@ -222,7 +238,7 @@ export default class DatastoreSPARQL extends Datastore {
             } WHERE {
                 ?s a prov:Plan .
                 ?s ?p ?o .
-            } LIMIT 1000
+            } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
@@ -244,7 +260,7 @@ export default class DatastoreSPARQL extends Datastore {
             ?att <http://sbols.org/v2#size> ?size .
             ?att <http://purl.org/dc/terms/title> ?title .
             ?att <http://sbols.org/v2#format> ?type
-        } LIMIT 1000
+        } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
@@ -263,7 +279,7 @@ export default class DatastoreSPARQL extends Datastore {
         WHERE {
             <${identified.uri}> <http://sbols.org/v2#component> ?tempComponent .
             ?tempComponent <http://sbols.org/v2#definition> ?component
-        } LIMIT 1000
+        } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
@@ -280,7 +296,7 @@ export default class DatastoreSPARQL extends Datastore {
         
         WHERE {
             <${identified.uri}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#comment> ?comment .
-        } LIMIT 1000
+        } LIMIT ${arbitraryLimitTODO}
         `)
 
     }
