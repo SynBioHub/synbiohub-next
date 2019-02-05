@@ -6,18 +6,18 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
-
-
 block jsState
+    script
+        | sbol = !{JSON.stringify(graph.serializeXML())}
+
+
+block js
     script.
         function popup() {
             popupS.modal({
                 content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
             });
         }
-
-block js
-    script.
         $(document).ready(function() {
             $('#lightgallery').lightGallery({
                 selector: '.sele',
@@ -76,6 +76,7 @@ block content
         div.row
             div.col-md-12.sbh-toplevel-preview
                 block topLevelPreview
+                    div#biocad
 
         div.row.entry-heading
             div.col-sm-6.entry-title

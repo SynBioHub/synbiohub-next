@@ -273,11 +273,13 @@ export default class DatastoreSPARQL extends Datastore {
 
         CONSTRUCT{
             <${identified.uri}> <http://sbols.org/v2#component> ?tempComponent .
+            ?tempComponent a sbol:Component .
             ?tempComponent <http://sbols.org/v2#definition> ?component
         }
         
         WHERE {
             <${identified.uri}> <http://sbols.org/v2#component> ?tempComponent .
+            ?tempComponent a sbol:Component .
             ?tempComponent <http://sbols.org/v2#definition> ?component
         } LIMIT ${arbitraryLimitTODO}
         `)

@@ -10,6 +10,11 @@
         "strictNullChecks": false,
         "allowJs": true,
         "paths": {
+            "biocad/*": [ "node_modules/@biocad/biocad/dist/biocad/*" ],
+            "jfw/*": [ "node_modules/@biocad/jfw/dist/jfw/*" ],
+            "data/*": [ "node_modules/@biocad/biocad/dist/data/*" ],
+            "visbolite/*": [ "node_modules/@biocad/biocad/dist/visbolite/*" ],
+            "visbolite": [ "node_modules/@biocad/biocad/dist/visbolite" ]
         }
     },
     "exclude": [
@@ -18,6 +23,7 @@
         "dist",
         "browser",
         "synbiohub.js",
+        "webpack.config.js",
         "migrations"
     ]
 }
