@@ -8,12 +8,16 @@ async function doBiocad() {
 
     if(window['sbol']) {
 
+        console.dir(window['sbol'])
+
         let elem = document.getElementById('biocad')
 
         if(elem) {
             let sbol = window['sbol']
 
             let graph = await SBOLXGraph.loadString(sbol, 'application/rdf+xml')
+
+            console.dir(graph.serializeXML())
 
             let layout = new Layout(graph)
 
