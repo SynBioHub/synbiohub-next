@@ -1,5 +1,5 @@
 import SBHURI from "../SBHURI";
-import { SBOL2Graph, S2Identified, node, S2Collection, S2ComponentDefinition, S2ModuleDefinition, S2Sequence, S2Attachment, S2Implementation, SEP21Experiment } from "sbolgraph";
+import { SBOL2Graph, S2Identified, node, S2Collection, S2ComponentDefinition, S2ModuleDefinition, S2Sequence, S2Attachment, S2Implementation, S2Experiment } from "sbolgraph";
 import Datastores from "../datastore/Datastores";
 import parseForm from "../parseForm";
 import SBOLUploader from "../SBOLUploader";
@@ -39,8 +39,8 @@ export default async function (req, res) {
         object = new S2Attachment(graph, uri.toURI())
     } else if(types.indexOf('http://sbols.org/v2#Implementation') !== -1){
         object = new S2Implementation(graph, uri.toURI())
-    } else if(types.indexOf('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment') !== -1){
-        object = new SEP21Experiment(graph, uri.toURI())
+    } else if(types.indexOf('http://sbols.org/v2#Experiment') !== -1){
+        object = new S2Experiment(graph, uri.toURI())
 
     }
     

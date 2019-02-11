@@ -45,7 +45,7 @@ export default async function(req, res) {
         let result = await sparql.queryJson(test_query, uri.getGraph())
 
         if (result.length === 1){
-            view = new ViewTest()
+            view = new ViewExperiment()
         }
 
         else{
@@ -68,7 +68,7 @@ export default async function(req, res) {
         view = new ViewAttachment()
     } else if(types.indexOf('http://sbols.org/v2#Implementation') !== -1){
         view = new ViewImplementation()
-    } else if(types.indexOf('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment') !== -1){
+    } else if(types.indexOf('http://sbols.org/v2#Experiment') !== -1){
         view = new ViewExperiment()
 
     } else {

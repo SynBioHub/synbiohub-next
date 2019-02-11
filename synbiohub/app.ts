@@ -45,7 +45,7 @@ import backupRestore from './views/admin/backupRestore';
 import registries from './views/admin/registries';
 import mail from './views/admin/mail';
 import ViewAddConstructToProject from './views/ViewAddConstructToProject';
-import createTest from './views/createTest';
+import createTest from './views/ViewAddExperimentToProject';
 import organisms from './loadOrganisms';
 
 import ViewAddDesignToProject from './views/ViewAddDesignToProject'
