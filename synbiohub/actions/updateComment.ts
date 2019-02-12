@@ -69,4 +69,6 @@ export default async function (req, res) {
     uploader.setOverwriteMerge(OverwriteMergeOption.OverwriteIfExists)
     await uploader.upload()
 
+    res.redirect(uri)
+
 }
