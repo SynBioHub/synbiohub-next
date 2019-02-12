@@ -1,14 +1,18 @@
+import SBHURI from "../SBHURI";
+import { SBOL2Graph, S2Identified, node, S2Collection, S2ComponentDefinition, S2ModuleDefinition, S2Sequence, S2Attachment, S2Implementation, S2Experiment } from "sbolgraph";
+import Datastores from "../datastore/Datastores";
+import SBOLUploader from "../SBOLUploader";
+import { OverwriteMergeOption } from "../OverwriteMerge";
+import * as sparql from 'synbiohub/sparql/sparql';
+import loadTemplate from "../loadTemplate";
+import { Types } from "bioterms";
+import S2Model from "sbolgraph/dist/sbol2/S2Model";
+import parseForm from 'synbiohub/parseForm'
+import { fs } from 'mz';
+import uploads from "synbiohub/uploads";
+const attachments = require('../attachments')
 
-import pug = require('pug');
-import loadTemplate from 'synbiohub/loadTemplate';
-import config from 'synbiohub/config';
-import multiparty = require('multiparty');
-import uploads from 'synbiohub/uploads';
-import * as attachments from 'synbiohub/attachments';
-import streamToString = require('stream-to-string');
-import * as sparql from 'synbiohub/sparql/sparql-collate';
-import SBHURI from 'synbiohub/SBHURI';
-import { Request, Response } from 'express'
+
 
 export default async function (req, res) {
 
@@ -16,68 +20,88 @@ export default async function (req, res) {
 
 	var attachmentObjects = []
 
-	const form = new multiparty.Form()
-
 	let uri:SBHURI = SBHURI.fromURIOrURL(req.url)
 
-	// let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
+	let { fields, files } = await parseForm(req)
 
-	// if (ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
-	// 	return res.status(401).send('not authorized to edit this submission')
-	// }
+	let caption = fields["caption"][0]
+	console.log(fields)
+	console.log(files)
+	let fileStream = await fs.createReadStream(files['file'][0]['path']);
+	let uploadInfo = await uploads.createUpload(fileStream)
+	const { hash, size, mime } = uploadInfo
+	console.log("Created upload!")
+	
+	await attachments.addAttachmentToTopLevel(
+		uri.getGraph(), uri.getURIPrefix(), uri, files['file'][0]['originalFilename'], hash, size,
+		mime, req.user.username, caption)
 
-	var done = false
+	res.redirect(uri)
+	console.log("????????")
 
-	form.on('part', async (partStream) => {
 
-		if (!partStream.filename)
-			return
+	// var done = false
 
-		if(done)
-			return
+	// form.on('part', async (partStream) => {
 
-		done = true
+	// 	if (!partStream.filename)
+	// 		return
 
-		let uploadInfo = await uploads.createUpload(partStream)
-		console.log(JSON.stringify(uploadInfo))
-		const { hash, size, mime } = uploadInfo
-		console.log("Created upload!")
-		console.log(JSON.stringify(uploadInfo))
+	// 	if(done)
+	// 		return
 
-		await attachments.addAttachmentToTopLevel(
-			uri.getGraph(), uri.getURIPrefix(), uri, partStream.filename, hash, size,
-			mime, req.user.username)
+	// 	done = true
 
-			var templateParams = {
-				uri: uri
-			}
+	// 	// console.log(partStream)
+	// 	let uploadInfo = await uploads.createUpload(partStream)
+	// 	console.log(JSON.stringify(uploadInfo))
+	// 	const { hash, size, mime } = uploadInfo
+	// 	console.log("Created upload!")
+	// 	console.log(JSON.stringify(uploadInfo))
 
-		// let attachmentObjects = await getAttachmentsForSubject(uri, uri.getGraph())
+	// 	await attachments.addAttachmentToTopLevel(
+	// 		uri.getGraph(), uri.getURIPrefix(), uri, partStream.filename, hash, size,
+	// 		mime, req.user.username)
 
-		const locals = {
-			config: config.get(),
-			canEdit: true,
-			url: req.url
-			// attachments: attachmentObjects
-		}
+	// 		var templateParams = {
+	// 			uri: uri
+	// 		}
 
-		// res.send(pug.renderFile('templates/partials/attachments.jade', locals))
-		console.log('umm???')
-		var response:Response = res
-		await res.redirect(uri.getPersistentIdentity() + uri.getVersion())
-		console.log('hello???')
+	// 	// let attachmentObjects = await getAttachmentsForSubject(uri, uri.getGraph())
 
-	})
+	// 	const locals = {
+	// 		config: config.get(),
+	// 		canEdit: true,
+	// 		url: req.url
+	// 		// attachments: attachmentObjects
+	// 	}
+
+
+	// 	console.log('hello???')
+
+	// })
 
 	// form.on('error', (err) => {
 	// 	throw err
 	// })
 
 
-	form.parse(req)
-	
-	let response:Response
-	response.redirect(uri.getPersistentIdentity() + uri.getVersion())
-};
+	// form.parse(req)
+
+	// res.redirect('/projects')
+	// res.end()
+	// res.send('/projects')
+
+	// const locals = {
+	// 	config: config.get(),
+	// 	canEdit: true,
+	// 	url: req.url
+	// 	// attachments: attachmentObjects
+	// }
+	// res.send(pug.renderFile('templates/partials/attachments.jade', locals))
+
+	// let response:Response
+	// response.redirect(uri.getPersistentIdentity() + uri.getVersion())
+}
 
 

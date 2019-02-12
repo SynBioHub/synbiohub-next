@@ -252,14 +252,19 @@ export default class DatastoreSPARQL extends Datastore {
             <${identified.uri}> <http://sbols.org/v2#attachment> ?att .
             ?att <http://sbols.org/v2#size> ?size .
             ?att <http://purl.org/dc/terms/title> ?title .
-            ?att <http://sbols.org/v2#format> ?type
+            ?att <http://sbols.org/v2#format> ?type .
+            ?att <http://purl.obolibrary.org/obo/IAO_0000304> ?caption .
         }
         
         WHERE {
             <${identified.uri}> <http://sbols.org/v2#attachment> ?att .
             ?att <http://sbols.org/v2#size> ?size .
             ?att <http://purl.org/dc/terms/title> ?title .
-            ?att <http://sbols.org/v2#format> ?type
+            ?att <http://sbols.org/v2#format> ?type .
+            OPTIONAL{
+                ?att <http://purl.obolibrary.org/obo/IAO_0000304> ?caption .
+            }
+            
         } LIMIT ${arbitraryLimitTODO}
         `)
 

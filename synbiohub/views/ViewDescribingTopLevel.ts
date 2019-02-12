@@ -41,7 +41,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
     //builds:Array<any>
     mutables:Mutables
     rdfType:any
-    attachments:any
+    attachments:S2Attachment[]
     comment:string
     commentHistory:string[]
 
@@ -69,6 +69,7 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
         await this.datastore.fetchAttachments(this.graph, this.object)
 
         this.attachments = this.object.attachments
+
 
         /* TODO
 
