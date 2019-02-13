@@ -8,7 +8,7 @@ import assert = require('assert')
 import sha1 = require('sha1');
 import { S2Attachment } from 'sbolgraph';
 
-export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy, caption) {
+export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy, caption='') {
 
     //console.log('Adding:'+name+' to:'+topLevelUri)
     const displayId = 'attachment_' + sliver.getId()
