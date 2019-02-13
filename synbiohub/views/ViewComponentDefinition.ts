@@ -52,6 +52,13 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
         this.componentDefinition = this.object as S2ComponentDefinition
 
+
+        await this.datastore.fetchComponents(this.graph, this.componentDefinition)
+
+        for(let component of this.componentDefinition.components) {
+            await this.datastore.fetchProperties(this.graph, component)
+        }
+
         let types = (this.object as S2ComponentDefinition).types
 
         let isDNA = types.indexOf(Specifiers.SBOL2.Type.DNA) !== -1
