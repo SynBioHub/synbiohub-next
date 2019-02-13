@@ -52,7 +52,7 @@
     "read-chunk": "^2.1.0",
     "request": "^2.79.0",
     "request-promise": "^4.2.2",
-    "sbolgraph": "https://github.com/udp/sbolgraph.git#0f70ff80b88bdbf7ef25feea2084653b3a599152",
+    "sbolgraph": "https://github.com/udp/sbolgraph.git#eba73d7608f4cf0db1422b70aa974a943abec889",
     "sendgrid": "^4.7.1",
     "sequelize": "^3.32.1",
     "sequence-formatter": "^1.0.0",
