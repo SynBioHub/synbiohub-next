@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@biocad/biocad": "https://github.com/ngbiocad/biocad.git#3920169b3a9fabd80647e35d5e6c641675ac9c22",
+    "@biocad/biocad": "https://github.com/ngbiocad/biocad.git#48fa259f89dcfe35fba18b849571155b1059a6a3",
     "@types/express": "^4.16.0",
     "@types/mz": "0.0.32",
     "alouette": "^5.5.0",
