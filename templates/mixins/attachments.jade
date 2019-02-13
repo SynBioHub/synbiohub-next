@@ -5,7 +5,6 @@ mixin attachments(url, attachments)
         table.attachments-table.table.table-striped
             thead
                 th Name
-                th Size
             tbody
 
             div#lightgallery
@@ -18,13 +17,12 @@ mixin attachments(url, attachments)
                             a.sele(style='height:300px;width:300px' href=attachment.uri + '/download', data-sub-html='<h3>' + attachment.displayName + '</h3>')
                                 img.attachmentImage(src=attachment.uri + '/download')
 
+            br
+            br
             for attachment in attachments
                 tr
                     td
                         a(href=attachment.uri) #{attachment.displayName}
-                    td
-                        if attachment.size
-                            | #{attachment.size}
                     td
                         a(href=attachment.uri + '/download')
                             button.btn.btn-primary

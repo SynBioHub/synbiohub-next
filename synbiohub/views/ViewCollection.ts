@@ -36,6 +36,8 @@ export default class ViewCollection extends ViewDescribingTopLevel {
 
         await super.prepare(req)
 
+        
+
         await this.datastore.fetchMembersMetadata(this.graph, this.object as S2Collection)
 
         console.log(JSON.stringify(this.graph.graph.toArray(), null, 2))
@@ -44,6 +46,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
             name: 'Collection',
         }
 
+        
         this.collection = this.object as S2Collection
 
         this.components = []
@@ -52,9 +55,15 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         
         this.typeBooleans = [false, false, false]
 
+        console.log(this.collection.members)
+
         for(let member of this.collection.members) {
+            
+            
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
 
+
+            console.log(member)
             if (member.objectType === Types.SBOL2.ComponentDefinition){
 
                 this.typeBooleans[0] = true
