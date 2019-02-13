@@ -1,4 +1,47 @@
 
+import Layout from 'biocad/cad/Layout'
+import ImageRenderer from 'biocad/cad/ImageRenderer'
+import { SBOLXGraph } from 'sbolgraph'
+import { Vec2 } from 'jfw/geom'
+
+async function doBiocad() {
+
+    if(window['sbol']) {
+
+        console.dir(window['sbol'])
+
+        let elem = document.getElementById('biocad')
+
+        if(elem) {
+            let sbol = window['sbol']
+
+            let graph = await SBOLXGraph.loadString(sbol, 'application/rdf+xml')
+
+            console.dir(graph.serializeXML())
+
+            let layout = new Layout(graph)
+
+            layout.syncAllDepictions(5)
+            layout.configurate([])
+            layout.size = layout.getBoundingSize().add(Vec2.fromXY(1, 1))
+
+            let renderer = new ImageRenderer(layout)
+            let svg = renderer.renderToSVGString()
+
+            elem.innerHTML = svg
+        }
+
+    }
+}
+
+doBiocad()
+
+
+
+
+
+declare var $:any
+
 $(document).on('click', '[data-uri]', function () {
 
     window.location = $(this).attr('data-uri')
@@ -11,6 +54,8 @@ $("body").tooltip({
     selector: '[data-toggle="tooltip"]',
     container: 'body'
 })
+
+declare function saveSvgAsPng(elem:any, name:string):any
 
 $('.sbh-download-picture').click(function () {
 
@@ -72,8 +117,8 @@ $(document).on('click', '.removeFromWoR', function() {
 })
 
 $(document).on('blur', '#user_edit #email', function() {
-    $username = $('#username');
-    $email = $(this).closest('#email');
+    let $username = $('#username');
+    let $email = $(this).closest('#email');
 
     let email = $email.val();
     let username = email.split('@')[0].replace(/\W/g, '');
@@ -82,8 +127,8 @@ $(document).on('blur', '#user_edit #email', function() {
 })
 
 $(document).on('blur', '#new #name', function() {
-    $id = $('input#id');
-    $name = $(this).closest('input#name');
+    let $id = $('input#id');
+    let $name = $(this).closest('input#name');
 
     let name = $name.val();
     let id = "";
@@ -126,7 +171,7 @@ $(document).on('click', '.sbh-datatable .delete', function () {
     })
 })
 
-if (typeof meta !== 'undefined') {
+if (typeof window['meta'] !== 'undefined') {
     $('.sbh-collection-members-datatable').DataTable({
         processing: true,
         serverSide: true,
@@ -135,8 +180,8 @@ if (typeof meta !== 'undefined') {
         dom: "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'p>>" +
             "<'row'<'col-sm-12'tr>>",
 
-        searching: !meta.remote,
-        ordering: !meta.remote,
+        searching: !window['meta'].remote,
+        ordering: !window['meta'].remote,
 
         "oLanguage": {
             "sSearch": ""
@@ -167,7 +212,7 @@ $('.sbh-registries-datatable').DataTable({
 })
 
 $(document).on('click', '.save-registry', function () {
-    $row = $(this).closest('tr')
+    let $row = $(this).closest('tr')
 
     var registryInfo = {
         uri: $row.find('#uri').val(),
@@ -178,7 +223,7 @@ $(document).on('click', '.save-registry', function () {
 })
 
 $(document).on('click', '.delete-registry', function () {
-    $row = $(this).closest('tr')
+    let $row = $(this).closest('tr')
 
      var registryInfo = {
         uri: $row.find('#uri').val(),
@@ -196,11 +241,76 @@ $(document).on('click', '.delete-registry', function () {
 
 $(".chosen-select").chosen()
 
-require('./autocomplete')
-require('./dataIntegration')
-require('./visbol')
-require('./sse')
-require('./setup')
+$('.sbh-autocomplete').typeahead({
+    hint: false,
+    highlight: true,
+    minLength: 1
+
+}, {
+    name: 'my-dataset',
+    source: function(query, syncResults, asyncResults) {
+
+        $.getJSON('/autocomplete/' + query, function(res) {
+
+            asyncResults(res.map((r) => r.name))
+
+        })
+
+
+    }
+
+})
+
+$('.organism-autocomplete').typeahead({
+    hint: false,
+    highlight: true,
+    minLength: 1,
+    limit: 2,
+  },
+  {
+    name: 'organisms',
+    source: function findMatches(query, syncResults, asyncResults) {
+
+        $.getJSON('/organisms/' + query, function(data) {
+            
+            console.log(data)
+            
+            syncResults(data);
+
+        })
+
+        .success(function(data) {
+            
+            asyncResults(data); 
+            
+       
+        })
+
+
+
+        }
+      
+  });
+
+
+
+$('#setupColor').keyup(updateColor)
+$('#setupColor').change(updateColor)
+
+function updateColor() {
+
+    var color = $('#setupColor').val()
+
+    $('.btn').css('background-color', color)
+    $('.btn').css('border-color', color)
+
+}
+
+
+
+
+
+$('.twitter-typeahead').css('display', 'inline')
 
 function createWikiEditor($el, saveButtonText, updateEndpoint) {
 
@@ -306,7 +416,7 @@ function createWikiEditor($el, saveButtonText, updateEndpoint) {
         var value = $textarea.val()
 
         $.post(updateEndpoint, {
-            uri: meta.uri,
+            uri: window['meta'].uri,
             value: value,
         }, function (res) {
             $div.replaceWith($(res))
@@ -434,6 +544,8 @@ $('#sbh-attachment-form').submit(function (e) {
 })
 
 
+
+declare var CodeMirror:any
 
 $('.sbh-sparql-editor').each((i, textarea) => {
 
@@ -563,107 +675,3 @@ function getFields(type) {
 
     return extend(fields, specificFields[type])
 }
-
-function clearForm() {
-    $form = $('#remoteForm').empty();
-}
-
-function populateForm(type, data) {
-    $form = $('#remoteForm');
-
-    const fields = getFields(type);
-
-    Object.keys(fields).forEach(key => {
-        fieldInfo = fields[key];
-
-        $label = $("<label />").attr("for", key).text(fieldInfo.name);
-        $input = {
-            "text": $("<input />").attr("type", "text").val(fieldInfo.default),
-            "checkbox": $("<input />").attr("type", "checkbox").prop("checked", fieldInfo.default),
-            "textarea": $("<textarea />").val(fieldInfo.default),
-            "value": $("<input />").attr("type", "text").attr('readonly', 'readonly').val(fieldInfo.default),
-        }[fieldInfo.type].attr("name", key).addClass("form-control")
-
-        if(data[key]) {
-	    if (fieldInfo.type === "checkbox") {
-		$input.prop("checked", data[key])
-	    } else {
-		$input.val(data[key]);
-	    }
-
-            if(key == "id") {
-                $input.attr('readonly', 'readonly')
-            }
-        }
-
-        $group = $("<div />").addClass('form-group').append($label, $input)
-
-        $('#remoteForm').append($group)
-    })
-
-
-}
-
-$(document).on('click', '#remoteTypeSelect', function () {
-    var type = $(this).val()
-
-    if (type != "") {
-        clearForm();
-        $('#addRemote').attr('disabled', false);
-        populateForm(type, {"type": type})
-    } else {
-        $('#addRemote').attr('disabled', true);
-        clearForm();
-    }
-})
-
-
-$(document).on('click', '#remoteEdit', function () {
-    clearForm();
-    var id = $(this).closest('table').find('#remote-id').text();
-
-    var remote = remotes.find((remote) => {
-        return remote.id == id;
-    })
-
-    var data = {
-        "ice": {
-            id: remote["id"],
-            type: "ice",
-            url: remote["url"],
-            rejectUnauthorized: remote["rejectUnauthorized"],
-            isPublic: remote["public"] || false,
-            folderPrefix: remote["folderPrefix"],
-            sequenceSuffix: remote["sequenceSuffix"],
-            defaultFolderId: remote["defaultFolderId"],
-            rootCollectionDisplayId: remote.rootCollection["displayId"],
-            rootCollectionName: remote.rootCollection["name"],
-            rootCollectionDescription: remote.rootCollection["description"],
-            iceApiToken: remote["X-ICE-API-Token"],
-            iceApiTokenClient: remote["X-ICE-API-Token-Client"],
-            iceApiTokenOwner: remote["X-ICE-API-Token-Owner"],
-            iceCollection: remote["iceCollection"],
-            groupId: remote["groupId"],
-            pi: remote["PI"],
-            partNumberPrefix: remote["partNumberPrefix"],
-            piEmail: remote["PIemail"],
-        },
-        "benchling": {
-            id: remote["id"],
-            type: "benchling",
-            url: remote["url"],
-            rejectUnauthorized: remote["rejectUnauthorized"],
-            isPublic: remote["public"] || false,
-            folderPrefix: remote["folderPrefix"],
-            sequenceSuffix: remote["sequenceSuffix"],
-            defaultFolderId: remote["defaultFolderId"],
-            rootCollectionDisplayId: remote.rootCollection["displayId"],
-            rootCollectionName: remote.rootCollection["name"],
-            rootCollectionDescription: remote.rootCollection["description"],
-            benchlingApiToken: remote["X-BENCHLING-API-Token"],
-            defaultFolderId: remote["defaultFolderId"],
-        }
-    }[remote.type]
-
-    populateForm(remote.type, data)
-})

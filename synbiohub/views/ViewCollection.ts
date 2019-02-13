@@ -39,6 +39,9 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         
 
         await this.datastore.fetchMembersMetadata(this.graph, this.object as S2Collection)
+
+        console.log(JSON.stringify(this.graph.graph.toArray(), null, 2))
+
         this.rdfType = {
             name: 'Collection',
         }

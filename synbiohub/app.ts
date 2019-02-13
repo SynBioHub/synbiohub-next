@@ -5,8 +5,15 @@ import cookieParser = require('cookie-parser')
 import bodyParser = require('body-parser')
 import multer = require('multer')
 import lessMiddleware = require('less-middleware')
-import browserifyMiddleware = require('browserify-middleware')
 import UglifyJS = require('uglify-es')
+
+
+import webpack = require('webpack')
+import webpackMiddleware = require('webpack-dev-middleware');
+
+import webpackConfig = require('webpack.config.js')
+
+let webpackCompiler = webpack(webpackConfig)
 
 
 
@@ -59,7 +66,7 @@ var views = {
     setup,
     addOwner,
     visualization,
-    createTest,
+    //createTest,
 
 
     editProfile: viewEditProfile,
@@ -183,19 +190,6 @@ var actions = {
     }
 }
 
-/*
-browserifyMiddleware.settings({
-    mode: 'production',
-    cache: '1 day',
-    // debug: false,
-    // minify: true,
-    // precompile: true,
-    postcompile: function(source) {
-        console.log("Compiled!")
-        return UglifyJS.minify(source).code
-    },
-})*/
-
 
 
 function App() {
@@ -206,7 +200,11 @@ function App() {
     app.set('view engine', 'pug')
     app.set('views', './')
 
-    app.get('/bundle.js', browserifyMiddleware('./browser/synbiohub.js'))
+    //app.get('/bundle.js', browserifyMiddleware('./browser/synbiohub.js'))
+
+    app.use(webpackMiddleware(webpackCompiler, {
+        publicPath: webpackConfig.output.publicPath
+    }))
 
 
     app.use(lessMiddleware('public', { /*once: true*/ }))
