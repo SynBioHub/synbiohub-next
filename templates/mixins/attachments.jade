@@ -11,6 +11,10 @@ mixin attachments(url, attachments)
             div#lightgallery
                 for attachment in attachments
                     if attachment.format.includes('http://purl.org/NET/mediatypes/image')
+                       if attachment.getUriProperty("http://purl.obolibrary.org/obo/IAO_0000304") != undefined
+                            a.sele(style='height:300px;width:300px' href=attachment.uri + '/download', data-sub-html='<h3>' + attachment.displayName + '</h3><p> ' + attachment.getUriProperty("http://purl.obolibrary.org/obo/IAO_0000304") + '</p>')
+                                img.attachmentImage(src=attachment.uri + '/download')
+                        else
                             a.sele(style='height:300px;width:300px' href=attachment.uri + '/download', data-sub-html='<h3>' + attachment.displayName + '</h3>')
                                 img.attachmentImage(src=attachment.uri + '/download')
 
@@ -28,12 +32,16 @@ mixin attachments(url, attachments)
                                 |  Download
     div.row
         form#sbh-attachment-form(method='post',enctype='multipart/form-data',action=url + '/attach')
+            input(type="text", id="caption", name="caption", placeholder="If attaching an image, write a caption here!", form="sbh-attachment-form").form-control
             div.col-xs-6
+                
                 div.input-group
+                    
                     label.input-group-btn
                         span.btn.btn-primary
                             | Select file(s)&hellip;
-                            input(type="file",name="file",style="display: none;",multiple)
+                            input(type="file",name="file",style="display: none;",multiple, form="sbh-attachment-form")
+                    
                     input(type="text",class="form-control",readonly)
             div.col-xs-3
             div.col-xs-3

@@ -8,7 +8,7 @@ import assert = require('assert')
 import sha1 = require('sha1');
 import { S2Attachment } from 'sbolgraph';
 
-export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy) {
+export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, uploadHash, size, attachmentType, ownedBy, caption) {
 
     //console.log('Adding:'+name+' to:'+topLevelUri)
     const displayId = 'attachment_' + sliver.getId()
@@ -18,21 +18,49 @@ export function addAttachmentToTopLevel(graphUri, baseUri, topLevelUri, name, up
     const attachmentURI = persistentIdentity + '/' + version
     const collectionUri = baseUri + baseUri.slice(baseUri.lastIndexOf('/')) + '_collection/' + version
 
-    const query = loadTemplate('./sparql/AttachUpload.sparql', {
-        collectionUri: collectionUri,
-        topLevel: topLevelUri,
-        attachmentURI: attachmentURI,
-        attachmentSource: attachmentURI + "/download",
-        persistentIdentity: persistentIdentity,
-        displayId: JSON.stringify(displayId),
-        version: JSON.stringify(version),
-        name: JSON.stringify(name),
-        description: JSON.stringify(""),
-        hash: JSON.stringify(uploadHash),
-        size: JSON.stringify(size + ''),
-        type: attachmentType,
-        ownedBy: config.get('databasePrefix') + 'user/' + encodeURIComponent(ownedBy)
-    })
+    let query = ''
+
+    if (caption == ''){
+        query = loadTemplate('./sparql/AttachUpload.sparql', {
+            collectionUri: collectionUri,
+            topLevel: topLevelUri,
+            attachmentURI: attachmentURI,
+            attachmentSource: attachmentURI + "/download",
+            persistentIdentity: persistentIdentity,
+            displayId: JSON.stringify(displayId),
+            version: JSON.stringify(version),
+            name: JSON.stringify(name),
+            description: JSON.stringify(""),
+            hash: JSON.stringify(uploadHash),
+            size: JSON.stringify(size + ''),
+            type: attachmentType,
+            ownedBy: config.get('databasePrefix') + 'user/' + encodeURIComponent(ownedBy)
+        })
+
+    }
+
+    else{
+
+        query = loadTemplate('./sparql/AttachUploadWithCaption.sparql', {
+            collectionUri: collectionUri,
+            topLevel: topLevelUri,
+            attachmentURI: attachmentURI,
+            attachmentSource: attachmentURI + "/download",
+            persistentIdentity: persistentIdentity,
+            displayId: JSON.stringify(displayId),
+            version: JSON.stringify(version),
+            name: JSON.stringify(name),
+            description: JSON.stringify(""),
+            hash: JSON.stringify(uploadHash),
+            size: JSON.stringify(size + ''),
+            type: attachmentType,
+            ownedBy: config.get('databasePrefix') + 'user/' + encodeURIComponent(ownedBy),
+            caption: JSON.stringify(caption)
+        })
+
+
+    }
+
 
     return sparql.updateQueryJson(query, graphUri).then((res) => {
         //console.log('Added:'+name+' to:'+topLevelUri)

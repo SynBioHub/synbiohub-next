@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 var sparql = require('../sparql/sparql')
 
-import { S2ProvActivity, SEP21Experiment, S2ProvAssociation, S2Implementation, SEP21ExperimentalData, S2Identified, S2ProvUsage, S2Attachment } from 'sbolgraph'
+import { S2ProvActivity, S2Experiment, S2ProvAssociation, S2Implementation, S2ExperimentalData, S2Identified, S2ProvUsage, S2Attachment } from 'sbolgraph'
 import { Predicates } from 'bioterms';
 
 export default class ViewExperiment extends ViewDescribingTopLevel{
@@ -19,7 +19,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
 
     meta:any
 
-    experiment:SEP21Experiment
+    experiment:S2Experiment
     experimentalData:S2Identified[]
 
     construct_uri:string
@@ -45,7 +45,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
             name: 'Experiment'
         }
 
-        this.experiment = this.object as SEP21Experiment
+        this.experiment = this.object as S2Experiment
 
         await this.datastore.fetchProperties(this.graph, this.experiment)
 
