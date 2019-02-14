@@ -12,7 +12,7 @@
     "awesome-typescript-loader": "^5.2.1",
     "basic-auth": "^1.0.3",
     "binary-split": "^1.0.3",
-    "bioterms": "https://github.com/udp/bioterms.git#8d269a8b7d0488984dac58914cb64487159a2e71",
+    "bioterms": "git+https://github.com/udp/bioterms.git",
     "body-parser": "^1.15.0",
     "byline": "^5.0.0",
     "cheerio": "^1.0.0-rc.2",
