@@ -55,8 +55,6 @@ export default class ViewCollection extends ViewDescribingTopLevel {
         
         this.typeBooleans = [false, false, false]
 
-        console.log(this.collection.members)
-
         for(let member of this.collection.members) {
             
             

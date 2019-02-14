@@ -65,6 +65,10 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
         // visbol was here
 
+        for(let component of this.componentDefinition.components) {
+            await this.datastore.fetchTopLevel(this.graph, component.definition)
+        }
+
 
         if(isDNA) {
             this.topLevelHumanType = 'DNA Part'
@@ -122,6 +126,8 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
     }
 
     async render(res:Response) {
+
+        console.log(this.graph.serializeXML())
 
         res.render('templates/views/componentDefinition.jade', this)
 
