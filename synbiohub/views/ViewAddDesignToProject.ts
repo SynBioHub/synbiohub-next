@@ -76,7 +76,9 @@ export default class ViewAddDesignToProject extends ViewConcerningTopLevel {
 
         let g:SBOL2Graph = await SBOL2Graph.loadString(contents)
 
-        g.changeURIPrefix(this.uri.getURIPrefix())
+       g.changeURIPrefix(this.uri.getURIPrefix())
+
+        // g.enforceURICompliance(this.uri.getURIPrefix());
 
         for(let topLevel of g.topLevels) {
             g.add(this.uri.toURI(), Predicates.a, node.createUriNode(Types.SBOL2.Collection)) // needed for sbolgraph to serialize to xml

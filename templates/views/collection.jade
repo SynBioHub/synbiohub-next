@@ -89,14 +89,14 @@ block topLevelPreview
                                 td
                                     a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
                                     br
-                                    ||____
+                                    ┣━ 
                                     - count = 0
                                     for component in componentList.slice(1, componentList.length)
                                         - count += 1
                                         a(href=memberURLs.get(component.uri)) #{component.displayId}
                                         if (count !== componentList.length -1 )
                                             br
-                                            ||____
+                                            ┣━ 
 
 
                                 td
