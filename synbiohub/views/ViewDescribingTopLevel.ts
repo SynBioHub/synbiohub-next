@@ -125,6 +125,8 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         }*/
 
+        await this.datastore.fetchComments(this.graph, this.object)
+
         let tempHistory = this.object.getUriProperties('http://www.w3.org/1999/02/22-rdf-syntax-ns#comment')
 
         if (tempHistory.length === 0){

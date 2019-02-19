@@ -13,8 +13,6 @@ export default async function (req, res) {
 
     let uri:SBHURI = SBHURI.fromURIOrURL(req.url)
 
-    console.log(uri.toURI())
-
     let datastore = Datastores.forSBHURI(uri)
     let graph = new SBOL2Graph()
 
