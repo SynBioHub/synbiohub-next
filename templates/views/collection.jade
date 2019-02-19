@@ -114,16 +114,17 @@ block topLevelPreview
                                             ┣━ 
 
                                 td
-                                    a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
-                                    br
-                                    ┣━ 
-                                    - count = 0
-                                    for component in componentList.slice(1, componentList.length)
-                                        - count += 1
-                                        a(href=memberURLs.get(component.uri)) #{component.displayType}
-                                        if (count !== componentList.length -1 )
-                                            br
-                                            ┣━ 
+                                    if (componentList[0].displayType != 'Design')
+                                        a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
+                                        br
+                                        ┣━ 
+                                        - count = 0
+                                        for component in componentList.slice(1, componentList.length)
+                                            - count += 1
+                                            a(href=memberURLs.get(component.uri)) #{component.displayType}
+                                            if (count !== componentList.length -1 )
+                                                br
+                                                ┣━ 
 
                                 if (componentList[0].description != undefined && componentList[0].description != '')
                                     td  ┣━ #{componentList[0].description}
