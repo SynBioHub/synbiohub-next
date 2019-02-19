@@ -102,37 +102,37 @@ block topLevelPreview
                                 td
                                     a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name}
                                     br
-                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    ┣━ 
                                     - count = 0
                                     for component in componentList.slice(1, componentList.length)
                                         - count += 1
                                         a(href=memberURLs.get(component.uri)) #{component.name}
                                         if (count !== componentList.length -1 )
                                             br
-                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            ┣━ 
 
                                 td
                                     a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayType}
                                     br
-                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    ┣━ 
                                     - count = 0
                                     for component in componentList.slice(1, componentList.length)
                                         - count += 1
                                         a(href=memberURLs.get(component.uri)) #{component.displayType}
                                         if (count !== componentList.length -1 )
                                             br
-                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            ┣━ 
 
                                 td  #{componentList[0].description}
                                     br
-                                    |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    ┣━ 
                                     - count = 0
                                     for component in componentList.slice(1, componentList.length)
                                         - count += 1
                                         a #{component.description}
                                         if (count !== componentList.length -1 )
                                             br
-                                            |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            ┣━ 
 
             div.sbh-project-add.creationButtons
                 a.addButton(href=uri.toURL() + '/addDesign')

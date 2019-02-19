@@ -309,7 +309,7 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         var description = form_vals['description']
         var organism = form_vals['organism']
         var taxId = form_vals['taxId']
-        // let construct_uri = form_vals['construct']
+        // let construct_uri = 
         let constructs = form_vals['constructs']
 
   
@@ -360,6 +360,8 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         // let construct = this.graph.getTopLevelsWithPrefix(construct_uri)[0] as S2Implementation
 
+        // let construct = graph.createImplementation(construct_uri.getURIPrefix(), construct_uri.getDisplayId(), construct_uri.getVersion())
+
 
         let usg = graph.createProvUsage(prefix, displayId + '_usage', version)
         usg.displayId = displayId + '_usage'
@@ -379,11 +381,13 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         exp.version = version
         exp.description = description
 
-        // exp.construct = construct
+        // exp.addConstruct(construct)
 
         exp.activity = act
 
         for (let construct of constructs){
+
+            let tempURI = SBHURI.fromURIOrURL(construct)
 
             let tempConstruct = new S2Implementation(graph, construct)
 
