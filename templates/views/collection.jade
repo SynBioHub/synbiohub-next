@@ -68,7 +68,7 @@ block topLevelPreview
             else
                 table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
                     thead
-                        th Identifier
+                        //- th Identifier
                         th Name
                         th Type
                         th Description
@@ -76,27 +76,29 @@ block topLevelPreview
                         for member in collection.members
                             if (member.version!= 'null' && member.displayType !== "Nucleic Acid Sequence" && member.displayType !== "Amino Acid Sequence" && member.displayType !== "Construct" && member.displayType !== "Experiment" && !CDCheck.includes(member.displayId))
                                 tr
-                                    td
-                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
+                                    //- td
+                                    //-     a(href=memberURLs.get(member.uri)) #{member.displayId}
                                     td
                                         a(href=memberURLs.get(member.uri)) #{member.name}
                                     td
                                         a(href=memberURLs.get(member.uri)) #{member.displayType}
-                                    td #{member.description}
+
+                                    if (member.description != undefined) 
+                                        td #{member.description}
                         for componentList in components
                             tr
 
-                                td
-                                    a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
-                                    br
-                                    ┣━ 
-                                    - count = 0
-                                    for component in componentList.slice(1, componentList.length)
-                                        - count += 1
-                                        a(href=memberURLs.get(component.uri)) #{component.displayId}
-                                        if (count !== componentList.length -1 )
-                                            br
-                                            ┣━ 
+                                //- td
+                                //-     a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].displayId}
+                                //-     br
+                                //-     ┣━ 
+                                //-     - count = 0
+                                //-     for component in componentList.slice(1, componentList.length)
+                                //-         - count += 1
+                                //-         a(href=memberURLs.get(component.uri)) #{component.displayId}
+                                //-         if (count !== componentList.length -1 )
+                                //-             br
+                                //-             ┣━ 
 
 
                                 td
@@ -123,16 +125,19 @@ block topLevelPreview
                                             br
                                             ┣━ 
 
-                                td  #{componentList[0].description}
-                                    br
-                                    ┣━ 
-                                    - count = 0
-                                    for component in componentList.slice(1, componentList.length)
-                                        - count += 1
-                                        a #{component.description}
-                                        if (count !== componentList.length -1 )
-                                            br
-                                            ┣━ 
+                                if (componentList[0].description != undefined && componentList[0].description != '')
+                                    td  ┣━ #{componentList[0].description}
+                                        br
+                                        - count = 0
+                                        for component in componentList.slice(1, componentList.length)
+                                            - count += 1
+                                            if (component.description != undefined) 
+                                                    &nbsp;&nbsp;&nbsp;┣━&nbsp;#{component.description}
+                                            if (count !== componentList.length -1 )
+                                                br
+                                                
+                                else
+                                    td
 
             div.sbh-project-add.creationButtons
                 a.addButton(href=uri.toURL() + '/addDesign')
@@ -150,20 +155,20 @@ block topLevelPreview
             else
                 table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
                     thead
-                        th Identifier
                         th Name
-                        th Type
+                        //- th Type
+                        th Organism
                         th Description
                     tbody
                         for member in collection.members
                             if (member.version!= 'null' && member.displayType === "Construct")
                                 tr
                                     td
-                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
-                                    td
                                         a(href=memberURLs.get(member.uri)) #{member.name}
                                     td
-                                        a(href=memberURLs.get(member.uri)) #{member.displayType}
+                                        a(href=member.getUriProperty("http://w3id.org/synbio/ont#taxId")) #{member.getUriProperty("http://www.biopax.org/release/biopax-level3.owl#organism")}
+                                    //- td
+                                    //-     a(href=memberURLs.get(member.uri)) #{member.displayType}
                                     td #{member.description}
 
             div.sbh-project-add.creationButtons
@@ -183,20 +188,21 @@ block topLevelPreview
             else
                 table#datatable.display.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
                     thead
-                        th Identifier
                         th Name
-                        th Type
+                        //- th Type
                         th Description
                     tbody
                         for member in collection.members
                             if (member.version!= 'null' && member.displayType === "Experiment")
                                 tr
                                     td
-                                        a(href=memberURLs.get(member.uri)) #{member.displayId}
-                                    td
                                         a(href=memberURLs.get(member.uri)) #{member.name}
+
                                     td
-                                        a(href=memberURLs.get(member.uri)) #{member.displayType}
+                                        a(href=member.getUriProperty("http://w3id.org/synbio/ont#taxId")) #{member.getUriProperty("http://www.biopax.org/release/biopax-level3.owl#organism")}
+
+                                    //- td
+                                    //-     a(href=memberURLs.get(member.uri)) #{member.displayType}
                                     td #{member.description}
 
             div.sbh-project-add.creationButtons

@@ -23,6 +23,7 @@ export default class ViewCollection extends ViewDescribingTopLevel {
     CDCheck: any[]
 
     typeBooleans: boolean[]
+    
 
     constructor() {
 
@@ -60,8 +61,6 @@ export default class ViewCollection extends ViewDescribingTopLevel {
             
             this.memberURLs.set(member.uri, SBHURI.fromURIOrURL(member.uri).toURL())
 
-
-            console.log(member)
             if (member.objectType === Types.SBOL2.ComponentDefinition){
 
                 this.typeBooleans[0] = true
@@ -90,11 +89,15 @@ export default class ViewCollection extends ViewDescribingTopLevel {
             }
 
             else if (member.objectType === Types.SBOL2.Implementation){
+
                 this.typeBooleans[1] = true
+                await this.datastore.fetchTopLevel(this.graph, member)
             }
 
             else if (member.objectType === Types.SBOL2.Experiment){
+                
                 this.typeBooleans[2] = true
+                await this.datastore.fetchTopLevel(this.graph, member)
             }
 
             
