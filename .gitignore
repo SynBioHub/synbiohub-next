@@ -17,7 +17,7 @@ jsbml.log
 dist/
 bin/fmaprefix
 data/
-
+package-lock.json
 
 
 /config.local.json~
