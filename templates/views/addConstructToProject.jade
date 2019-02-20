@@ -9,6 +9,15 @@ block breadcrumbs
             |  Construct Submission
 
 
+block js
+
+    script.
+
+        $('#design').selectize({
+            sortField: 'text'
+        });
+
+
 block content
     div.submission-container(align='center')
         div.submission-header
@@ -42,7 +51,7 @@ block content
                                     label(for="agent") Design
                                         a(title='Placeholder Design Info Box Cause I Cant Think Of Anything')
                                                 span.fa.fa-info-circle
-                                    select.form-control(name='design', id="design")
+                                    select(name='design', id="design")
                                             option(value='', selected='selected') The design this construct is derived from
                                             - for(var i=0;i< designs.length;i++) {
                                               option(value = [designs[i].uri]) #{designs[i].displayName}

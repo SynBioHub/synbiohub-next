@@ -22,6 +22,7 @@ import { S2ProvPlan, S2Identified, S2Collection, SBOL2Graph } from 'sbolgraph';
 import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 import SBOLUploader from '../SBOLUploader';
 import { OverwriteMergeOption } from '../OverwriteMerge';
+// var escapeString = require('escape-string')
 
     
 
