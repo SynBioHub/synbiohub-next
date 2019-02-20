@@ -14,7 +14,8 @@ block js
     script.
 
         $('#design').selectize({
-            sortField: 'text'
+            sortField: 'text',
+            maxItems: 1,
         });
 
 
@@ -51,7 +52,7 @@ block content
                                     label(for="agent") Design
                                         a(title='Placeholder Design Info Box Cause I Cant Think Of Anything')
                                                 span.fa.fa-info-circle
-                                    select(name='design', id="design")
+                                    select(name='design', id="design", multiple)
                                             option(value='', selected='selected') The design this construct is derived from
                                             - for(var i=0;i< designs.length;i++) {
                                               option(value = [designs[i].uri]) #{designs[i].displayName}
