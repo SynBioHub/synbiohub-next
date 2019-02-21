@@ -141,10 +141,10 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         this.agent = fields['agent'][0],
         this.description = fields['description'][0],
         this.location = fields['location'][0]
-        this.design = fields['design'][0]
     
         var chosen_plan = ''
         var chosen_plan_uri = ''
+
 
         if (fields['constructName'][0] === ''){
     
@@ -152,7 +152,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
     
         }
     
-        if (fields['design'][0] === ''){
+        if (!fields['design']){
     
             errors.push('Please mention which design this construct was inspired by.')
       
@@ -231,6 +231,9 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         // HAVE TO REIMPLEMENT FILE STUFF
 
+
+        this.design = fields['design'][0]
+
         var projectId = fields['constructName'][0].replace(/\s+/g, '')
         var displayId = projectId 
         var version = '1'
@@ -238,7 +241,15 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
 
         var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
-        var taxId = org_search[0].split('|')[1]
+        
+        var taxId
+
+        if (org_search[0] == ''){
+            taxId = 'custom'
+        }
+        else{
+            taxId = org_search[0].split('|')[1]
+        }
 
         var form_vals = {
 
@@ -393,8 +404,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
         impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         impl.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', impl.uri)
-        impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
+
+        if (taxId != "custom"){
+            impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
+        }
 
         let col_uri = SBHURI.fromURIOrURL(this.object.uri)
 

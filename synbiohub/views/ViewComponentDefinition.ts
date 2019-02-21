@@ -95,6 +95,8 @@ export default class ViewComponentDefinition extends ViewDescribingTopLevel {
 
             this.lengthUnits = this.sequence.encoding === Specifiers.SBOL2.SequenceEncoding.AminoAcid ? 'aa' : 'bp'
 
+            console.log(this.graph.serializeXML())
+            
             this.formatted = formatSequence(this.sequence.elements)
         }
 
