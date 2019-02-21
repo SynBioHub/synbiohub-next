@@ -222,7 +222,15 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
         var newURI = new SBHURI(uri.getUser(), projectId, displayId, version)
 
         var org_search = await FMAPrefix.search('./data/ncbi_taxonomy.txt', fields['organism'][0])
-        var taxId = org_search[0].split('|')[1]
+
+        var taxId
+
+        if (org_search[0] == ''){
+            taxId = 'custom'
+        }
+        else{
+            taxId = org_search[0].split('|')[1]
+        }
 
         var form_vals = {
 
@@ -398,9 +406,12 @@ export default class ViewAddExperimentToProject extends ViewConcerningTopLevel{
 
         exp.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', graphUri.uri)
         exp.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', exp.uri)
-        exp.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
         exp.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', organism)
         exp.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', location)
+
+        if (taxId != "custom"){
+            exp.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + taxId)
+        }
 
         let expData = graph.createExperimentalData(prefix, displayId + '_metadata', version)
         
