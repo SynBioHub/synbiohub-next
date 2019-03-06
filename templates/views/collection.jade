@@ -225,7 +225,7 @@ block topLevelPreview
                                         a(href=memberURLs.get(member.uri)) #{member.name}
 
                                     td
-                                        a(href=member.getUriProperty("http://w3id.org/synbio/ont#taxId")) #{member.getUriProperty("http://www.biopax.org/release/biopax-level3.owl#organism")}
+                                        a(href=member.getUriProperty("http://w3id.org/synbio/ont#taxId")) <i>#{member.getUriProperty("http://www.biopax.org/release/biopax-level3.owl#organism")}</i>
 
                                     //- td
                                     //-     a(href=memberURLs.get(member.uri)) #{member.displayType}
