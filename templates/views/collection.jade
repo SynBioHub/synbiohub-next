@@ -30,6 +30,7 @@ block js
         $(document).ready(function() {
             $(".hideButton").click(function(){
                 temp_name = CSS.escape(this.id.split("_root")[0])
+                temp_name = temp_name.split(' ').join('')
                 child_class = '.' + temp_name + '_child'
                 $(child_class.trim()).toggle()
             })
@@ -118,7 +119,7 @@ block topLevelPreview
 
                                 td
                                     a(href=memberURLs.get(componentList[0].uri)) #{componentList[0].name} 
-                                    button.btn.btn-sm.btn-outline-light.text-dark(id=componentList[0].name + "_" + member_count + "_root", class="hideButton")
+                                    button.btn.btn-sm.btn-outline-light.text-dark(id=componentList[0].name.split(' ').join('') + "_" + member_count + "_root", class="hideButton")
                                         | +
                                     br
                                     
@@ -126,7 +127,7 @@ block topLevelPreview
                                     for component in componentList.slice(1, componentList.length)
                                         - count += 1
                                         
-                                        span.subTree(class=componentList[0].name + "_" + member_count + "_child")
+                                        span.subTree(class=componentList[0].name.split(' ').join('') + "_" + member_count + "_child")
                                             ┣━ 
                                             a(href=memberURLs.get(component.uri)) #{component.name}
                                             if (count !== componentList.length -1 )
@@ -142,7 +143,7 @@ block topLevelPreview
                                         for component in componentList.slice(1, componentList.length)
                                             - count += 1
                                             
-                                            span.subTree(class=componentList[0].name + "_" + member_count + "_child")
+                                            span.subTree(class=componentList[0].name.split(' ').join('') + "_" + member_count + "_child")
                                                 ┣━ 
                                                 a(href=memberURLs.get(component.uri)) #{component.displayType}
                                                 if (count !== componentList.length -1 )
@@ -154,7 +155,7 @@ block topLevelPreview
                                         - count = 0
                                         for component in componentList.slice(1, componentList.length)
                                             - count += 1
-                                            span.subTree(class=componentList[0].name + "_" + member_count + "_child")
+                                            span.subTree(class=componentList[0].name.split(' ').join('') + "_" + member_count + "_child")
                                                 if (component.description != undefined) 
                                                         &nbsp;&nbsp;&nbsp;┣━&nbsp;#{component.description}
                                                 if (count !== componentList.length -1 )
