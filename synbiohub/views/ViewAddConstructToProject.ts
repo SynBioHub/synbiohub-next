@@ -135,7 +135,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         console.log(fields)
         console.log(files)
 
-        this.constructName = fields['constructName'][0],
+        this.constructName = fields['constructName'][0].replace(/:/g,"-"),
         this.plan1 = fields['plan1'][0],
         this.plan2 = fields['plan2'][0],
         this.agent = fields['agent'][0],
@@ -234,7 +234,7 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
 
         this.design = fields['design'][0]
 
-        var projectId = fields['constructName'][0].replace(/\s+/g, '')
+        var projectId = fields['constructName'][0].replace(/\s+/g, '').replace(/:/g,"-")
         var displayId = projectId 
         var version = '1'
     
