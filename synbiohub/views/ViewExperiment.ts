@@ -35,6 +35,7 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
     plan_url:string
     plan_filename:string
     metadata:any[]
+    location:string
 
 
     async prepare(req:SBHRequest) {
@@ -50,6 +51,8 @@ export default class ViewExperiment extends ViewDescribingTopLevel{
         await this.datastore.fetchProperties(this.graph, this.experiment)
 
         let act = this.experiment.activity as S2ProvActivity
+
+        this.location = this.experiment.getStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation')
 
         await this.datastore.fetchProperties(this.graph, act)
 

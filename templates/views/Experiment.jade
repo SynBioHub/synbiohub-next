@@ -91,10 +91,14 @@ block topLevelBelowPropertyTable
             tr
                 td Organism
                 td 
-                    a(href=taxId) #{organism}
+                    a(href=taxId) <i>#{organism}</i>
             tr
                 td Experimental Conditions
                 td 
                     for data in experimentalData
                         if data.attachments[0].displayName
                             a(href=data.attachments[0].uri + '/download') #{data.attachments[0].displayName}
+            tr
+                td Experimental Data
+                td #{location}
+                //- td #{getUriProperty("http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation")}
