@@ -1,0 +1,7 @@
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX sbol2: <http://sbols.org/v2#>
+DELETE {
+<$collection> ?x ?y
+} WHERE {
+<$collection> ?x ?y .
+}

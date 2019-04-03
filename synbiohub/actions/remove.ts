@@ -10,7 +10,7 @@ export default async function(req, res) {
 
   // TODO reimplement
 
-  /*
+  
     req.setTimeout(0) // no timeout
 
     const uri = SBHURI.fromURIOrURL(req.url)
@@ -21,14 +21,14 @@ export default async function(req, res) {
 
     var removeQuery = loadTemplate('sparql/remove.sparql', templateParams)
 
-    var type = await DefaultMDFetcher.get(req).getType(uri)
+    // var type = await DefaultMDFetcher.get(req).getType(uri)
 
-    if (type == 'http://sbols.org/v2#Implementation'){
+    // if (type == 'http://sbols.org/v2#Implementation'){
 
-      var removeQuery = loadTemplate('sparql/removeImplementation.sparql', templateParams)
-    }
+    //   var removeQuery = loadTemplate('sparql/removeImplementation.sparql', templateParams)
+    // }
 
-    var ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
+    // var ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
 
     // TODO THIS NEEDS TO BE FIXED BECAUSE ANYONE CAN DELETE ANYTHING RIGHT NOW
@@ -61,6 +61,6 @@ export default async function(req, res) {
 
   await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
-  res.redirect('/manage');
-*/
+  res.redirect("/projects");
+
   };

@@ -5,12 +5,13 @@ import config from 'synbiohub/config';
 import * as sparql from 'synbiohub/sparql/sparql';
 import pug = require('pug');
 import SBHURI from '../SBHURI';
+import { S1Collection } from 'sbolgraph';
 
 export default async function(req, res) {
 
     // TODO reimplement
 
-    /*
+
     req.setTimeout(0) // no timeout
 
     const uri = SBHURI.fromURIOrURL(req.url)
@@ -27,31 +28,36 @@ export default async function(req, res) {
         version: req.params.version
     }
 
-    var removeQuery = loadTemplate('sparql/removeCollection.sparql', templateParams)
+    console.log(templateParams['collection'])
 
-    let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
+    var removeQuery1 = loadTemplate('sparql/removeCollectionContents.sparql', templateParams)
+    var removeQuery2 = loadTemplate('sparql/removeProject.sparql', templateParams)
 
-    if(ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
-        //res.status(401).send('not authorized to edit this submission')
-    const locals = {
-    config: config.get(),
-    section: 'errors',
-    user: req.user,
-    errors: [ 'Not authorized to remove this submission' ]
-        }
-        res.send(pug.renderFile('templates/views/errors/errors.jade', locals))        
-    }
+    // let ownedBy = await DefaultMDFetcher.get(req).getOwnedBy(uri)
 
-    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+    // if(ownedBy.indexOf(config.get('databasePrefix') + 'user/' + req.user.username) === -1) {
+    //     //res.status(401).send('not authorized to edit this submission')
+    // const locals = {
+    // config: config.get(),
+    // section: 'errors',
+    // user: req.user,
+    // errors: [ 'Not authorized to remove this submission' ]
+    //     }
+    //     res.send(pug.renderFile('templates/views/errors/errors.jade', locals))        
+    // }
 
-    let templateParams2 = {
-        uri: uri
-    }
-    removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
+    await sparql.deleteStaggered(removeQuery1, uri.getGraph())
+    await sparql.deleteStaggered(removeQuery2, uri.getGraph())
 
-    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+
+    // let templateParams2 = {
+    //     uri: uri
+    // }
+    // removeQuery = loadTemplate('sparql/remove.sparql', templateParams2)
+
+    // await sparql.deleteStaggered(removeQuery, uri.getGraph())
     
-    res.redirect('/manage');*/
+    res.redirect('/projects');
 
 };
     
