@@ -41,7 +41,8 @@ block content
                                 td
                                     if project.triplestore != 'public'
                                         a(href=project.url + '/makePublic')
-                                            button(type='button').btn.btn-success.public-btn Make Public
+                                            // TODO: MAKING PROJECTS PUBLIC IS CURRENTLY BROKEN
+                                            //- button(type='button').btn.btn-success.public-btn Make Public
                                         | 
                                         a(href=project.url + '/removeCollection')
                                             button(type='button').btn.btn-success.remove-btn Remove
@@ -49,36 +50,37 @@ block content
             br
             br
 
-            div.col-md-5.submission-list.resultsCol
-                h4 Public Projects
-                br
-                table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
-                    thead
-                        th Project Name
-                        th Designs
-                        th Constructs
-                        th Experiments
-                    tbody
-                        each project in publicProjects
-                            tr
-                                td
-                                    span.topLevelIcon.fas.fa-folder
-                                    a(href=project.url)   #{project.name}
-                                td
-                                    if project.typeBooleans[0]
-                                        span.topLevelIcon.fas.fa-check
-                                    else
-                                        span.topLevelIcon.fas.fa-times
-                                td
-                                    if project.typeBooleans[1]
-                                        span.topLevelIcon.fas.fa-check
-                                    else
-                                        span.topLevelIcon.fas.fa-times
-                                td
-                                    if project.typeBooleans[2]
-                                        span.topLevelIcon.fas.fa-check
-                                    else
-                                        span.topLevelIcon.fas.fa-times
+            // TODO: MAKING PROJECTS PUBLIC IS CURRENTLY BROKEN
+            //- div.col-md-5.submission-list.resultsCol
+            //-     h4 Public Projects
+            //-     br
+            //-     table.table.table-striped.entry-detail-table.sbh-collection-members-datatable.table-hover
+            //-         thead
+            //-             th Project Name
+            //-             th Designs
+            //-             th Constructs
+            //-             th Experiments
+            //-         tbody
+            //-             each project in publicProjects
+            //-                 tr
+            //-                     td
+            //-                         span.topLevelIcon.fas.fa-folder
+            //-                         a(href=project.url)   #{project.name}
+            //-                     td
+            //-                         if project.typeBooleans[0]
+            //-                             span.topLevelIcon.fas.fa-check
+            //-                         else
+            //-                             span.topLevelIcon.fas.fa-times
+            //-                     td
+            //-                         if project.typeBooleans[1]
+            //-                             span.topLevelIcon.fas.fa-check
+            //-                         else
+            //-                             span.topLevelIcon.fas.fa-times
+            //-                     td
+            //-                         if project.typeBooleans[2]
+            //-                             span.topLevelIcon.fas.fa-check
+            //-                         else
+            //-                             span.topLevelIcon.fas.fa-times
                                 
 
 
