@@ -82,14 +82,11 @@ export default class ViewAddConstructToProject extends ViewConcerningTopLevel{
         }
 
         if (req.method === 'POST'){
-
             await this.submitPost(req)
           }
       
-          else{
-      
+        else{
             await this.submitForm(req, {}, {})
-      
           }
     }
 

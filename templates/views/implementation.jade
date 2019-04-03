@@ -5,6 +5,8 @@ include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
 
+include ./editableModals.jade
+
 
 block OtherProperties
 block Collections
@@ -13,7 +15,36 @@ block Mutables
 block topLevelIcon
     span.topLevelIcon.fa.fa-flask
 
+
+block js
+
+    script.
+
+        $(document).ready(function() {
+            $(".edit").click(function(){
+
+                if (this.id == 'plan_edit'){
+                    $("#editablePlan").appendTo("#attachModalBody")
+                    $("#attachModalBody").append('<input name="old_plan_url" id="old_plan_url" form="constructForm" type="hidden" value=' + "#{plan_url}" + '>')
+                    $("#attachModalBody").append('<input name="old_plan_id" id="old_plan_id" form="constructForm" type="hidden" value=' + "#{plan}" + '>')
+                    $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="constructForm" type="hidden" value=plan >')
+
+                }
+
+                $("#attachmentModal").on("hidden.bs.modal", function () {
+
+                    $("#editablePlan").appendTo("#allForms")
+                    $("#attachModalBody").empty()
+
+                    });
+
+            })
+        })
+
 block topLevelBelowPropertyTable
+
+    +editables()
+
 
     div.card-body
         p(style='font-size:18px') Original Design: 
@@ -26,7 +57,10 @@ block topLevelBelowPropertyTable
             tr
                 td Protocol
                 td 
-                    a(href=plan_url + '/download') #{plan}
+                    a(id="planForm" href=plan_url + '/download') #{plan}
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="plan_edit")
+                        span.fas.fa-pencil-alt
+
             tr
                 td Physical Location
                 td #{location}
@@ -34,3 +68,13 @@ block topLevelBelowPropertyTable
                 td Organism
                 td 
                     a(href=taxId) <i>#{organism}</i>
+
+
+
+            #attachmentModal(class="modal fade")
+                div(class="modal-dialog")
+                    div(class="modal-content")
+                        div(class="modal-header")
+                            h4.modal-title Edit Field
+                            button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+                        div#attachModalBody.modal-body

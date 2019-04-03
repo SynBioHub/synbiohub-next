@@ -6,9 +6,10 @@ import {getAttachmentsFromTopLevel} from 'synbiohub/attachments';
 import { Request, Response } from 'express'
 import { SBHRequest } from 'synbiohub/SBHRequest';
 import { Predicates } from 'bioterms'
-import { S2ProvActivity, SBOL2Graph, S2ProvAssociation, S2Identified, S2ComponentDefinition, S2Attachment } from 'sbolgraph'
+import { S2ProvActivity, SBOL2Graph, S2ProvAssociation, S2Identified, S2ComponentDefinition, S2Attachment, S2ProvPlan } from 'sbolgraph'
 import SBHURI from 'synbiohub/SBHURI';
 import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
+import parseForm from 'synbiohub/parseForm';
 
 export default class ViewImplementation extends ViewDescribingTopLevel {
 
@@ -28,6 +29,7 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
     plan:string
     plan_url:string
     plan_filename:string
+    plans:S2ProvPlan[]
 
     async prepare(req:SBHRequest) {
 
@@ -79,6 +81,10 @@ export default class ViewImplementation extends ViewDescribingTopLevel {
         this.design_uri = design.uri
 
         this.design = design.displayName
+
+        await this.datastore.fetchPlans(this.graph)
+
+        this.plans = this.graph.provPlans
 
     }
 
