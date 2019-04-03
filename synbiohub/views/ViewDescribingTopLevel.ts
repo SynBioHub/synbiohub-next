@@ -171,20 +171,21 @@ export default abstract class ViewDescribingTopLevel extends ViewConcerningTopLe
 
         this.topLevelDownloadMenu = new Menu()
         this.topLevelDownloadMenu.addItem(new MenuItem('Download SBOL', url + '/' + id + '.xml', 'fa-download'))
-        this.topLevelDownloadMenu.addItem(new MenuItem('Download COMBINE archive', url + '/' + id + '.omex', 'fa-download'))
-        this.topLevelDownloadMenu.addItem(new MenuItem('Download GenBank', url + '/' + id + '.gb', 'fa-download'))
-        this.topLevelDownloadMenu.addItem(new MenuItem('Download FASTA', url + '/' + id + '.fasta', 'fa-download'))
-        this.topLevelDownloadMenu.addItem(new MenuItem('Download Image', '/sbol', 'fa-image'))
 
-        this.topLevelShareMenu = new Menu()
-        this.topLevelShareMenu.addItem(new MenuItem('Get Share Link', '/sbol', 'fa-link'))
-        this.topLevelShareMenu.addItem(new MenuItem('Send to ICE', url + '/' + id + '/createICEPart', 'fa-external-link-alt'))
-        this.topLevelShareMenu.addItem(new MenuItem('Add Owner', '/sbol', 'fa-users'))
-        this.topLevelShareMenu.addItem(new MenuItem('Make Public', '/sbol', 'fa-globe'))
+        // TODO: THESE ARE ALL BROKEN AND NEED REIMPLEMENTING/REEVALUATION
+        // this.topLevelDownloadMenu.addItem(new MenuItem('Download COMBINE archive', url + '/' + id + '.omex', 'fa-download'))
+        // this.topLevelDownloadMenu.addItem(new MenuItem('Download GenBank', url + '/' + id + '.gb', 'fa-download'))
+        // this.topLevelDownloadMenu.addItem(new MenuItem('Download FASTA', url + '/' + id + '.fasta', 'fa-download'))
+        // this.topLevelDownloadMenu.addItem(new MenuItem('Download Image', '/sbol', 'fa-image'))
+
+
+        //  TODO: THIS WHOLE MENU DOESNT WORK AND NEEDS REIMPLEMENTING/REVALUATION
+        // this.topLevelShareMenu = new Menu()
+        // this.topLevelShareMenu.addItem(new MenuItem('Get Share Link', '/sbol', 'fa-link'))
+        // // this.topLevelShareMenu.addItem(new MenuItem('Add Owner', '/sbol', 'fa-users'))
+        // this.topLevelShareMenu.addItem(new MenuItem('Make Public', '/sbol', 'fa-globe'))
 
         this.topLevelOtherMenu = new Menu()
-        this.topLevelOtherMenu.addItem(new MenuItem('Find Uses', url + '/' + id + '/uses', 'fa-search'))
-        this.topLevelOtherMenu.addItem(new MenuItem('Find Matching Parts', url + '/' + id + '/twins', 'fa-search'))
         this.topLevelOtherMenu.addItem(new MenuItem('Delete Part', url + '/remove', 'fa-trash-alt'))
 
     }

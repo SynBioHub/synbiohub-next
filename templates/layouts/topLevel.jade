@@ -50,11 +50,13 @@ block content
                                 div.dropdown-menu
                                     for item in topLevelDownloadMenu.items
                                         a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
-                            li
-                                span.fa.fa-share(data-toggle='dropdown')
-                                div.dropdown-menu
-                                    for item in topLevelShareMenu.items
-                                        a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
+                            
+                            // TODO: THIS MENU IS COMPLETELY BROKEN
+                            //- li
+                            //-     span.fa.fa-share(data-toggle='dropdown')
+                            //-     div.dropdown-menu
+                            //-         for item in topLevelShareMenu.items
+                            //-             a.dropdown-item(href=item.url) #[span(class='fa ' + item.faIconClass)] #{item.title}
                             li
                                 span.fa.fa-ellipsis-h(data-toggle='dropdown')
                                 div.dropdown-menu
