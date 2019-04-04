@@ -39,6 +39,9 @@ block topLevelBelowPropertyTable
             tr
                 td Physical Location
                 td #{location}
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="location_edit" ,value=location)
+                        span.fas.fa-pencil-alt
+
             tr
                 td Organism
                 td 

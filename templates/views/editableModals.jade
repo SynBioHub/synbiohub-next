@@ -2,7 +2,7 @@ mixin editables()
     div#allForms(style="display:none")
         div#editablePlan
             div.tab-content
-                form(method='post',enctype='multipart/form-data', action=uri + "/edit")#constructForm
+                form(method='post',enctype='multipart/form-data', action=uri + "/edit")#editPlanForm
                     div.row
                         div.col-md-12
                             div.form-group-100.required
@@ -51,3 +51,16 @@ mixin editables()
                     div.row
                         div.col-md-12
                             button(type='submit').btn.btn-primary.btn-lg Submit
+        div#editableLocation
+            form(method='post',enctype='multipart/form-data', action=uri + "/edit")#editLocationForm
+                div.row
+                        div.col-md-12
+                            div.form-group-100.required
+                                label(for="location") Physical Location 
+                                    a(title='Noting the physical location of the built construct is useful information that SynBioHub stores.')
+                                            span.fa.fa-info-circle
+                                input.form-control(name='location', id="location"
+                                        placeholder='Physical location of the construct e.g. Fridge A, Tray 2', value=location)
+                div.row
+                    div.col-md-12
+                        button(type='submit').btn.btn-primary.btn-lg Submit
