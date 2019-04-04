@@ -36,6 +36,8 @@ $(document).ready(function() {
             $("#editablePlan").appendTo("#allForms")
 
             $("#editableLocation").appendTo("#allForms")
+
+            $("#editableHost").appendTo("#allForms")
             
             $("#attachModalBody").empty()
 

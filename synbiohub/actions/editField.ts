@@ -143,6 +143,49 @@ async function editHost(fields, files, uri){
     console.log(old_tax)
     console.log(new_tax)
 
+    
+    let graph = new SBOL2Graph()
 
+    let impl = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+
+    let templateParams
+
+    if (old_tax[0] != ''){
+
+        templateParams = {
+            subject:impl.uri,
+            predicate:'http://w3id.org/synbio/ont#taxId',
+            object:'http://www.uniprot.org/taxonomy/' + old_tax[0].split('|')[1]
+        }
+        let removeQuery = loadTemplate('sparql/removeSpecificURITriple.sparql', templateParams)
+
+        await sparql.deleteStaggered(removeQuery, uri.getGraph())
+    }
+
+    templateParams = {
+        subject:impl.uri,
+        predicate:'http://www.biopax.org/release/biopax-level3.owl#organism',
+        object:old_host
+    }
+    let removeQuery = loadTemplate('sparql/removeSpecificLiteralTriple.sparql', templateParams)
+
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+
+
+    if (new_tax[0] != ''){
+
+        impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + new_tax[0].split('|')[1])
+
+    }
+
+    impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', new_host)
+
+
+    let uploader = new SBOLUploader()
+    uploader.setGraph(graph)
+    uploader.setDestinationGraphUri(uri.getGraph())
+    uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+
+    await uploader.upload()
 
 }
