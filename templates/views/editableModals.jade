@@ -78,3 +78,32 @@ mixin editables()
                 div.row
                     div.col-md-12
                         button(type='submit').btn.btn-primary.btn-lg Submit
+
+        div#editableMetadata
+            form(method='post',enctype='multipart/form-data', action=uri + "/edit")#editMetadataForm
+                div.card.w-100
+                    div.card-header
+                        div.col-md-12
+                                <b>Experimental Conditions </b>
+                                a(title='Upload a document e.g. spreadsheet that contains the experimental conditions for the experiment. A template spreadsheet is offered below.')
+                                            span.fa.fa-info-circle.in
+
+                                            
+                    #collapseSix.panel-collapse
+                        .panel-body
+                            div.row
+                                div.col-md-12
+                                        div.row
+                                            div.col
+                                                a(href='/metadataDownload') Template Conditions Spreadsheet 
+                                                        span.fas.fa-table 
+                                                div.input-group
+                                                    label.input-group-btn
+                                                        span.btn.btn-primary
+                                                            | Select file(s)&hellip;
+                                                            input(type="file",name="metadata_file",style="display: none;",multiple)
+                                                    input(type="text",class="form-control",readonly)
+                                            div.col-xs-3   
+                div.row
+                    div.col-md-12
+                        button(type='submit').btn.btn-primary.btn-lg Submit

@@ -1,0 +1,9 @@
+PREFIX sbh: <http://wiki.synbiohub.org/wiki/Terms/synbiohub#>
+PREFIX sbol2: <http://sbols.org/v2#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+DELETE {
+<$uri> sbol2:attachment ?att
+} WHERE {
+<$uri> sbol2:attachment ?att
+}

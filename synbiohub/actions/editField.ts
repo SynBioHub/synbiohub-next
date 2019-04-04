@@ -33,6 +33,10 @@ export default async function (req, res) {
            await editHost(fields, files, uri)
         }
 
+        else if (type === "metadata"){
+            await editMetadata(fields, files, uri)
+        }
+
         res.redirect(uri)
 
 }
@@ -132,17 +136,12 @@ async function editLocation(fields, files, uri){
 
 async function editHost(fields, files, uri){
 
-    console.log(fields)
-
     let old_host = fields["old_host"]
     let new_host = fields['organism']
 
     let old_tax = await FMAPrefix.search('./data/ncbi_taxonomy.txt', old_host)
 
     let new_tax = await FMAPrefix.search('./data/ncbi_taxonomy.txt', new_host)
-
-    console.log(old_tax)
-    console.log(new_tax)
 
     let temp_graph = new SBOL2Graph()
 
@@ -228,4 +227,54 @@ async function getTypeObject(uri){
     }
 
     return [obj, graph, type]
+}
+
+async function editMetadata(fields, files, uri){
+
+    let old_metadata = fields["old_metadata"][0]
+
+    let new_metadata = files["metadata_file"][0]
+
+    let graph = new SBOL2Graph()
+
+    let exp = graph.createExperiment(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+
+    let expData = graph.createExperimentalData(uri.getURIPrefix(), uri.getDisplayId() + '_metadata', uri.getVersion())
+
+    exp.addExperimentalData(expData)
+
+    let templateParams = {
+        subject:uri,
+        predicate:'http://sbols.org/v2#experimentalData',
+        object:expData.uri
+    }
+
+    let removeQuery = loadTemplate('sparql/removeSpecificURITriple.sparql', templateParams)
+
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+
+    let templateParams2 = {
+        uri: expData.uri
+    }
+  
+    removeQuery = loadTemplate('sparql/removeAttachments.sparql', templateParams2)
+
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+
+    let uploader = new SBOLUploader()
+    uploader.setGraph(graph)
+    uploader.setDestinationGraphUri(uri.getGraph())
+    uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+
+    await uploader.upload()
+
+    let fileStream = await fs.createReadStream(new_metadata['path']);
+    let uploadInfo = await uploads.createUpload(fileStream)
+    const { hash, size, mime } = uploadInfo
+    await attachments.addAttachmentToTopLevel(uri.getGraph(), uri.getURIPrefix() 
+    , expData.uri,
+    new_metadata['originalFilename'], hash, size, mime,
+    uri.getGraph().split('/').pop)
+
+
 }

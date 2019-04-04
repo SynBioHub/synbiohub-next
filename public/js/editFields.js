@@ -11,7 +11,7 @@ $(document).ready(function() {
 
         }
 
-        else if (this.id =="location_edit"){
+        else if (this.id == "location_edit"){
 
             var location = $("#location_edit").attr('value')
 
@@ -20,7 +20,7 @@ $(document).ready(function() {
             $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editLocationForm" type="hidden" value=location >')
 
         }
-        else if (this.id =="host_edit"){
+        else if (this.id == "host_edit"){
             
             var host = $("#host_edit").attr('value')
 
@@ -31,6 +31,15 @@ $(document).ready(function() {
 
         }
 
+        else if (this.id == "metadata_edit"){
+
+            var metadata = $("#metadata_edit").attr('value')
+            $("#editableMetadata").appendTo("#attachModalBody")
+            $("#attachModalBody").append('<input name="old_metadata" id="old_metadata" form="editMetadataForm" type="hidden" value="' + metadata+'">')
+            $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editMetadataForm" type="hidden" value=metadata >')
+
+        }
+
         $("#attachmentModal").on("hidden.bs.modal", function () {
 
             $("#editablePlan").appendTo("#allForms")
@@ -38,6 +47,8 @@ $(document).ready(function() {
             $("#editableLocation").appendTo("#allForms")
 
             $("#editableHost").appendTo("#allForms")
+
+            $("#editableMetadata").appendTo("#allForms")
             
             $("#attachModalBody").empty()
 

@@ -105,6 +105,8 @@ block topLevelBelowPropertyTable
                     for data in experimentalData
                         if data.attachments[0].displayName
                             a(href=data.attachments[0].uri + '/download') #{data.attachments[0].displayName}
+                            a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="metadata_edit", value=data.uri)
+                                span.fas.fa-pencil-alt
             tr
                 td Experimental Data Location
                 td #{location}
