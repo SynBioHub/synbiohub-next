@@ -16,31 +16,6 @@ block topLevelIcon
     span.topLevelIcon.fa.fa-flask
 
 
-block js
-
-    script.
-
-        $(document).ready(function() {
-            $(".edit").click(function(){
-
-                if (this.id == 'plan_edit'){
-                    $("#editablePlan").appendTo("#attachModalBody")
-                    $("#attachModalBody").append('<input name="old_plan_url" id="old_plan_url" form="constructForm" type="hidden" value=' + "#{plan_url}" + '>')
-                    $("#attachModalBody").append('<input name="old_plan_id" id="old_plan_id" form="constructForm" type="hidden" value=' + "#{plan}" + '>')
-                    $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="constructForm" type="hidden" value=plan >')
-
-                }
-
-                $("#attachmentModal").on("hidden.bs.modal", function () {
-
-                    $("#editablePlan").appendTo("#allForms")
-                    $("#attachModalBody").empty()
-
-                    });
-
-            })
-        })
-
 block topLevelBelowPropertyTable
 
     +editables()
@@ -57,7 +32,7 @@ block topLevelBelowPropertyTable
             tr
                 td Protocol
                 td 
-                    a(id="planForm" href=plan_url + '/download') #{plan}
+                    a(id="planForm" href=plan_url + '/download', value=plan) #{plan}
                     a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="plan_edit")
                         span.fas.fa-pencil-alt
 

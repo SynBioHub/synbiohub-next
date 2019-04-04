@@ -9,9 +9,6 @@ const attachments = require('../attachments')
 const fs = require('mz/fs')
 import uploads from '../uploads'
 
-
-
-
 export default async function (req, res) {
 
 
@@ -49,6 +46,21 @@ export default async function (req, res) {
 
             asc.plan = plan
 
+            let old_uri = SBHURI.fromURIOrURL(old_plan_uri)
+
+
+            var templateParams = {
+                subject:asc.uri,
+                predicate:"http://www.w3.org/ns/prov#hadPlan",
+                object:old_plan_uri
+            }
+
+            console.log(templateParams)
+
+            var removeQuery = loadTemplate('sparql/removeSpecificTriple.sparql', templateParams)
+
+            await sparql.deleteStaggered(removeQuery, old_uri.getGraph())
+
             let uploader = new SBOLUploader()
             uploader.setGraph(graph)
             uploader.setDestinationGraphUri(new_plan_uri.getGraph())
@@ -56,17 +68,8 @@ export default async function (req, res) {
 
             await uploader.upload()
 
-            let old_uri = SBHURI.fromURIOrURL(old_plan_uri)
 
-            var templateParams = {
-                subject:asc.uri,
-                predicate:"http://www.w3.org/ns/prov#hadPlan",
-                object:old_plan_uri
-            }
-        
-            var removeQuery = loadTemplate('sparql/removeSpecificTriple.sparql', templateParams)
-
-            await sparql.deleteStaggered(removeQuery, old_uri.getGraph())
+    
 
 
             if (files['file'][0]['size'] != 0){
