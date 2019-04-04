@@ -19,6 +19,14 @@ $(document).ready(function() {
             $("#attachModalBody").append('<input name="old_location" id="old_location" form="editLocationForm" type="hidden" value="' + location +'">')
             $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editLocationForm" type="hidden" value=location >')
 
+        }
+        else if (this.id =="host_edit"){
+            
+            var host = $("#host_edit").attr('value')
+
+            $("#editableHost").appendTo("#attachModalBody")
+            $("#attachModalBody").append('<input name="old_host" id="old_host" form="editHostForm" type="hidden" value="' + host +'">')
+            $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editHostForm" type="hidden" value=host >')
 
 
         }

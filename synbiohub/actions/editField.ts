@@ -8,6 +8,7 @@ import * as sparql from 'synbiohub/sparql/sparql';
 const attachments = require('../attachments')
 const fs = require('mz/fs')
 import uploads from '../uploads'
+import FMAPrefix from "synbiohub/FMAPrefix";
 
 export default async function (req, res) {
 
@@ -19,13 +20,16 @@ export default async function (req, res) {
         let type = fields["fieldType"][0]
 
         if (type === "plan"){
-
-            editPlan(fields, files, uri)
+            await editPlan(fields, files, uri)
             
         }
 
         else if (type === "location"){
-            editLocation(fields, files, uri)
+            await editLocation(fields, files, uri)
+        }
+
+        else if (type === "host"){
+           await editHost(fields, files, uri)
         }
 
         res.redirect(uri)
@@ -106,16 +110,11 @@ async function editLocation(fields, files, uri){
 
     impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', new_location)
 
-    console.log(graph.serializeXML())
-
-
     var templateParams = {
         subject:impl.uri,
         predicate:"http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation",
         object:old_location
     }
-
-    console.log(templateParams)
 
     var removeQuery = loadTemplate('sparql/removeSpecificLiteralTriple.sparql', templateParams)
 
@@ -127,5 +126,23 @@ async function editLocation(fields, files, uri){
     uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
 
     await uploader.upload()
+
+}
+
+async function editHost(fields, files, uri){
+
+    console.log(fields)
+
+    let old_host = fields["old_host"]
+    let new_host = fields['organism']
+
+    let old_tax = await FMAPrefix.search('./data/ncbi_taxonomy.txt', old_host)
+
+    let new_tax = await FMAPrefix.search('./data/ncbi_taxonomy.txt', new_host)
+
+    console.log(old_tax)
+    console.log(new_tax)
+
+
 
 }

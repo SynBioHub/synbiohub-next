@@ -11,6 +11,9 @@ import SBHURI from 'synbiohub/SBHURI';
 import S2Implementation from 'sbolgraph/dist/sbol2/S2Implementation';
 import parseForm from 'synbiohub/parseForm';
 
+import FMAPrefix from '../FMAPrefix'
+
+
 export default class ViewImplementation extends ViewDescribingTopLevel {
 
     constructor() {

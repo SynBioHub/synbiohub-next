@@ -64,3 +64,17 @@ mixin editables()
                 div.row
                     div.col-md-12
                         button(type='submit').btn.btn-primary.btn-lg Submit
+
+        div#editableHost
+            form(method='post',enctype='multipart/form-data', action=uri + "/edit")#editHostForm
+                div.row
+                    div.col-md-12
+                        div.form-group-100.required
+                            label(for="organism") Host Context
+                                a(title='SynBioHub will give suggestions as you write the organism name. It will also link the chosen organism with its NCBI taxonomy ID automatically.')
+                                        span.fa.fa-info-circle
+                            input.form-control.organism-autocomplete(name='organism', id="organism"
+                                    placeholder='Organism', value='')
+                div.row
+                    div.col-md-12
+                        button(type='submit').btn.btn-primary.btn-lg Submit
