@@ -1,4 +1,12 @@
 mixin editables()
+
+    #attachmentModal(class="modal fade")
+        div(class="modal-dialog")
+            div(class="modal-content")
+                div(class="modal-header")
+                    h4.modal-title Edit Field
+                    button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+                div#attachModalBody.modal-body
     div#allForms(style="display:none")
         div#editablePlan
             div.tab-content
@@ -19,8 +27,9 @@ mixin editables()
                                     .panel-body
                                     select.form-control(name='plan1', id="plan1")
                                             option(value='', selected='selected') Choose an existing Lab Protocol
-                                            for plan in plans
-                                                option(value=[plan.uri, plan.name]) #{plan.name}
+                                            if plans
+                                                for plan in plans
+                                                    option(value=[plan.uri, plan.name]) #{plan.name}
                                             
                     div.row
                             .collapseForm.panel-collapse.collapse
@@ -104,6 +113,20 @@ mixin editables()
                                                             input(type="file",name="metadata_file",style="display: none;",multiple)
                                                     input(type="text",class="form-control",readonly)
                                             div.col-xs-3   
+                div.row
+                    div.col-md-12
+                        button(type='submit').btn.btn-primary.btn-lg Submit
+
+        div#editableDescription
+            form(method='post',enctype='multipart/form-data', action=uri + "/edit")#editDescriptionForm
+                div.row
+                    div.col-md-12
+                        div.form-group-100.required
+                            label(for="description") Purpose 
+                                a(title='Writing the purpose of a built Construct is important for properly describing it.')
+                                        span.fa.fa-info-circle
+                            input.form-control(name='description',id="description"
+                                    placeholder='Brief description about the purpose of this construct',value=description)
                 div.row
                     div.col-md-12
                         button(type='submit').btn.btn-primary.btn-lg Submit

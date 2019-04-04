@@ -5,6 +5,8 @@ include ../mixins/blast-button.jade
 include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
+include ../views/editableModals.jade
+
 
 block js
     script.
@@ -35,10 +37,11 @@ block js
                 $(child_class.trim()).toggle()
             })
         })
+        
+    script(src='/js/editFields.js')
 
 
-
-
++editables()
         
 block topLevelIcon
     span.topLevelIcon.fa.fa-folder

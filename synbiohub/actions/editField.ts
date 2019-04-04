@@ -18,6 +18,7 @@ export default async function (req, res) {
 
         let { fields, files } = await parseForm(req)
 
+        console.log(fields)
         let type = fields["fieldType"][0]
 
         if (type === "plan"){

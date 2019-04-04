@@ -5,32 +5,16 @@ include ../mixins/blast-button.jade
 include ../mixins/mutable-fields.jade
 include ../mixins/attachments.jade
 include ../mixins/citations.jade
+include ../views/editableModals.jade
 
 block jsState
     script
         | sbol = !{JSON.stringify(graph.serializeXML())}
 
 
-block js
-    script.
-        function popup() {
-            popupS.modal({
-                content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
-            });
-        }
-        $(document).ready(function() {
-            $('#lightgallery').lightGallery({
-                selector: '.sele',
-                speed: 500,
-                escKey: true
-
-            });
-        })
-
-    script(src='/js/editFields.js')
-
 block content
-    br
+    br 
+
     div.container-fluid.px-5
         div.row
             div.col
@@ -69,13 +53,8 @@ block content
                 div.col-md-12
                     h4
                         != object.description
-
-
-        if object.wasDerivedFrom && object.wasDerivedFrom != ''
-            div.row
-                div.col-md-12
-                    i Derived from 
-                        a(href=object.wasDerivedFrom) #{object.wasDerivedFrom}
+                            a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="description_edit" ,value=object.description)
+                                span.fas.fa-pencil-alt
 
         div.row
             div.col-md-12.sbh-toplevel-preview
@@ -146,8 +125,10 @@ block content
                                         br
 
                         block topLevelPropertyTable
+                            
 
                     block topLevelBelowPropertyTable
+                    
 
 
         block comments
@@ -266,4 +247,24 @@ block content
                     +mutable-notes(mutables.notes.source, mutables.notes.rendered, canEdit)
                     +mutable-source(mutables.source.source, mutables.source.rendered, canEdit)
                     +citations(mutables.citations.source, mutables.citations.rendered, canEdit)
+                    +editables()
+
+
+        block js
+            script.
+                function popup() {
+                    popupS.modal({
+                        content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
+                    });
+                }
+                $(document).ready(function() {
+                    $('#lightgallery').lightGallery({
+                        selector: '.sele',
+                        speed: 500,
+                        escKey: true
+
+                    });
+                })
+                
+            script(src='/js/editFields.js')
 

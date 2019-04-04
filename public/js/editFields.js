@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    $(".edit").click(function(){
 
+    $(".edit").click(function(){
         if (this.id == 'plan_edit'){
 
             var plan = $("#planForm").attr('value')
@@ -37,6 +37,16 @@ $(document).ready(function() {
             $("#editableMetadata").appendTo("#attachModalBody")
             $("#attachModalBody").append('<input name="old_metadata" id="old_metadata" form="editMetadataForm" type="hidden" value="' + metadata+'">')
             $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editMetadataForm" type="hidden" value=metadata >')
+
+        }
+
+        else if (this.id =="description_edit"){
+
+            var description = $("#description_edit").attr('value')
+            $("#editableDescription").appendTo("#attachModalBody")
+            $("#attachModalBody").append('<input name="old_description" id="old_description" form="editDescriptionForm" type="hidden" value="' + description +'">')
+            $("#attachModalBody").append('<input name="fieldType" id="fieldType" form="editDescriptionForm" type="hidden" value=description >')
+
 
         }
 
