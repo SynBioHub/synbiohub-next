@@ -1,6 +1,6 @@
 import SBHURI from "synbiohub/SBHURI";
 import parseForm from "synbiohub/parseForm";
-import { SBOL2Graph } from "sbolgraph";
+import { SBOL2Graph, S2Identified } from "sbolgraph";
 import SBOLUploader from "synbiohub/SBOLUploader";
 import { OverwriteMergeOption } from "synbiohub/OverwriteMerge";
 import loadTemplate from "synbiohub/loadTemplate";
@@ -9,6 +9,7 @@ const attachments = require('../attachments')
 const fs = require('mz/fs')
 import uploads from '../uploads'
 import FMAPrefix from "synbiohub/FMAPrefix";
+import Datastores from "synbiohub/datastore/Datastores";
 
 export default async function (req, res) {
 
@@ -103,21 +104,21 @@ async function editLocation(fields, files, uri){
     let old_location = fields["old_location"][0]
     let new_location = fields["location"][0]
 
+    let result = await getTypeObject(uri)
 
-    let graph = new SBOL2Graph()
+    let obj = result[0]
+    let graph = result[1]
+    let type = result[2]
 
-    let impl = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
-
-    impl.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', new_location)
+    obj.setStringProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation', new_location)
 
     var templateParams = {
-        subject:impl.uri,
+        subject:obj.uri,
         predicate:"http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation",
         object:old_location
     }
 
     var removeQuery = loadTemplate('sparql/removeSpecificLiteralTriple.sparql', templateParams)
-
     await sparql.deleteStaggered(removeQuery, uri.getGraph())
 
     let uploader = new SBOLUploader()
@@ -143,17 +144,25 @@ async function editHost(fields, files, uri){
     console.log(old_tax)
     console.log(new_tax)
 
-    
-    let graph = new SBOL2Graph()
+    let temp_graph = new SBOL2Graph()
 
-    let impl = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+    let datastore = Datastores.forSBHURI(uri)
+
+    await datastore.fetchMetadata(temp_graph, new S2Identified(temp_graph, uri.toURI()))
+
+    let types:Array<string> = temp_graph.getTypes(uri.toURI())
+
+    let result = await getTypeObject(uri)
+
+    let obj = result[0]
+    let graph = result[1]
 
     let templateParams
 
     if (old_tax[0] != ''){
 
         templateParams = {
-            subject:impl.uri,
+            subject:obj.uri,
             predicate:'http://w3id.org/synbio/ont#taxId',
             object:'http://www.uniprot.org/taxonomy/' + old_tax[0].split('|')[1]
         }
@@ -163,7 +172,7 @@ async function editHost(fields, files, uri){
     }
 
     templateParams = {
-        subject:impl.uri,
+        subject:obj.uri,
         predicate:'http://www.biopax.org/release/biopax-level3.owl#organism',
         object:old_host
     }
@@ -174,12 +183,13 @@ async function editHost(fields, files, uri){
 
     if (new_tax[0] != ''){
 
-        impl.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + new_tax[0].split('|')[1])
+        obj.setUriProperty('http://w3id.org/synbio/ont#taxId', 'http://www.uniprot.org/taxonomy/' + new_tax[0].split('|')[1])
 
     }
 
-    impl.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', new_host)
+    obj.setStringProperty('http://www.biopax.org/release/biopax-level3.owl#organism', new_host)
 
+    console.log(graph.serializeXML())
 
     let uploader = new SBOLUploader()
     uploader.setGraph(graph)
@@ -188,4 +198,34 @@ async function editHost(fields, files, uri){
 
     await uploader.upload()
 
+}
+
+async function getTypeObject(uri){
+
+    let temp_graph = new SBOL2Graph()
+
+    let datastore = Datastores.forSBHURI(uri)
+
+    await datastore.fetchMetadata(temp_graph, new S2Identified(temp_graph, uri.toURI()))
+
+    let types:Array<string> = temp_graph.getTypes(uri.toURI())
+
+    let obj
+    let type
+    let graph = new SBOL2Graph()
+
+    if(types.indexOf('http://sbols.org/v2#Implementation') !== -1) {
+
+        obj = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'implementation'
+
+    }
+
+    else if(types.indexOf('http://sbols.org/v2#Experiment') !== -1){
+        obj = graph.createExperiment(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'experiment'
+
+    }
+
+    return [obj, graph, type]
 }

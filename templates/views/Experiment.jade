@@ -8,6 +8,7 @@ block topLevelIcon
 block OtherProperties
 block Collections
 block Mutables
+include ./editableModals.jade
 
 
 block js2
@@ -17,9 +18,7 @@ block js2
         let temp_elements = [{data: { id: expName, type: "exp"}}]
 
         let constructs = !{JSON.stringify(constructNames)}
-
         for (construct of constructs){
-
             temp_elements.push({
                 data: { id: construct, type: "cons"}
             })
@@ -28,6 +27,7 @@ block js2
                 data: { id: expName + construct, source: expName, target: construct }
             })
         }
+
 
         var cy = cytoscape({
             container: document.getElementById('cy'),
@@ -73,6 +73,9 @@ block js2
             
 block topLevelBelowPropertyTable
 
+    +editables()
+
+
     //- div.card-body
     //-     a(style='font-size:18px', href=dataurl) Digital Data Repository
 
@@ -87,11 +90,15 @@ block topLevelBelowPropertyTable
             tr
                 td Protocol
                 td 
-                    a(href=plan_url + '/download') #{plan}
+                    a(id="planForm" href=plan_url + '/download', value=plan) #{plan}
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="plan_edit")
+                        span.fas.fa-pencil-alt
             tr
                 td Organism
                 td 
                     a(href=taxId) <i>#{organism}</i>
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="host_edit" ,value=organism)
+                        span.fas.fa-pencil-alt
             tr
                 td Experimental Conditions
                 td 
@@ -99,6 +106,19 @@ block topLevelBelowPropertyTable
                         if data.attachments[0].displayName
                             a(href=data.attachments[0].uri + '/download') #{data.attachments[0].displayName}
             tr
-                td Experimental Data
+                td Experimental Data Location
                 td #{location}
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="location_edit" ,value=location)
+                        span.fas.fa-pencil-alt
                 //- td #{getUriProperty("http://wiki.synbiohub.org/wiki/Terms/synbiohub#physicalLocation")}
+
+
+
+
+            #attachmentModal(class="modal fade")
+                div(class="modal-dialog")
+                    div(class="modal-content")
+                        div(class="modal-header")
+                            h4.modal-title Edit Field
+                            button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+                        div#attachModalBody.modal-body
