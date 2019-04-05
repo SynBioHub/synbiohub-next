@@ -13,12 +13,10 @@ import Datastores from "synbiohub/datastore/Datastores";
 
 export default async function (req, res) {
 
-
         let uri = SBHURI.fromURIOrURL(req.url)
 
         let { fields, files } = await parseForm(req)
 
-        console.log(fields)
         let type = fields["fieldType"][0]
 
         if (type === "plan"){
@@ -36,6 +34,10 @@ export default async function (req, res) {
 
         else if (type === "metadata"){
             await editMetadata(fields, files, uri)
+        }
+
+        else if (type === "description"){
+            await editDescription(fields, files, uri)
         }
 
         res.redirect(uri)
@@ -200,36 +202,6 @@ async function editHost(fields, files, uri){
 
 }
 
-async function getTypeObject(uri){
-
-    let temp_graph = new SBOL2Graph()
-
-    let datastore = Datastores.forSBHURI(uri)
-
-    await datastore.fetchMetadata(temp_graph, new S2Identified(temp_graph, uri.toURI()))
-
-    let types:Array<string> = temp_graph.getTypes(uri.toURI())
-
-    let obj
-    let type
-    let graph = new SBOL2Graph()
-
-    if(types.indexOf('http://sbols.org/v2#Implementation') !== -1) {
-
-        obj = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
-        type = 'implementation'
-
-    }
-
-    else if(types.indexOf('http://sbols.org/v2#Experiment') !== -1){
-        obj = graph.createExperiment(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
-        type = 'experiment'
-
-    }
-
-    return [obj, graph, type]
-}
-
 async function editMetadata(fields, files, uri){
 
     let old_metadata = fields["old_metadata"][0]
@@ -277,5 +249,80 @@ async function editMetadata(fields, files, uri){
     new_metadata['originalFilename'], hash, size, mime,
     uri.getGraph().split('/').pop)
 
+}
 
+async function editDescription(fields, files, uri){
+
+    let old_description = fields["old_description"][0]
+    let new_description = fields["description"][0]
+
+    let templateParams = {
+        subject:uri,
+        predicate:'http://purl.org/dc/terms/description',
+        object:old_description
+    }
+
+    let removeQuery = loadTemplate('sparql/removeSpecificLiteralTriple.sparql', templateParams)
+
+    await sparql.deleteStaggered(removeQuery, uri.getGraph())
+
+    let results = await getTypeObject(uri)
+    let obj = results[0]
+    let graph = results[1]
+
+    obj.description = new_description
+
+    let uploader = new SBOLUploader()
+    uploader.setGraph(graph)
+    uploader.setDestinationGraphUri(uri.getGraph())
+    uploader.setOverwriteMerge(OverwriteMergeOption.FailIfExists)
+
+    await uploader.upload()
+
+}
+
+
+async function getTypeObject(uri){
+
+    let temp_graph = new SBOL2Graph()
+
+    let datastore = Datastores.forSBHURI(uri)
+
+    await datastore.fetchMetadata(temp_graph, new S2Identified(temp_graph, uri.toURI()))
+
+    let types:Array<string> = temp_graph.getTypes(uri.toURI())
+
+    let obj
+    let type
+    let graph = new SBOL2Graph()
+
+    if(types.indexOf('http://sbols.org/v2#Implementation') !== -1) {
+
+        obj = graph.createImplementation(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'implementation'
+
+    }
+
+    else if(types.indexOf('http://sbols.org/v2#Experiment') !== -1){
+        obj = graph.createExperiment(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'experiment'
+
+    }
+    else if(types.indexOf('http://sbols.org/v2#ComponentDefinition') !== -1) {
+        obj = graph.createComponentDefinition(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'componentdefinition'
+    }
+
+    else if(types.indexOf('http://sbols.org/v2#ModuleDefinition') !== -1) {
+        obj = graph.createModuleDefinition(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'moduledefinition'
+
+    }
+
+    else if (types.indexOf('http://sbols.org/v2#Collection') !== -1){
+        obj = graph.createCollection(uri.getURIPrefix(), uri.getDisplayId(), uri.getVersion())
+        type = 'collection' 
+    }
+
+    return [obj, graph, type]
 }

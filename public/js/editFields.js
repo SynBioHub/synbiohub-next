@@ -59,6 +59,8 @@ $(document).ready(function() {
             $("#editableHost").appendTo("#allForms")
 
             $("#editableMetadata").appendTo("#allForms")
+
+            $("#editableDescription").appendTo("#allForms")
             
             $("#attachModalBody").empty()
 
