@@ -1,8 +1,12 @@
 $(document).ready(function() {
 
     $(".edit").click(function(){
-        if (this.id == 'plan_edit'){
 
+        let type = this.id.split('_')[0]
+        $("#modalTitle").text("Edit the " + type)
+        if (this.id == 'protocol_edit'){
+
+            
             var plan = $("#planForm").attr('value')
 
             $("#editablePlan").appendTo("#attachModalBody")

@@ -33,7 +33,7 @@ block topLevelBelowPropertyTable
                 td Protocol
                 td 
                     a(id="planForm" href=plan_url + '/download', value=plan) #{plan}
-                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="plan_edit")
+                    a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="protocol_edit")
                         span.fas.fa-pencil-alt
 
             tr
@@ -48,13 +48,3 @@ block topLevelBelowPropertyTable
                     a(href=taxId) <i>#{organism}</i>
                     a.edit(data-toggle="modal" href="#attachmentModal" style="margin-left: 25px;" id="host_edit" ,value=organism)
                         span.fas.fa-pencil-alt
-
-
-
-            #attachmentModal(class="modal fade")
-                div(class="modal-dialog")
-                    div(class="modal-content")
-                        div(class="modal-header")
-                            h4.modal-title Edit Field
-                            button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
-                        div#attachModalBody.modal-body

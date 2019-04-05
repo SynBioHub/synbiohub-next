@@ -4,9 +4,11 @@ mixin editables()
         div(class="modal-dialog")
             div(class="modal-content")
                 div(class="modal-header")
-                    h4.modal-title Edit Field
+                    h4.modal-title#modalTitle Edit Field
                     button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
                 div#attachModalBody.modal-body
+
+
     div#allForms(style="display:none")
         div#editablePlan
             div.tab-content
@@ -65,11 +67,11 @@ mixin editables()
                 div.row
                         div.col-md-12
                             div.form-group-100.required
-                                label(for="location") Physical Location 
-                                    a(title='Noting the physical location of the built construct is useful information that SynBioHub stores.')
+                                label(for="location") Location 
+                                    a(title="If this entry is a Construct, then write a Physical Location. If it's an Experiment, write the location of its data")
                                             span.fa.fa-info-circle
                                 input.form-control(name='location', id="location"
-                                        placeholder='Physical location of the construct e.g. Fridge A, Tray 2', value=location)
+                                        placeholder='Physical location of a Construct/Experiment', value=location)
                 div.row
                     div.col-md-12
                         button(type='submit').btn.btn-primary.btn-lg Submit
@@ -122,11 +124,11 @@ mixin editables()
                 div.row
                     div.col-md-12
                         div.form-group-100.required
-                            label(for="description") Purpose 
-                                a(title='Writing the purpose of a built Construct is important for properly describing it.')
+                            label(for="description") Description
+                                a(title='Give this entry a description.')
                                         span.fa.fa-info-circle
                             input.form-control(name='description',id="description"
-                                    placeholder='Brief description about the purpose of this construct',value=description)
+                                    placeholder='Brief description about this entry.',value=description)
                 div.row
                     div.col-md-12
                         button(type='submit').btn.btn-primary.btn-lg Submit

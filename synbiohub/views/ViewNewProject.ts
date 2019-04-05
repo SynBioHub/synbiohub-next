@@ -79,7 +79,8 @@ export default class ViewNewProject extends View {
         collection.name = this.projectInfo.name
         collection.description = this.projectInfo.desc
         collection.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#ownedBy', uri.getUserURI())
-
+        collection.setUriProperty('http://wiki.synbiohub.org/wiki/Terms/synbiohub#topLevel', collection.uri)
+        
         let uploader = new SBOLUploader()
         uploader.setGraph(graph)
         uploader.setDestinationGraphUri(uri.getGraph())
