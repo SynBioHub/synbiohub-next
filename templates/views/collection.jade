@@ -28,14 +28,11 @@ block js
         })
 
     script.
-
-        $(document).ready(function() {
-            $(".hideButton").click(function(){
-                temp_name = CSS.escape(this.id.split("_root")[0])
-                temp_name = temp_name.split(' ').join('')
-                child_class = '.' + temp_name + '_child'
-                $(child_class.trim()).toggle()
-            })
+        $(".hideButton").on('click', function(){
+            temp_name = CSS.escape(this.id.split("_root")[0])
+            temp_name = temp_name.split(' ').join('')
+            child_class = '.' + temp_name + '_child'
+            $(child_class.trim()).toggle()
         })
         
     script(src='/js/editFields.js')
