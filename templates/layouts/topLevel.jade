@@ -250,21 +250,21 @@ block content
                     +editables()
 
 
-        block js
-            script.
-                function popup() {
-                    popupS.modal({
-                        content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
-                    });
-                }
-                $(document).ready(function() {
-                    $('#lightgallery').lightGallery({
-                        selector: '.sele',
-                        speed: 500,
-                        escKey: true
+block js
+    script.
+            function popup() {
+                popupS.modal({
+                content: '<div class="form-group"><label for="share">Copy the following link to share</label><input id="share" type="text" class="form-control" style="width:30em;" readonly value="#{share}"/></div>',
+                });
+            }
+            $(document).ready(function() {
+                $('#lightgallery').lightGallery({
+                selector: '.sele',
+                speed: 500,
+                escKey: true
 
-                    });
-                })
-                
-            script(src='/js/editFields.js')
+                });
+            })
+    
+    script(src='/js/editFields.js')
 
