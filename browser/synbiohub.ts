@@ -26,7 +26,7 @@ async function doBiocad() {
             layout.size = layout.getBoundingSize().add(Vec2.fromXY(1, 1))
 
             let renderer = new ImageRenderer(layout)
-            let svg = renderer.renderToSVGString()
+            let svg = renderer.renderSVGString()
 
             elem.innerHTML = svg
         }
